@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st June 2018//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_180601.dtd">
+<PubmedArticleSet>
+
+<PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+        <PMID Version="1">10599663</PMID>
+        <DateCompleted>
+            <Year>1999</Year>
+            <Month>12</Month>
+            <Day>21</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2007</Year>
+            <Month>11</Month>
+            <Day>14</Day>
+        </DateRevised>
+        <Article PubModel="Print">
+            <Journal>
+                <ISSN IssnType="Print">0161-6420</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>106</Volume>
+                    <Issue>12</Issue>
+                    <PubDate>
+                        <Year>1999</Year>
+                        <Month>Dec</Month>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Ophthalmology</Title>
+                <ISOAbbreviation>Ophthalmology</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>Randomized clinical trial of the 350-mm2 versus the 500-mm2 Baerveldt implant: longer term results: is bigger better?</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>2312-8</MedlinePgn>
+            </Pagination>
+            <Abstract>
+                <AbstractText Label="OBJECTIVE" NlmCategory="OBJECTIVE">To report the longer term results of a randomized, clinical trial comparing the 350-mm2 and the 500-mm2 Baerveldt glaucoma implants.</AbstractText>
+                <AbstractText Label="DESIGN" NlmCategory="METHODS">Extended follow-up on a randomized, controlled trial.</AbstractText>
+                <AbstractText Label="PARTICIPANTS" NlmCategory="METHODS">Between March 1991 and April 1993, 107 patients with uncontrolled intraocular pressure (IOP) due to non-neovascular glaucoma associated with aphakia, pseudophakia, or failed filters were randomly assigned for surgical placement of either the 350-mm or the 500-mm2 Baerveldt implant at the Doheny Eye Institute.</AbstractText>
+                <AbstractText Label="METHODS" NlmCategory="METHODS">A random-numbers table was used to assign each patient to one of the two groups. Preoperative IOPs and visual acuities were recorded. Clinical records were reviewed to ascertain postoperative IOPs, visual acuities, number of medications used, and implant-related complications that occurred throughout the follow-up period.</AbstractText>
+                <AbstractText Label="MAIN OUTCOME MEASURES" NlmCategory="METHODS">Success was defined as IOP of 6 mmHg or greater and of 21 mmHg or less in two or more consecutive follow-up visits without further glaucoma surgery or loss of light perception attributable to glaucoma.</AbstractText>
+                <AbstractText Label="RESULTS" NlmCategory="RESULTS">The overall success rates were 87% for the 350-mm2 group and 70% for the 500-mm2 group (P = 0.05). Average follow-up was 37 months (range, 1-76 months) for the 350-mm2 group and 34 months (range, 5-77 months) for the 500-mm2 group. The life-table success rates declined over time for both implant groups, from a high of 98% for the 350-mm2 group and 92% for the 500-mm2 group at 1 year to a cumulative success rate of 79% for the 350-mm2 group and 66% for the 500-mm2 group at 5 years. Visual acuities were better or remained the same in 50% of the patients in the 350-mm2 group and 46% of those in the 500-mm2 group. Complications during the 5-year follow-up were also statistically similar.</AbstractText>
+                <AbstractText Label="CONCLUSIONS" NlmCategory="CONCLUSIONS">The longer term results show that the 350-mm2 Baerveldt implant is more successful than the 500-mm2 implant for overall IOP control. Interval comparisons indicate a higher rate of success for the 350-mm2 implant in the first, second, third, fourth, and fifth years of implantation. Visual acuities, implant-related complications, and average IOPs were statistically indistinguishable between the two groups.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Britt</LastName>
+                    <ForeName>M T</ForeName>
+                    <Initials>MT</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Doheny Eye Institute, Department of Ophthalmology, University of Southern California School of Medicine, Los Angeles 90033, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>LaBree</LastName>
+                    <ForeName>L D</ForeName>
+                    <Initials>LD</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Lloyd</LastName>
+                    <ForeName>M A</ForeName>
+                    <Initials>MA</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Minckler</LastName>
+                    <ForeName>D S</ForeName>
+                    <Initials>DS</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Heuer</LastName>
+                    <ForeName>D K</ForeName>
+                    <Initials>DK</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Baerveldt</LastName>
+                    <ForeName>G</ForeName>
+                    <Initials>G</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Varma</LastName>
+                    <ForeName>R</ForeName>
+                    <Initials>R</Initials>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <GrantList CompleteYN="Y">
+                <Grant>
+                    <GrantID>EY03040</GrantID>
+                    <Acronym>EY</Acronym>
+                    <Agency>NEI NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+            </GrantList>
+            <PublicationTypeList>
+                <PublicationType UI="D016430">Clinical Trial</PublicationType>
+                <PublicationType UI="D003160">Comparative Study</PublicationType>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+                <PublicationType UI="D016449">Randomized Controlled Trial</PublicationType>
+                <PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+                <PublicationType UI="D013487">Research Support, U.S. Gov't, P.H.S.</PublicationType>
+            </PublicationTypeList>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>United States</Country>
+            <MedlineTA>Ophthalmology</MedlineTA>
+            <NlmUniqueID>7802443</NlmUniqueID>
+            <ISSNLinking>0161-6420</ISSNLinking>
+        </MedlineJournalInfo>
+        <CitationSubset>IM</CitationSubset>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName UI="D000293" MajorTopicYN="N">Adolescent</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D000328" MajorTopicYN="N">Adult</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D000368" MajorTopicYN="N">Aged</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D000369" MajorTopicYN="N">Aged, 80 and over</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D001036" MajorTopicYN="N">Aphakia, Postcataract</DescriptorName>
+                <QualifierName UI="Q000150" MajorTopicYN="N">complications</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D002648" MajorTopicYN="N">Child</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D005260" MajorTopicYN="N">Female</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D005500" MajorTopicYN="N">Follow-Up Studies</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D005901" MajorTopicYN="N">Glaucoma</DescriptorName>
+                <QualifierName UI="Q000209" MajorTopicYN="N">etiology</QualifierName>
+                <QualifierName UI="Q000503" MajorTopicYN="N">physiopathology</QualifierName>
+                <QualifierName UI="Q000601" MajorTopicYN="Y">surgery</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D020327" MajorTopicYN="Y">Glaucoma Drainage Implants</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D006801" MajorTopicYN="N">Humans</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D007429" MajorTopicYN="Y">Intraocular Pressure</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D008297" MajorTopicYN="N">Male</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D008875" MajorTopicYN="N">Middle Aged</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D011379" MajorTopicYN="N">Prognosis</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D019919" MajorTopicYN="N">Prosthesis Implantation</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D019591" MajorTopicYN="N">Pseudophakia</DescriptorName>
+                <QualifierName UI="Q000150" MajorTopicYN="N">complications</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D012189" MajorTopicYN="N">Retrospective Studies</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D014792" MajorTopicYN="N">Visual Acuity</DescriptorName>
+            </MeshHeading>
+        </MeshHeadingList>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>1999</Year>
+                <Month>12</Month>
+                <Day>22</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>1999</Year>
+                <Month>12</Month>
+                <Day>22</Day>
+                <Hour>0</Hour>
+                <Minute>1</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>1999</Year>
+                <Month>12</Month>
+                <Day>22</Day>
+                <Hour>0</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">10599663</ArticleId>
+            <ArticleId IdType="pii">S0161-6420(99)90532-8</ArticleId>
+            <ArticleId IdType="doi">10.1016/S0161-6420(99)90532-8</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+</PubmedArticleSet>
