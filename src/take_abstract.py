@@ -11,7 +11,7 @@ def take(pmid):
 
     http = urllib3.PoolManager()
 
-    url = 'http://www.ncbi.nlm.nih.gov/pubmed/' + str(pmid) + \
+    url = 'https://www.ncbi.nlm.nih.gov/pubmed/' + str(pmid) + \
           '?report=xml&format=text'
 
     response = http.request('GET', url)
@@ -49,7 +49,7 @@ def take_title(pmid):
     '''
     http = urllib3.PoolManager()
 
-    url = 'http://www.ncbi.nlm.nih.gov/pubmed/' + str(pmid) + \
+    url = 'https://www.ncbi.nlm.nih.gov/pubmed/' + str(pmid) + \
           '?report=xml&format=text'
 
     response = http.request('GET', url)

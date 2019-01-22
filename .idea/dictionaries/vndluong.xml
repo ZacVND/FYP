@@ -2,6 +2,7 @@
   <dictionary name="vndluong">
     <words>
       <w>pharmacologic</w>
+      <w>stopword</w>
       <w>umls</w>
     </words>
   </dictionary>

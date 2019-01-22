@@ -8,6 +8,7 @@ class Feature(Enum):
     # TODO: Add more features
     IS_DRUG = 0
     IS_IN_TITLE = 1
+    IS_BNP = 2
 
 
 class_to_feature_mapping = {
