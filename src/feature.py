@@ -13,7 +13,10 @@ class Feature(Enum):
 
 class_to_feature_mapping = {
     Feature.IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
-                            'Organic Chemical', 'Biomedical or Dental Material']
+                            'Organic Chemical',
+                            'Biomedical or Dental Material',
+                            'Therapeutic or Preventive Procedure',
+                            'Medical Device']
 }
 
 class_to_feature_trie = util.make_trie(class_to_feature_mapping)

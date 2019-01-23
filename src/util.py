@@ -1,7 +1,9 @@
 from Authentication import Authentication
+from os import path, listdir
 import requests
 import logging
 import json
+import bs4
 
 logging.basicConfig(format='[%(name)s|%(levelname)s] %(message)s',
                     level=logging.INFO)
@@ -11,6 +13,9 @@ auth_client = Authentication(api_key)
 tgt = auth_client.gettgt()
 
 _end = '__end'
+
+script_dir = path.dirname(path.abspath(__file__))
+data_path = path.join(script_dir, "..", 'data/annotation I/')
 
 
 def get_logger(name):
@@ -56,6 +61,17 @@ def check_trie(trie, string):
     return None
 
 
+def get_paper_paths():
+    return [path.join(data_path, file) for file in sorted(listdir(data_path))]
+
+
+def parse_paper(paper_path):
+    with open(paper_path) as f:
+        raw = f.read()
+        soup = bs4.BeautifulSoup(raw, "html5lib")
+    return soup
+
+
 def get_umls_classes(string):
     """
     Query the param with UMLS REST API and build up its class, only consider
@@ -75,29 +91,37 @@ def get_umls_classes(string):
     query = {'string': string, 'ticket': ticket, 'pageNumber': 1,
              'pageSize': 1,
              'searchType': 'exact'}
-    r = requests.get(uri + content_endpoint, params=query)
-    r.encoding = 'utf-8'
-    items = json.loads(r.text)
-    json_data = items["result"]
+    search_result = requests.get(uri + content_endpoint, params=query)
+    search_result.encoding = 'utf-8'
+    results = json.loads(search_result.text)["result"]["results"]
 
     uri_2 = 'https://uts-ws.nlm.nih.gov/rest'
     content_endpoint_2 = '/content/' + version + '/CUI/'
 
     classes = []
 
-    for result in json_data["results"]:
+    for result in results:
+
+        uid = result["ui"]
+        if uid is None or uid == 'NONE':
+            continue
+
         try:
             ticket = auth_client.getst(tgt)
             query_2 = {'ticket': ticket}
-            r_2 = requests.get(uri_2 + content_endpoint_2 + result["ui"],
+            r_2 = requests.get(uri_2 + content_endpoint_2 + uid,
                                params=query_2)
+
+            if not 200 <= r_2.status_code < 300:
+                continue
+
             r_2.encoding = 'utf-8'
             items = json.loads(r_2.text)
             json_sem = items['result']['semanticTypes']
             for result in json_sem:
                 classes.append(result['name'])
-        except:
-            NameError
+        except json.JSONDecodeError:
+            print('Got bad JSON!')
 
     return classes
 

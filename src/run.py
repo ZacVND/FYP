@@ -10,23 +10,18 @@ import bs4
 logger = util.get_logger("run")
 
 sw = stopwords.words('english') + ['non']
-cur_dir = path.dirname(path.abspath(__file__))
+
+# TODO: write code to download all of the UMLS query data
 
 if __name__ == "__main__":
 
-    data_path = path.join(cur_dir, "..", 'data/annotation I/')
-
     # Prepare papers' XML
     # paper_files = sorted(listdir(data_path))[:4]
-    paper_files = listdir(data_path)[:4]
-    paper_count = len(paper_files)
+    paper_paths = util.get_paper_paths()
+    paper_count = len(paper_paths)
     paper_soups = [None] * paper_count
-    for i in range(len(paper_files)):
-        paper_file = paper_files[i]
-        paper_path = path.join(data_path, paper_file)
-        with open(paper_path) as f:
-            raw = f.read()
-            paper_soups[i] = bs4.BeautifulSoup(raw, "html5lib")
+    for i in range(len(paper_paths)):
+        paper_soups[i] = util.parse_paper(paper_paths[i])
 
     # Extract feature vectors from all papers
     token_cols = [None] * paper_count

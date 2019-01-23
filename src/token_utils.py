@@ -132,9 +132,9 @@ class TokenCollection:
             feature_class_map = ft.get_feature_classes(token.word, umls_cache)
             for feature_i, val in feature_class_map.items():
                 feature_vectors[token_i, int(feature_i)] = val
-            sys.stdout.write(
-                'UMLS Progress {}/{}\r'.format(token_i + 1, token_count))
-            sys.stdout.flush()
+            # sys.stdout.write(
+            #     'UMLS Progress {}/{}\r'.format(token_i + 1, token_count))
+            # sys.stdout.flush()
 
             # in title feature
             key = util.check_trie(title_trie, token.word)
