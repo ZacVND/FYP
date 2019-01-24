@@ -13,8 +13,9 @@ import bs4
 script_dir = path.dirname(path.abspath(__file__))
 
 
-class Label(Enum):
+class EvLabel(Enum):
     # TODO: Add more features
+    __order__ = 'A1 A2 R1 R2 OC P'
     A1 = 0
     A2 = 1
     R1 = 2
@@ -23,29 +24,36 @@ class Label(Enum):
     P = 5
 
 
+class EvLabelData:
+    def __init__(self, word):
+        self.word = word
+
+
 class Token:
     def __init__(self, word, g_tags=[]):
         self.word = word.lower()
         self.og_word = word
         self.g_tags = g_tags
 
-        self.label = None
+        self.ev_label = None
+        self.predicted_ev_label = None
 
-    def set_label(self, label):
-        self.label = label
+    def set_ev_label(self, ev_label):
+        self.ev_label = ev_label
 
 
 # genia tagger instance
-executable_path = path.join("..", "geniatagger-3.0.2", "geniatagger")
+executable_path = path.join(script_dir, "..", "geniatagger-3.0.2",
+                            "geniatagger")
 tagger = GENIATagger(executable_path)
 
-xml_tag_to_label = {
-    'a1': Label.A1,
-    'a2': Label.A2,
-    'r1': Label.R1,
-    'r2': Label.R2,
-    'oc': Label.OC,
-    'p': Label.P,
+xml_tag_to_ev_label = {
+    'a1': EvLabel.A1,
+    'a2': EvLabel.A2,
+    'r1': EvLabel.R1,
+    'r2': EvLabel.R2,
+    'oc': EvLabel.OC,
+    'p': EvLabel.P,
 }
 stopword_trie = util.make_trie({999: stopwords.words('english') + ['non']})
 
@@ -55,10 +63,7 @@ class TokenCollection:
         self.bs_doc = bs_doc
 
         self.tokens = None
-        self.a_tokens = []
-        self.r_tokens = []
-        self.oc_token = None
-        self.p_token = None
+        self.ev_labels = {}
 
         self.feature_vectors = None
         self.a_labels = None
@@ -76,21 +81,15 @@ class TokenCollection:
                 continue  # Skip blank new lines
             for child in abs_text.children:
                 xml_tag = child.name
-                label = xml_tag_to_label.get(xml_tag)
+                label = xml_tag_to_ev_label.get(xml_tag)
                 if label is not None:
                     # Dealing with specific tags
                     tags = list(tagger.tag(child.text))
                     token = Token(child.text, g_tags=tags)
-                    token.set_label(label)
+                    token.set_ev_label(label)
                     tokens.append(token)
-                    if label in [Label.A1, Label.A2]:
-                        self.a_tokens.append(token)
-                    if label in [Label.R1, Label.R2]:
-                        self.r_tokens.append(token)
-                    if label == Label.OC:
-                        self.oc_token = token
-                    if label == Label.P:
-                        self.p_token = token
+
+                    self.ev_labels[label] = EvLabelData(token.word)
                 else:
                     # Dealing with text
                     if not isinstance(child, bs4.NavigableString):
@@ -108,7 +107,7 @@ class TokenCollection:
         # NOTE: Token count should not change after this point!!
         self.tokens = tokens
 
-    def generate_feature_vector(self):
+    def generate_feature_matrix(self):
         # TODO: Complete this
         token_count = len(self.tokens)
         feature_count = len(ft.Feature.__members__.items())
@@ -136,6 +135,7 @@ class TokenCollection:
             #     'UMLS Progress {}/{}\r'.format(token_i + 1, token_count))
             # sys.stdout.flush()
 
+            # TODO: Add code to assign values to more features
             # in title feature
             key = util.check_trie(title_trie, token.word)
             in_title = key is not None
@@ -163,13 +163,14 @@ class TokenCollection:
 
         for token_i in range(len(self.tokens)):
             token = self.tokens[token_i]
-            if token.label in [Label.A1, Label.A2]:
+            ev_label = token.ev_label
+            if ev_label in [EvLabel.A1, EvLabel.A2]:
                 a_labels[token_i] = 1
-            if token.label in [Label.R1, Label.R2]:
+            if ev_label in [EvLabel.R1, EvLabel.R2]:
                 r_labels[token_i] = 1
-            if token.label == Label.OC:
+            if ev_label == EvLabel.OC:
                 oc_labels[token_i] = 1
-            if token.label == Label.P:
+            if ev_label == EvLabel.P:
                 p_labels[token_i] = 1
 
         self.a_labels = a_labels
@@ -177,4 +178,12 @@ class TokenCollection:
         self.oc_labels = oc_labels
         self.p_labels = p_labels
 
-        return a_labels, r_labels, oc_labels, p_labels
+        # TODO: Store labels in self
+        labels = {
+            'a': a_labels,
+            'r': r_labels,
+            'oc': oc_labels,
+            'p': p_labels,
+        }
+
+        return labels

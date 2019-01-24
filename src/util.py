@@ -2,6 +2,7 @@ from Authentication import Authentication
 from os import path, listdir
 import requests
 import logging
+import heapq
 import json
 import bs4
 
@@ -65,6 +66,15 @@ def get_paper_paths():
     return [path.join(data_path, file) for file in sorted(listdir(data_path))]
 
 
+def load_paper_xmls(paper_paths):
+    paper_count = len(paper_paths)
+    paper_soups = [None] * paper_count
+    for i in range(len(paper_paths)):
+        paper_soups[i] = parse_paper(paper_paths[i])
+
+    return paper_soups
+
+
 def parse_paper(paper_path):
     with open(paper_path) as f:
         raw = f.read()
@@ -126,14 +136,28 @@ def get_umls_classes(string):
     return classes
 
 
+def get_n_max_indices(values, n):
+    heap = [(-x, i) for i, x in enumerate(values)]
+    heapq.heapify(heap)
+    results = []
+    for i in range(n):
+        curr_item = heapq.heappop(heap)
+        results.append(curr_item[1])
+
+    return results
+
+
 if __name__ == '__main__':
     # classes = get_umls_classes("timolol")
     # assert ('Pharmacologic Substance' in classes)
-    class_to_feature_mapping = {
-        13: ['Pharmacologic Substance', 'Antibiotic',
-             'Organic Chemical', 'Biomedical or Dental Material']
-    }
-    trie = make_trie(class_to_feature_mapping)
-    print(trie)
-    print(check_trie(trie, 'Pharmacologic Substance'))
-    print(check_trie(trie, 'Random bullshit'))
+    # class_to_feature_mapping = {
+    #     13: ['Pharmacologic Substance', 'Antibiotic',
+    #          'Organic Chemical', 'Biomedical or Dental Material']
+    # }
+    # trie = make_trie(class_to_feature_mapping)
+    # print(trie)
+    # print(check_trie(trie, 'Pharmacologic Substance'))
+    # print(check_trie(trie, 'Random bullshit'))
+    # lst = array([1, 2, 0, 5, 9, 7, 3])
+    # print(get_n_max_indices(lst, 2))
+    pass

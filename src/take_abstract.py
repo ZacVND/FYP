@@ -1,5 +1,10 @@
 import urllib3, re, os
 from bs4 import BeautifulSoup
+import certifi
+
+http = urllib3.PoolManager(
+    cert_reqs='CERT_REQUIRED',
+    ca_certs=certifi.where())
 
 
 def take(pmid):
@@ -7,9 +12,9 @@ def take(pmid):
     retrieves the abstract with id pmid from PUBMED and saves it in path
     in a standard format
     '''
-    path = os.path.join(os.getcwd(), 'new_data')
+    global http
 
-    http = urllib3.PoolManager()
+    path = os.path.join(os.getcwd(), 'new_data')
 
     url = 'https://www.ncbi.nlm.nih.gov/pubmed/' + str(pmid) + \
           '?report=xml&format=text'
@@ -36,7 +41,7 @@ def take(pmid):
         abstract = re.sub(r'NlmCategory\=', 'nlmcategory=', abstract)
 
     abstract = re.sub(r'\n\s+', '\n', str(abstract))
-    output = str(soup.pmid) + '\n' +abstract
+    output = str(soup.pmid) + '\n' + abstract
     out_file = open(os.path.join(path, pmid + '.xml'), 'w')
     out_file.write(output)
     out_file.close()
@@ -47,7 +52,7 @@ def take_title(pmid):
     returns the title of the document registered with pmid
     :param pmid:str
     '''
-    http = urllib3.PoolManager()
+    global http
 
     url = 'https://www.ncbi.nlm.nih.gov/pubmed/' + str(pmid) + \
           '?report=xml&format=text'

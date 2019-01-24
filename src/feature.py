@@ -9,14 +9,20 @@ class Feature(Enum):
     IS_DRUG = 0
     IS_IN_TITLE = 1
     IS_BNP = 2
+    IS_PROCEDURE = 3
+    IS_PATIENT = 4
+    IS_PLACEBO = 5
+
+feature_count = len(Feature.__members__.items())
 
 
 class_to_feature_mapping = {
     Feature.IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
                             'Organic Chemical',
                             'Biomedical or Dental Material',
-                            'Therapeutic or Preventive Procedure',
-                            'Medical Device']
+                            ],
+    Feature.IS_PROCEDURE.value: ['Therapeutic or Preventive Procedure',
+                                 'Medical Device']
 }
 
 class_to_feature_trie = util.make_trie(class_to_feature_mapping)
