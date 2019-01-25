@@ -1,16 +1,13 @@
 from joblib import Parallel, delayed
-from os import path, listdir
+from os import path
 import token_utils as tu
-import feature as ft
 import util
-import bs4
 
 script_dir = path.dirname(path.abspath(__file__))
 
 if __name__ == "__main__":
 
-    umls_cache_path = path.join(script_dir, 'umls_cache.json')
-    umls_cache = util.load_dict(umls_cache_path)
+    umls_cache = util.umls_cache
 
     # Prepare papers' XML
     # paper_files = sorted(listdir(data_path))[:4]
@@ -18,15 +15,17 @@ if __name__ == "__main__":
     paper_count = len(paper_paths)
     paper_soups = [None] * paper_count
 
+    import util as our_util
+
 
     def process_word(word_i, word):
         # print('Processing word {}'.format(word_i + 1))
-        cached_map = umls_cache.get(word)
-        if cached_map is not None:
-            return word, cached_map
+        cached_classes = umls_cache.get(word)
+        if cached_classes is not None:
+            return word, cached_classes
 
-        class_map = ft.get_feature_classes(word, cache=None)
-        return word, class_map
+        classes = our_util.get_umls_classes(word)
+        return word, classes
 
 
     for i in range(len(paper_paths)):
@@ -43,10 +42,10 @@ if __name__ == "__main__":
         result = Parallel(n_jobs=4)(delayed(process_word)(i, token.word)
                                     for i, token in enumerate(col.tokens))
 
-        for word, class_map in result:
-            umls_cache[word] = class_map
+        for word, classes in result:
+            umls_cache.set(word, classes)
 
-        util.save_dict(umls_cache_path, umls_cache)
+        umls_cache.save()
         print('\n\n')
 
     print('Done!')

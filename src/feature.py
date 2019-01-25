@@ -10,11 +10,13 @@ class Feature(Enum):
     IS_IN_TITLE = 1
     IS_BNP = 2
     IS_PROCEDURE = 3
-    IS_PATIENT = 4
+    IS_IN_PDICT = 4  # is in patient dictionary
     IS_PLACEBO = 5
+
 
 feature_count = len(Feature.__members__.items())
 
+patient_dict_trie = util.Trie(strings=["patient"])
 
 class_to_feature_mapping = {
     Feature.IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
@@ -25,20 +27,16 @@ class_to_feature_mapping = {
                                  'Medical Device']
 }
 
-class_to_feature_trie = util.make_trie(class_to_feature_mapping)
+class_to_feature_trie = util.Trie(mapping=class_to_feature_mapping)
 
 
-def get_feature_classes(word, cache=None):
-    if cache is not None:
-        cached_map = cache.get(word)
-        if cached_map is not None:
-            return cached_map
+def get_feature_classes(word):
 
     feature_class_map = {}
     classes = util.get_umls_classes(word)
 
     for cls in classes:
-        feature_i = util.check_trie(class_to_feature_trie, cls)
+        feature_i = class_to_feature_trie.check(cls)
         if feature_i is not None:
 
             # When this is set to False, the code returns 1 if some feature
@@ -56,9 +54,6 @@ def get_feature_classes(word, cache=None):
 
             else:
                 feature_class_map[feature_i] = 1
-
-    if cache is not None:
-        cache[word] = feature_class_map
 
     return feature_class_map
 

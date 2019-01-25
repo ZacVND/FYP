@@ -65,6 +65,6 @@ def take_title(pmid):
 
     soup = BeautifulSoup(xmlpage, "html5lib")
     if soup.articletitle:
-        return soup.articletitle
+        return soup.articletitle.text
     else:
-        return 'no title'
+        return None

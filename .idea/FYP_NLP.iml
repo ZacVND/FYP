@@ -6,6 +6,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (yr4py3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="all" level="application" />
+    <orderEntry type="library" name="bulma-extensions" level="application" />
   </component>
   <component name="TestRunnerService">
     <option name="projectConfiguration" value="pytest" />

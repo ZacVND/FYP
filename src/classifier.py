@@ -3,7 +3,6 @@ import feature as ft
 import numpy as np
 import time
 import util
-import heapq
 
 
 class Classifier:
@@ -15,6 +14,8 @@ class Classifier:
             'oc': np.zeros((ft.feature_count,)),
             'p': np.zeros((ft.feature_count,)),
         }
+        self.last_total_loss = None
+        self.last_test_results = None
 
         if init_weights is not None:
             for key, value in init_weights.items():
@@ -31,12 +32,15 @@ class Classifier:
             'p': np.zeros((0,)),
         }
 
+        print('Training...')
+
         # Extract feature vectors from all papers
         token_cols = [None] * paper_count
         all_feat_vecs = np.ones((0, ft.feature_count + 1))
         for i in range(paper_count):
             soup = paper_soups[i]
             start = time.time()
+            paper_id = soup.pmid.text
 
             col = tu.TokenCollection(soup)
             col.normalize()
@@ -53,7 +57,8 @@ class Classifier:
             token_cols[i] = col
 
             end = time.time()
-            print('Time elapsed on paper #{}: {}'.format(i + 1, end - start))
+            print('Time elapsed on paper #{} ({}): {}'
+                  .format(i + 1, paper_id, end - start))
 
         # Train: Try to learn the weights for each feature
         weights = {}
@@ -65,7 +70,10 @@ class Classifier:
                 rcond=None
             )[0].reshape(ft.feature_count + 1, 1)
 
+        print('Done training.')
+
         self.weights = weights
+        self.last_train_paths = paper_paths
 
     def test(self, paper_paths):
         # Test how good our prediction is
@@ -73,7 +81,8 @@ class Classifier:
         paper_count = len(paper_soups)
 
         # Extract feature vectors from all papers
-        all_feat_vecs = np.ones((0, ft.feature_count + 1))
+        test_results = [None] * paper_count
+        losses = np.zeros((paper_count,))
         for i in range(paper_count):
             soup = paper_soups[i]
             print('---- Paper #{} [{}]'.format(i + 1, soup.pmid.text))
@@ -87,19 +96,42 @@ class Classifier:
                 weights = self.weights[name].reshape(ft.feature_count + 1, 1)
                 predictions[name] = (feature_matrix @ weights).flatten()
 
-            ev_labels_data = self.assign_ev_labels(col, predictions)
+            label_assignment = self.assign_ev_labels(col, predictions)
+            loss = self.compute_loss(col, label_assignment)
+            losses[i] = loss
 
             for ev_label in tu.EvLabel:
                 true_ev_label_data = col.ev_labels[ev_label]
-                ev_label_data = ev_labels_data[ev_label]
+                ev_label_data = label_assignment[ev_label]
                 print("Predicted: ", ev_label.name, ev_label_data.word,
                       " --- True Label: ", true_ev_label_data.word)
 
+            print('loss for this paper is: ', loss)
+            test_result = {
+                "soup": soup,
+                "paper_path": paper_paths[i],
+                "token_collection": col,
+                "true_label_assignment": col.ev_labels,
+                "predicted_label_assignment": label_assignment,
+                "feature_matrix": feature_matrix,
+                "loss": loss
+            }
+            test_results[i] = test_result
+
+        total_loss = np.sum(losses)
+        print("\n\n\n---------------")
+        print("total loss is: ", total_loss)
+        self.last_total_loss = total_loss
+        self.last_test_results = test_results
+        return total_loss
+
     def assign_ev_labels(self, token_collection, predictions):
-        ev_labels = {}
+        label_assignment = {}
         # label_data = {"word": "timolol"}
         # ev_labels[tu.EvLabel.A1] = label_data
 
+        # TODO: Write better label assignment code
+        # Currently it is taking duplicate values
         tokens = token_collection.tokens
         for key, value in predictions.items():
             if key == 'a':
@@ -117,14 +149,61 @@ class Classifier:
                 token_is = util.get_n_max_indices(value, 2)
                 p = tokens[token_is[0]]
 
-        ev_labels[tu.EvLabel.A1] = tu.EvLabelData(a1.word)
-        ev_labels[tu.EvLabel.A2] = tu.EvLabelData(a2.word)
-        ev_labels[tu.EvLabel.R1] = tu.EvLabelData(r1.word)
-        ev_labels[tu.EvLabel.R2] = tu.EvLabelData(r2.word)
-        ev_labels[tu.EvLabel.OC] = tu.EvLabelData(oc.word)
-        ev_labels[tu.EvLabel.P] = tu.EvLabelData(p.word)
+        label_assignment[tu.EvLabel.A1] = tu.EvLabelData(a1.word)
+        label_assignment[tu.EvLabel.A2] = tu.EvLabelData(a2.word)
+        label_assignment[tu.EvLabel.R1] = tu.EvLabelData(r1.word)
+        label_assignment[tu.EvLabel.R2] = tu.EvLabelData(r2.word)
+        label_assignment[tu.EvLabel.OC] = tu.EvLabelData(oc.word)
+        label_assignment[tu.EvLabel.P] = tu.EvLabelData(p.word)
 
-        return ev_labels
+        return label_assignment
 
-    def compute_loss(self, token_collection):
-        pass
+    def compute_loss(self, token_collection, label_assignment):
+        """
+        Loss small -> result is good
+        Loss high -> result is bad
+        :param token_collection:
+        :param ev_label_data:
+        :return: loss
+        """
+        loss = 0
+        for label, label_data in label_assignment.items():
+            true_label_data = token_collection.ev_labels[label]
+            if label_data.word != true_label_data.word:
+                loss += 1
+
+        return loss
+
+    def save_result(self, json_path):
+        """
+        TODO: tCalculate the error between the desired labels and the true
+        labels(
+        posterior)
+        :param json_path:
+        :return:
+        """
+        train_data = {}
+
+        test_counts = len(self.last_test_results)
+        test_data = [None] * test_counts
+        for i in range(test_counts):
+            result = self.last_test_results[i]
+            tokens = result["token_collection"].tokens
+            new_result = {
+                "pmid": result["soup"].pmid.text,
+                "paper_path": result["paper_path"],
+                "tokens": [{"word": t.word} for t in tokens],
+                "true_label_assignment": {},
+                "predicted_label_assignment": {},
+                "feature_matrix": result["feature_matrix"].tolist(),
+                "loss": result["loss"]
+            }
+            test_data[i] = new_result
+
+        data = {
+            "train_data": train_data,
+            "test_data": test_data,
+            "feature_names": [f.name for f in ft.Feature],
+        }
+
+        util.save_dict(json_path, data)

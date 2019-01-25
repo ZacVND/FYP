@@ -12,9 +12,14 @@ import bs4
 
 script_dir = path.dirname(path.abspath(__file__))
 
+G_WORD = 0
+G_BASE_FORM = 1
+G_POS_TAG = 2
+G_CHUNK = 3
+G_NAMED_ENTITY = 4
+
 
 class EvLabel(Enum):
-    # TODO: Add more features
     __order__ = 'A1 A2 R1 R2 OC P'
     A1 = 0
     A2 = 1
@@ -55,7 +60,7 @@ xml_tag_to_ev_label = {
     'oc': EvLabel.OC,
     'p': EvLabel.P,
 }
-stopword_trie = util.make_trie({999: stopwords.words('english') + ['non']})
+stopword_trie = util.Trie(strings=(stopwords.words('english') + ['non']))
 
 
 class TokenCollection:
@@ -66,10 +71,7 @@ class TokenCollection:
         self.ev_labels = {}
 
         self.feature_vectors = None
-        self.a_labels = None
-        self.r_labels = None
-        self.oc_labels = None
-        self.p_labels = None
+        self.labels = None
 
     def normalize(self):
 
@@ -102,13 +104,12 @@ class TokenCollection:
         # Removing stopwords
         # TODO: Replace token list with linked list for quick removal
         tokens = [x for x in tokens
-                  if not util.check_trie(stopword_trie, x.word)]
+                  if not stopword_trie.check(x.word)]
 
         # NOTE: Token count should not change after this point!!
         self.tokens = tokens
 
     def generate_feature_matrix(self):
-        # TODO: Complete this
         token_count = len(self.tokens)
         feature_count = len(ft.Feature.__members__.items())
         feature_vectors = np.zeros((token_count, feature_count + 1))
@@ -116,19 +117,18 @@ class TokenCollection:
         # Set bias term to 1
         feature_vectors[:, feature_count] += 1
 
-        umls_cache_path = path.join(script_dir, 'umls_cache.json')
-        umls_cache = util.load_dict(umls_cache_path)
-
-        title = take_title(self.bs_doc.pmid.text).text
-        title_words = pp.normalise_sentence(title)
-        title_mapping = {999: title_words}
-        title_trie = util.make_trie(title_mapping)
+        title = take_title(self.bs_doc.pmid.text)
+        if title is None:
+            print('Cannot fetch the title, assuming no title.')
+        else:
+            title_words = pp.normalise_sentence(title)
+            title_trie = util.Trie(strings=title_words)
 
         for token_i in range(len(self.tokens)):
             token = self.tokens[token_i]
 
             # extracting features from UMLS class
-            feature_class_map = ft.get_feature_classes(token.word, umls_cache)
+            feature_class_map = ft.get_feature_classes(token.word)
             for feature_i, val in feature_class_map.items():
                 feature_vectors[token_i, int(feature_i)] = val
             # sys.stdout.write(
@@ -136,18 +136,24 @@ class TokenCollection:
             # sys.stdout.flush()
 
             # TODO: Add code to assign values to more features
+            # g_tag is a list of tuples
             # in title feature
-            key = util.check_trie(title_trie, token.word)
-            in_title = key is not None
-            if in_title:
-                feature_vectors[token_i, ft.Feature.IS_IN_TITLE.value] = 1
+            if title is not None:
+                in_title = title_trie.check(token.word)
+                if in_title:
+                    feature_vectors[token_i, ft.Feature.IS_IN_TITLE.value] = 1
 
             # is beginning of noun phrase
-            if token.g_tags[0][3] == 'B-NP':
+            if token.g_tags[0][G_CHUNK] == 'B-NP':
                 feature_vectors[token_i, ft.Feature.IS_BNP.value] = 1
 
-        util.save_dict(umls_cache_path, umls_cache)
+            # is in patient
+            for tag in token.g_tags:
+                result = ft.patient_dict_trie.check(tag[G_BASE_FORM])
+                if result:
+                    feature_vectors[token_i, ft.Feature.IS_IN_PDICT.value] = 1
 
+        util.umls_cache.save()
         self.feature_vectors = feature_vectors
 
         return feature_vectors
@@ -173,12 +179,6 @@ class TokenCollection:
             if ev_label == EvLabel.P:
                 p_labels[token_i] = 1
 
-        self.a_labels = a_labels
-        self.r_labels = r_labels
-        self.oc_labels = oc_labels
-        self.p_labels = p_labels
-
-        # TODO: Store labels in self
         labels = {
             'a': a_labels,
             'r': r_labels,
@@ -186,4 +186,5 @@ class TokenCollection:
             'p': p_labels,
         }
 
+        self.labels = labels
         return labels

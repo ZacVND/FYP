@@ -1,0 +1,52 @@
+html
+    head
+        title Results
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css')
+        link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/bulma-extensions@4.0.1/dist/css/bulma-extensions.min.css')
+        script(src='https://use.fontawesome.com/releases/v5.3.1/js/all.js')
+        script(src='https://cdn.jsdelivr.net/npm/bulma-extensions@4.0.1/dist/js/bulma-extensions.min.js')
+        script(src='https://cdn.jsdelivr.net/npm/bulma-extensions@4.0.1/bulma-accordion/dist/js/bulma-accordion.min.js')
+    body
+        br
+
+        div(class='container')
+            for test_result in test_data
+                div(class='message is-dark')
+                    div(class='message-body')
+                        h1(class='title') Paper #{test_result.pmid}
+                        p Path: #{test_result.paper_path}
+                        p Loss: #{test_result.loss}
+                        section.accordions
+                            article.accordion
+                                .accordion-header.toggle
+                                    p Feature Matrix
+                                .accordion-body
+                                    .accordion-content
+                                        div(style="max-height:400px;overflow-y:scroll;")
+                                            table(class='table is-bordered is-striped')
+                                                thead
+                                                    tr
+                                                        th Token
+                                                        for name in feature_names
+                                                            th(style="font-size: 0.5em") #{name}
+                                                        th Bias
+                                                tbody
+                                                    -
+                                                        var token_i = 0
+                                                    while token_i < test_result.feature_matrix.length
+                                                        -
+                                                            feat = test_result.feature_matrix[token_i]
+                                                            token = test_result.tokens[token_i]
+                                                        tr
+                                                            td #{token.word}
+                                                            for val in feat
+                                                                td #{val}
+
+                                                        -
+                                                            token_i++
+
+        br
+        script.
+            var accordions = bulmaAccordion.attach();

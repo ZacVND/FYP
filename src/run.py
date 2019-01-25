@@ -9,8 +9,6 @@ logger = util.get_logger("run")
 
 sw = stopwords.words('english') + ['non']
 
-# TODO: write code to download all of the UMLS query data
-
 if __name__ == "__main__":
 
     # Prepare papers' XML
@@ -23,7 +21,7 @@ if __name__ == "__main__":
 
     # Extract feature vectors from all papers
     token_cols = [None] * paper_count
-    feature_count = len(ft.Feature.__members__.items())
+    feature_count = ft.feature_count
     all_feat_vecs = np.ones((0, feature_count + 1))
     all_a_labs = np.zeros((0,))
     all_r_labs = np.zeros((0,))

@@ -2,9 +2,11 @@ from Authentication import Authentication
 from os import path, listdir
 import requests
 import logging
+import shutil
 import heapq
 import json
 import bs4
+import os
 
 logging.basicConfig(format='[%(name)s|%(levelname)s] %(message)s',
                     level=logging.INFO)
@@ -23,43 +25,39 @@ def get_logger(name):
     return logging.getLogger(name)
 
 
-def load_dict(filename):
+def load_dict(file_path):
     try:
-        cache = json.load(open(filename, 'r'))
+        cache = json.load(open(file_path, 'r'))
     except (IOError, ValueError):
         cache = {}
     return cache
 
 
-def save_dict(filename, dict):
-    json.dump(dict, open(filename, 'w'))
+def save_dict(file_path, dict):
+    json.dump(dict, open(file_path, 'w'))
 
 
-def make_trie(mapping):
-    root = dict()
-    for key, str_arr in mapping.items():
-        for string in str_arr:
-            string = string.lower()
-            current_dict = root
-            for letter in string:
-                current_dict = current_dict.setdefault(letter, {})
-            current_dict[_end] = key
-    return root
+def render_pug(template_path, out_path=None, out_file=None, json_path=None):
+    if shutil.which("pug") is None:
+        print("The command `pug` is not available! You will need to install it"
+              " yourself - https://pugjs.org")
+        return
 
+    command = "pug"
+    if out_file is not None:
+        command += " < {}".format(template_path)
+        command += " > {}".format(out_file)
+        if json_path is not None:
+            command += " -O {}".format(json_path)
 
-def check_trie(trie, string):
-    curr_dict = trie
-    string = string.lower()
-    for letter in string:
-        curr_dict = curr_dict.get(letter)
-        if curr_dict is None:
-            return None
+    else:
+        command += " {}".format(template_path)
+        if out_path is not None:
+            command += " -o {}".format(json_path)
+            if json_path is not None:
+                command += " -O {}".format(json_path)
 
-    key = curr_dict.get(_end)
-    if key is not None:
-        return key
-
-    return None
+    os.system(command)
 
 
 def get_paper_paths():
@@ -82,6 +80,80 @@ def parse_paper(paper_path):
     return soup
 
 
+def get_n_max_indices(values, n):
+    heap = [(-x, i) for i, x in enumerate(values)]
+    heapq.heapify(heap)
+    results = []
+    for i in range(n):
+        curr_item = heapq.heappop(heap)
+        results.append(curr_item[1])
+
+    return results
+
+
+class Cache:
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.cache = load_dict(file_path)
+
+    def set(self, key, value):
+        self.cache[key] = value
+
+    def get(self, key):
+        return self.cache.get(key)
+
+    def save(self):
+        save_dict(self.file_path, self.cache)
+
+
+class Trie:
+    def __init__(self, mapping=None, strings=None):
+        if mapping is not None:
+            self.trie = self.make_trie_from_mapping(mapping)
+        else:
+            self.trie = self.make_trie_from_strings(strings)
+
+    def make_trie_from_mapping(self, mapping):
+        root = dict()
+        for key, str_arr in mapping.items():
+            for string in str_arr:
+                string = string.lower()
+                current_dict = root
+                for letter in string:
+                    current_dict = current_dict.setdefault(letter, {})
+                current_dict[_end] = key
+        return root
+
+    @staticmethod
+    def make_trie_from_strings(strings):
+        root = dict()
+        for string in strings:
+            string = string.lower()
+            current_dict = root
+            for letter in string:
+                current_dict = current_dict.setdefault(letter, {})
+            current_dict[_end] = True
+        return root
+
+    def check(self, string):
+        curr_dict = self.trie
+        string = string.lower()
+        for letter in string:
+            curr_dict = curr_dict.get(letter)
+            if curr_dict is None:
+                return None
+
+        key = curr_dict.get(_end)
+        if key is not None:
+            return key
+
+        return None
+
+
+umls_cache_path = path.join(script_dir, 'umls_cache.json')
+umls_cache = Cache(file_path=umls_cache_path)
+
+
 def get_umls_classes(string):
     """
     Query the param with UMLS REST API and build up its class, only consider
@@ -89,8 +161,12 @@ def get_umls_classes(string):
     Original source from NLM UMLS API examples.
     https://github.com/HHS/uts-rest-api/blob/master/samples/python/search-terms.py
     :param string:
-    :return class:
+    :return classes: The Semantic classes of the string
     """
+    cached = umls_cache.get(string)
+    if cached is not None:
+        return cached
+
     uri = "https://uts-ws.nlm.nih.gov"
     version = "2018AB"
     content_endpoint = "/rest/search/" + version
@@ -133,31 +209,15 @@ def get_umls_classes(string):
         except json.JSONDecodeError:
             print('Got bad JSON!')
 
+    umls_cache.set(string, classes)
     return classes
 
 
-def get_n_max_indices(values, n):
-    heap = [(-x, i) for i, x in enumerate(values)]
-    heapq.heapify(heap)
-    results = []
-    for i in range(n):
-        curr_item = heapq.heappop(heap)
-        results.append(curr_item[1])
-
-    return results
-
-
 if __name__ == '__main__':
-    # classes = get_umls_classes("timolol")
-    # assert ('Pharmacologic Substance' in classes)
-    # class_to_feature_mapping = {
-    #     13: ['Pharmacologic Substance', 'Antibiotic',
-    #          'Organic Chemical', 'Biomedical or Dental Material']
-    # }
-    # trie = make_trie(class_to_feature_mapping)
-    # print(trie)
-    # print(check_trie(trie, 'Pharmacologic Substance'))
-    # print(check_trie(trie, 'Random bullshit'))
-    # lst = array([1, 2, 0, 5, 9, 7, 3])
-    # print(get_n_max_indices(lst, 2))
+    classes = get_umls_classes("timolol")
+    assert ('Pharmacologic Substance' in classes)
+    class_to_feature_mapping = {
+        13: ['Pharmacologic Substance', 'Antibiotic',
+             'Organic Chemical', 'Biomedical or Dental Material']
+    }
     pass
