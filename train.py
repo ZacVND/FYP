@@ -9,7 +9,8 @@ script_dir = path.dirname(path.abspath(__file__))
 results_dir = path.join(script_dir, "results")
 
 if __name__ == "__main__":
-    paper_paths = util.get_paper_paths()[:20]
+    max_papers = 50
+    paper_paths = util.get_paper_paths()[:max_papers]
     train_pps, test_pps = ms.train_test_split(paper_paths,
                                               test_size=0.1)
     classifier = Classifier()

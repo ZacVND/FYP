@@ -2,9 +2,7 @@ import urllib3, re, os
 from bs4 import BeautifulSoup
 import certifi
 
-http = urllib3.PoolManager(
-    cert_reqs='CERT_REQUIRED',
-    ca_certs=certifi.where())
+http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
 
 def take(pmid):
@@ -14,7 +12,7 @@ def take(pmid):
     '''
     global http
 
-    path = os.path.join(os.getcwd(), 'new_data')
+    path = os.path.join(os.getcwd(), '../new_data')
 
     url = 'https://www.ncbi.nlm.nih.gov/pubmed/' + str(pmid) + \
           '?report=xml&format=text'
@@ -41,7 +39,10 @@ def take(pmid):
         abstract = re.sub(r'NlmCategory\=', 'nlmcategory=', abstract)
 
     abstract = re.sub(r'\n\s+', '\n', str(abstract))
-    output = str(soup.pmid) + '\n' + abstract
+    title_tag = soup.new_tag('title')
+    title_tag.string = soup.articletitle.text
+
+    output = str(soup.pmid) + '\n' + str(title_tag) + '\n' + abstract
     out_file = open(os.path.join(path, pmid + '.xml'), 'w')
     out_file.write(output)
     out_file.close()
@@ -68,3 +69,21 @@ def take_title(pmid):
         return soup.articletitle.text
     else:
         return None
+
+
+if __name__ == "__main__":
+    # take('1565457')
+    # populate data with title tags
+    # import util
+    # paper_paths = util.get_paper_paths()
+    # for file_path in sorted(paper_paths):
+    #     with open(file_path, 'r+') as f:
+    #         raw = f.read()
+    #         soup = BeautifulSoup(raw, "html5lib")
+    #         pmid = soup.pmid.text
+    #         print("processing paper #", pmid)
+    #         title = take_title(pmid)
+    #         title_tag = soup.new_tag('title')
+    #         title_tag.string = title
+    #         f.write("\n" + str(title_tag))
+    pass

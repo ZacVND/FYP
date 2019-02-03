@@ -23,8 +23,10 @@ if __name__ == "__main__":
     token_cols = [None] * paper_count
     feature_count = ft.feature_count
     all_feat_vecs = np.ones((0, feature_count + 1))
-    all_a_labs = np.zeros((0,))
-    all_r_labs = np.zeros((0,))
+    all_a1_labs = np.zeros((0,))
+    all_a2_labs = np.zeros((0,))
+    all_r1_labs = np.zeros((0,))
+    all_r2_labs = np.zeros((0,))
     all_oc_labs = np.zeros((0,))
     all_p_labs = np.zeros((0,))
     for i in range(paper_count):
@@ -34,14 +36,18 @@ if __name__ == "__main__":
         col = tu.TokenCollection(soup)
         col.normalize()
         feature_vector = col.generate_feature_matrix()
-        (a_labels,
-         r_labels,
+        (a1_labels,
+         a2_labels,
+         r1_labels,
+         r2_labels,
          oc_labels,
          p_labels) = col.generate_train_labels()
 
         all_feat_vecs = np.vstack((all_feat_vecs, feature_vector))
-        all_a_labs = np.concatenate((all_a_labs, a_labels))
-        all_r_labs = np.concatenate((all_r_labs, r_labels))
+        all_a1_labs = np.concatenate((all_a1_labs, a1_labels))
+        all_a2_labs = np.concatenate((all_a2_labs, a2_labels))
+        all_r1_labs = np.concatenate((all_r1_labs, r1_labels))
+        all_r2_labs = np.concatenate((all_r2_labs, r2_labels))
         all_oc_labs = np.concatenate((all_oc_labs, oc_labels))
         all_p_labs = np.concatenate((all_p_labs, p_labels))
 

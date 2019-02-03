@@ -12,6 +12,7 @@ class Feature(Enum):
     IS_PROCEDURE = 3
     IS_IN_PDICT = 4  # is in patient dictionary
     IS_PLACEBO = 5
+    IS_ABBREV = 6
 
 
 feature_count = len(Feature.__members__.items())

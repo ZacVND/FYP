@@ -17,7 +17,33 @@ html
                     div(class='message-body')
                         h1(class='title') Paper #{test_result.pmid}
                         p Path: #{test_result.paper_path}
-                        p Loss: #{test_result.loss}
+                        p loss: #{test_result.loss}
+
+
+
+
+                        table(class='table is-bordered is-striped')
+                            thead
+                                tr
+                                    th
+                                    for label in label_names
+                                        th #{label}
+                            tbody
+                                -
+                                    var assignment = test_result.label_assignment
+                                tr
+                                    td True
+                                    each ass, label in assignment
+                                        td #{ass.true}
+                                tr
+                                    td Predicted
+                                    each ass, label in assignment
+                                        td #{ass.predicted}
+
+
+
+
+
                         section.accordions
                             article.accordion
                                 .accordion-header.toggle

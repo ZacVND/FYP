@@ -35,7 +35,7 @@ if __name__ == "__main__":
                                               soup.pmid.text))
 
         col = tu.TokenCollection(soup)
-        col.normalize()
+        col.cache_normalize()
 
         print('Total tokens: {}'.format(len(col.tokens)))
 
