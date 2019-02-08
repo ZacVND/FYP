@@ -5,6 +5,7 @@ import logging
 import shutil
 import heapq
 import json
+import time
 import bs4
 import os
 
@@ -19,6 +20,15 @@ _end = '__end'
 
 script_dir = path.dirname(path.abspath(__file__))
 data_path = path.join(script_dir, "..", 'data/annotation I/')
+
+last_time = time.time()
+
+
+def log(string):
+    global last_time
+    diff = time.time() - last_time
+    last_time = time.time()
+    print("{}, (+{}s)".format(string, round(diff, 4)))
 
 
 def get_logger(name):
@@ -74,6 +84,7 @@ def load_paper_xmls(paper_paths):
 
 
 def parse_paper(paper_path):
+    # NOTE: if error encounters then remove .DS_Store file in data folder
     with open(paper_path) as f:
         raw = f.read()
         soup = bs4.BeautifulSoup(raw, "html5lib")

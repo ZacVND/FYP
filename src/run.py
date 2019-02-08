@@ -34,7 +34,7 @@ if __name__ == "__main__":
         start = time.time()
 
         col = tu.TokenCollection(soup)
-        col.normalize()
+        col.normalise()
         feature_vector = col.generate_feature_matrix()
         (a1_labels,
          a2_labels,

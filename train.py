@@ -9,11 +9,21 @@ script_dir = path.dirname(path.abspath(__file__))
 results_dir = path.join(script_dir, "results")
 
 if __name__ == "__main__":
-    max_papers = 50
+    random = True
+
+    max_papers = 100
     paper_paths = util.get_paper_paths()[:max_papers]
-    train_pps, test_pps = ms.train_test_split(paper_paths,
-                                              test_size=0.1)
+
+    if random:
+        train_pps, test_pps = ms.train_test_split(paper_paths, test_size=0.2)
+    else:
+        i = len(paper_paths)
+        train_pps = paper_paths[:int(i/2)]
+        test_pps = paper_paths[int(i/2)+1:]
+
     classifier = Classifier()
+    # first paper will always take longer to run than the subsequent
+    # papers because we starts genia tagger.
     classifier.train(train_pps)
     classifier.test(test_pps)
 

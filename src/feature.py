@@ -6,13 +6,23 @@ import util
 # `umls_cache.json`
 class Feature(Enum):
     # TODO: Add more features
-    IS_DRUG = 0
-    IS_IN_TITLE = 1
-    IS_BNP = 2
-    IS_PROCEDURE = 3
-    IS_IN_PDICT = 4  # is in patient dictionary
-    IS_PLACEBO = 5
-    IS_ABBREV = 6
+    TOK_IS_DRUG = 0
+    TOK_IS_IN_TITLE = 1
+    TOK_IS_BNP = 2
+    TOK_IS_PROCEDURE = 3
+    TOK_IS_IN_PDICT = 4  # is in patient dictionary
+    TOK_IS_PLACEBO = 5
+    TOK_IS_ABBREV = 6
+    CHUNK_TYPE_NP = 7
+    CHUNK_TYPE_VP = 8
+    CHUNK_TYPE_PP = 9
+    CHUNK_TYPE_ADVP = 10
+    CHUNK_TYPE_ADJP = 11
+    CHUNK_BOW = 12
+    TOK_PROB_AFTER_P =13
+    TOK_PROB_BEFORE_R = 14
+    TOK_IS_NUMBER = 15
+
 
 
 feature_count = len(Feature.__members__.items())
@@ -20,19 +30,16 @@ feature_count = len(Feature.__members__.items())
 patient_dict_trie = util.Trie(strings=["patient"])
 
 class_to_feature_mapping = {
-    Feature.IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
-                            'Organic Chemical',
-                            'Biomedical or Dental Material',
-                            ],
-    Feature.IS_PROCEDURE.value: ['Therapeutic or Preventive Procedure',
-                                 'Medical Device']
+    Feature.TOK_IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
+                                'Organic Chemical'],
+    Feature.TOK_IS_PROCEDURE.value: ['Therapeutic or Preventive Procedure',
+                                     'Medical Device']
 }
 
 class_to_feature_trie = util.Trie(mapping=class_to_feature_mapping)
 
 
 def get_feature_classes(word):
-
     feature_class_map = {}
     classes = util.get_umls_classes(word)
 
