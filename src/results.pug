@@ -12,10 +12,11 @@ html
         br
 
         div(class='container')
+            h1(class='total_loss') Total Loss: #{total_loss}
             for test_result in test_data
                 div(class='message is-dark')
                     div(class='message-body')
-                        h1(class='title') Paper #{test_result.pmid}
+                        h2(class='title') Paper #{test_result.pmid}
                         p Path: #{test_result.paper_path}
                         p loss: #{test_result.loss}
 

@@ -10,8 +10,8 @@ class Feature(Enum):
     TOK_IS_IN_TITLE = 1
     TOK_IS_BNP = 2
     TOK_IS_PROCEDURE = 3
-    TOK_IS_IN_PDICT = 4  # is in patient dictionary
-    TOK_IS_PLACEBO = 5
+    TOK_IS_IN_PDICT = 4  # is in patient dictionary, P can appear anywhere
+    TOK_IS_PLACEBO = 5  # sometimes A2 is a placebo
     TOK_IS_ABBREV = 6
     CHUNK_TYPE_NP = 7
     CHUNK_TYPE_VP = 8
@@ -19,21 +19,40 @@ class Feature(Enum):
     CHUNK_TYPE_ADVP = 10
     CHUNK_TYPE_ADJP = 11
     CHUNK_BOW = 12
-    TOK_PROB_AFTER_P =13
-    TOK_PROB_BEFORE_R = 14
-    TOK_IS_NUMBER = 15
+    TOK_IS_NUMBER = 13
+    TOK_IS_CD = 14
+    PARA_CAT_OBJECTIVE = 15
+    PARA_CAT_METHODS = 16
+    PARA_CAT_RESULTS = 17
+    PARA_CAT_CONCLUSIONS = 18
+    # PARA_CAT_BACKGROUND = 19  # paragraph of category BACKGROUND is irrelevant
+    TOK_IS_PATIENTS = 19
+    TOK_IS_ARM = 20
+    TOK_IS_IN_ODICT = 21
+    SENT_POSITION = 22  # A/R 1 always appear before A/R 2 in a sentence
+    ABSTRACT_POSITION = 23  # A always appear before OC always appear before R
+
 
 
 
 feature_count = len(Feature.__members__.items())
 
-patient_dict_trie = util.Trie(strings=["patient"])
+patient_dict_trie = util.Trie(strings=["patient", "patients", "eyes",
+                                       "adults", "subjects", "individuals"])
+
+outcome_dict_trie = util.Trie(strings=["pressure", "pressures", "iop", "change",
+                                       "reduction", "lowering", "values",
+                                       "density", "control", "proportion",
+                                       "decrease", "loss"])
 
 class_to_feature_mapping = {
     Feature.TOK_IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
                                 'Organic Chemical'],
     Feature.TOK_IS_PROCEDURE.value: ['Therapeutic or Preventive Procedure',
-                                     'Medical Device']
+                                     'Medical Device'],
+    Feature.TOK_IS_PATIENTS.value: ['Patient or Disabled Group',
+                                    'Body Part, Organ, or Organ Component',
+                                    'Age Group', 'Group']
 }
 
 class_to_feature_trie = util.Trie(mapping=class_to_feature_mapping)
@@ -67,4 +86,4 @@ def get_feature_classes(word):
 
 
 if __name__ == "__main__":
-    print(get_feature_classes('timolol'))
+    print(get_feature_classes('44.7'))

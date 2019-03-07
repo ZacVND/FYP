@@ -8,6 +8,7 @@ import json
 import time
 import bs4
 import os
+import re
 
 logging.basicConfig(format='[%(name)s|%(levelname)s] %(message)s',
                     level=logging.INFO)
@@ -47,6 +48,10 @@ def save_dict(file_path, dict):
     json.dump(dict, open(file_path, 'w'))
 
 
+def find_whole_word(w):
+    return re.compile(r'\b({0})\b'.format(w), flags=re.IGNORECASE).search
+
+
 def render_pug(template_path, out_path=None, out_file=None, json_path=None):
     if shutil.which("pug") is None:
         print("The command `pug` is not available! You will need to install it"
@@ -71,7 +76,13 @@ def render_pug(template_path, out_path=None, out_file=None, json_path=None):
 
 
 def get_paper_paths():
-    return [path.join(data_path, file) for file in sorted(listdir(data_path))]
+    paper_paths = []
+    for file in sorted(listdir(data_path)):
+        if file.startswith(".DS"):
+            continue
+        paper_paths.append(path.join(data_path, file))
+
+    return paper_paths
 
 
 def load_paper_xmls(paper_paths):

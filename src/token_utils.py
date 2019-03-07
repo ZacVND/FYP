@@ -1,12 +1,15 @@
 from geniatagger import GENIATagger
 from nltk.corpus import stopwords
+from string import punctuation
 from enum import Enum
 import feature as ft
 from os import path
 import numpy as np
 import util
 import nltk
+import math
 import bs4
+import re
 
 script_dir = path.dirname(path.abspath(__file__))
 
@@ -32,6 +35,7 @@ class EvLabel(Enum):
     OC = 4
     P = 5
 
+
 # holds information for the evidence table output
 class EvLabelData:
     def __init__(self, word):
@@ -47,13 +51,30 @@ class Token:
         self.g_tags = g_tags
         self.chunk = None
         self.ev_label = None
+        self.sent_pos = 1  # position in decile
+        self.abs_pos = 1
+        self.para_cat = None
+        self.para_label = None
+
+    def set_sent_pos(self, sent_pos):
+        if sent_pos > self.sent_pos:
+            self.sent_pos = sent_pos
+
+    def set_abs_pos(self, abs_pos):
+        if abs_pos > self.abs_pos:
+            self.abs_pos = abs_pos
 
     def set_ev_label(self, ev_label):
         self.ev_label = ev_label
 
     def set_chunk(self, chunk):
         self.chunk = chunk
-        # TODO: make sure this method is used instead of token.chunk=something
+
+    def set_para_cat(self, para_cat):
+        self.para_cat = para_cat
+
+    def set_para_label(self, para_label):
+        self.para_label = para_label
 
 
 class Chunk:
@@ -93,6 +114,8 @@ xml_tag_to_ev_label = {
     'p': EvLabel.P,
 }
 
+stopword_trie = util.Trie(strings=stopwords.words('english') + ['non'])
+
 
 class TokenCollection:
     def __init__(self, bs_doc):
@@ -101,28 +124,41 @@ class TokenCollection:
         self.ev_labels = {}
         self.feature_vectors = None
         self.labels = None
-        self.paragraphs = []
         self.chunks = None
 
-    def normalise(self):
+    def build_tokens(self, umls_cache=False):
 
         # Tokenizing
         tokens = []
         abstract = self.bs_doc.abstract
+
+        # for unstructured abstracts
         if len(abstract.abstracttext.attrs) == 0:
             abstract.abstracttext['label'] = 'None'
             abstract.abstracttext['nlmcategory'] = 'None'
 
         # Populate the tokens list
-        for abs_text in abstract.children:
-            if isinstance(abs_text, bs4.NavigableString):
-                continue  # Skip blank new lines
+        for abs_text in abstract.findAll('abstracttext'):
+
+            para_cat = abs_text['nlmcategory']
+            para_label = abs_text['label']
+            if para_cat == "BACKGROUND" or para_cat == "CONCLUSIONS":
+                # Background of abstract is irrelevant
+                # Conclusions of abstract does not contribute any info
+                continue
 
             sents_ = nltk.sent_tokenize(abs_text.text)
             tags = []
+            sent_lens = []
             for s in sents_:
-                tags.extend(list(tagger.tag(s)))
+                tags_list = list(tagger.tag(s))
+                sent_lens.append(len(tags_list))
+                tags.extend(tags_list)
+
             tag_i = 0
+            sent_i = 0
+            sent_len_i = 0
+
             for child in abs_text.children:
                 xml_tag = child.name
                 label = xml_tag_to_ev_label.get(xml_tag)
@@ -133,8 +169,16 @@ class TokenCollection:
                     for tok in word_tokens:
                         token = Token(tok, g_tags=tags[tag_i])
                         token.set_ev_label(label)
+                        # set sentence position in decile
+                        sent_pos = math.ceil(sent_i / (sent_lens[sent_len_i] /
+                                                       10))
+                        token.set_sent_pos(sent_pos)
+                        token.set_para_cat(para_cat)
+                        token.set_para_label(para_label)
+                        # append to full tokens list
                         tokens.append(token)
                         tokens_of_label.append(EvLabelData(token.word))
+                        sent_i += 1
                         tag_i += 1
 
                     # get only the first token of the label
@@ -154,43 +198,67 @@ class TokenCollection:
                         # because genia tagger returns missing "<15 mm Hg" causing tag_i to mismatch
                         # for now we take some files out of dataset
                         token = Token(tok, g_tags=tags[tag_i])
+                        # set sentence position in decile
+                        sent_pos = math.ceil(
+                            sent_i / (sent_lens[sent_len_i] / 10))
+                        token.set_sent_pos(sent_pos)
+                        token.set_para_cat(para_cat)
+                        token.set_para_label(para_label)
+                        # append to full tokens list
                         tokens.append(token)
+                        sent_i += 1
                         tag_i += 1
+                        if tok == '.':
+                            sent_i = 0
+                            sent_len_i += 1
 
-        # Chunking and assigning the correct chunk to each token
-        chunk_tokens = None
-        chunks = []
-        for tok in tokens:
-            chunk_tag = tok.g_tags[G_CHUNK]
-            if not chunk_tag.startswith("I"):
-                if chunk_tokens is not None:
-                    # save chunk
-                    chunk = Chunk(chunk_tokens)
-                    chunks.append(chunk)
-                    for c_tok in chunk_tokens:
-                        c_tok.chunk = chunk
-                    chunk_tokens = None
+        if umls_cache:
+            # remove stopwords
+            tokens = [x for x in tokens if not stopword_trie.check(x.word)]
+            # remove punctuations
+            tokens = [x for x in tokens if x.word not in punctuation]
+            # remove anything that is not alphabetic or of type num-chars
+            pattern = re.compile(r'[\d\w]+(?:-\w+)+')
+            tokens = [x for x in tokens if ((x.word.isalpha()) or\
+                                            (re.match(pattern, x.word) is not None))]
+        else:
+            # Chunking and assigning the correct chunk to each token
+            # TODO: write code to check if a chunk has measurement in it
+            chunk_tokens = None
+            chunks = []
+            for tok in tokens:
+                chunk_tag = tok.g_tags[G_CHUNK]
+                if not chunk_tag.startswith("I"):
+                    if chunk_tokens is not None:
+                        # save chunk
+                        chunk = Chunk(chunk_tokens)
+                        chunks.append(chunk)
+                        for c_tok in chunk_tokens:
+                            c_tok.set_chunk(chunk)
+                        chunk_tokens = None
 
-                if chunk_tag.startswith("B"):
-                    chunk_tokens = [tok]
-            else:
-                if chunk_tokens is not None:
-                    chunk_tokens.append(tok)
-        if chunk_tokens is not None:
-            # save chunk
-            chunk = Chunk(chunk_tokens)
-            chunks.append(chunk)
-            for c_tok in chunk_tokens:
-                c_tok.chunk = chunk
+                    if chunk_tag.startswith("B"):
+                        chunk_tokens = [tok]
+                else:
+                    if chunk_tokens is not None:
+                        chunk_tokens.append(tok)
+            if chunk_tokens is not None:
+                # save chunk
+                chunk = Chunk(chunk_tokens)
+                chunks.append(chunk)
+                for c_tok in chunk_tokens:
+                    c_tok.set_chunk(chunk)
+
+            self.chunks = chunks
 
         # NOTE: Token count should not change after this point!!
         self.tokens = tokens
-        self.chunks = chunks
 
     def generate_feature_matrix(self):
         token_count = len(self.tokens)
         feature_count = len(ft.Feature.__members__.items())
         feature_vectors = np.zeros((token_count, feature_count))
+        pattern = re.compile(r'[\d\w]+(?:-\w+)+')
 
         title = self.bs_doc.title.text
         if title is None:
@@ -203,13 +271,17 @@ class TokenCollection:
         for chunk in self.chunks:
             chunk.extract_features()
 
-        for token_i in range(len(self.tokens)):
+        for token_i in range(token_count):
             token = self.tokens[token_i]
 
-            # extracting features from UMLS class
-            feature_class_map = ft.get_feature_classes(token.word)
-            for feature_i, val in feature_class_map.items():
-                feature_vectors[token_i, int(feature_i)] = val
+            if (not stopword_trie.check(token.word) and
+                    token.word not in punctuation and
+                    (token.word.isalpha() or
+                     re.match(pattern, token.word) is not None)):
+                # extracting features from UMLS class
+                feature_class_map = ft.get_feature_classes(token.word)
+                for feature_i, val in feature_class_map.items():
+                    feature_vectors[token_i, int(feature_i)] = val
             # sys.stdout.write(
             #     'UMLS Progress {}/{}\r'.format(token_i + 1, token_count))
             # sys.stdout.flush()
@@ -225,15 +297,31 @@ class TokenCollection:
             if token.g_tags[G_CHUNK] == 'B-NP':
                 feature_vectors[token_i, ft.Feature.TOK_IS_BNP.value] = 1
 
-            # is in patient
+            # is in patient dictionary
             # for tag in token.g_tags:
-            result = ft.patient_dict_trie.check(token.g_tags[G_BASE_FORM])
-            if result:
+            result_pdict = ft.patient_dict_trie.check(token.g_tags[G_BASE_FORM])
+            if result_pdict:
                 feature_vectors[token_i, ft.Feature.TOK_IS_IN_PDICT.value] = 1
 
+            # is in outcome dictionary
+            result_odict = ft.outcome_dict_trie.check(token.g_tags[G_BASE_FORM])
+            if result_odict:
+                feature_vectors[token_i, ft.Feature.TOK_IS_IN_ODICT.value] = 1
+
             # is number
-            if token.g_tags[G_POS_TAG] == "CD":
+            try:
+                float(token.g_tags[G_WORD])
                 feature_vectors[token_i, ft.Feature.TOK_IS_NUMBER.value] = 1
+            except ValueError:
+                feature_vectors[token_i, ft.Feature.TOK_IS_NUMBER.value] = 0
+
+            # is placebo
+            if token.g_tags[G_BASE_FORM] == "placebo":
+                feature_vectors[token_i, ft.Feature.TOK_IS_PLACEBO.value] = 1
+
+            # is Cardinal Digit
+            if token.g_tags[G_POS_TAG] == "CD":
+                feature_vectors[token_i, ft.Feature.TOK_IS_CD.value] = 1
 
             # extract chunk features
             curr_chunk = token.chunk
@@ -242,6 +330,50 @@ class TokenCollection:
                 for ft_enum, value in features.items():
                     feature_vectors[token_i, ft_enum.value] = value
 
+            if token.para_cat == "OBJECTIVE":
+                feature_vectors[token_i, ft.Feature.PARA_CAT_OBJECTIVE.value] \
+                    = 1
+
+            if token.para_cat == "METHODS":
+                feature_vectors[token_i, ft.Feature.PARA_CAT_METHODS.value] = 1
+
+            if token.para_cat == "RESULTS":
+                feature_vectors[token_i, ft.Feature.PARA_CAT_RESULTS.value] = 1
+
+            if token.para_cat == "CONCLUSIONS":
+                feature_vectors[
+                    token_i, ft.Feature.PARA_CAT_CONCLUSIONS.value] = 1
+
+            O_and_M_para = ["OBJECTIVE", "METHODS"]
+            # patients group only mentioned in either OBJECTIVE or METHODS
+            if ((token.para_cat in O_and_M_para) and
+                    feature_vectors[token_i, ft.Feature.TOK_IS_IN_PDICT.value]):
+                feature_vectors[token_i, ft.Feature.TOK_IS_PATIENTS.value] = 1
+
+            # A1 and A2 are only in OBJECTIVE or METHODS
+            # A1 and A2 are either drug, placebo or procedure
+            if ((token.para_cat in O_and_M_para) and
+                    (feature_vectors[token_i, ft.Feature.TOK_IS_DRUG.value] or
+                     feature_vectors[
+                         token_i, ft.Feature.TOK_IS_PLACEBO.value] or
+                     feature_vectors[
+                         token_i, ft.Feature.TOK_IS_PROCEDURE.value])):
+                feature_vectors[token_i, ft.Feature.TOK_IS_ARM.value] = 1
+
+            # if token.para_cat == "BACKGROUND":
+            #     feature_vectors[token_i, ft.Feature.PARA_CAT_OBJECTIVE] = 1
+
+            # sentence position in decile
+            feature_vectors[token_i,
+                            ft.Feature.SENT_POSITION.value] = token.sent_pos
+
+            # abstract position in decile
+            abs_pos = math.ceil(token_i / (token_count / 10))
+            token.set_abs_pos(abs_pos)
+            feature_vectors[token_i,
+                            ft.Feature.ABSTRACT_POSITION.value] = token.abs_pos
+
+        # expand the cache if encounters new words
         util.umls_cache.save()
         self.feature_vectors = feature_vectors
 
@@ -249,7 +381,8 @@ class TokenCollection:
 
     def generate_train_labels(self):
         token_count = len(self.tokens)
-        labels_matrix = np.zeros((token_count, len(EvLabel.__members__.items())))
+        labels_matrix = np.zeros(
+            (token_count, len(EvLabel.__members__.items())))
 
         # Generate label vectors, -1 for all tokens
         a1_labels = -1 * np.ones((token_count,))
@@ -294,10 +427,9 @@ class TokenCollection:
 
 if __name__ == "__main__":
     # testing out tagger
-    # text = "To compare the clinical success rates and quality of life impact " \
-    #        "of brimonidine 0.2% with timolol 0.5% in newly diagnosed patients naive to glaucoma therapy."
+    text = "Mean (+/-SD) preoperative and 1-year postoperative intraocular pressures in the 5-fluorouracil group were 26.9 (+/-9.5) and 15.3 (+/-5.8) mm Hg, respectively. In the control group these were 25.9 (+/-8.1) mm Hg, and 15.8 (+/-5.1) mm Hg, respectively."
 
-    text = "The objective of the study was to compare the long-term efficacy and safety of tafluprost 0.0015% with latanoprost 0.005% eye drops in patients with open-angle glaucoma or ocular hypertension"
+    # text = "The objective of the study was to compare the long-term efficacy and safety of tafluprost 0.0015% with latanoprost 0.005% eye drops in patients with open-angle glaucoma or ocular hypertension"
 
     tags = list(tagger.tag(text))
     for tag in list(tags):

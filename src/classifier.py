@@ -1,6 +1,6 @@
-from sklearn.preprocessing import normalize
 from sklearn.metrics import log_loss
 from sklearn import tree
+from sklearn.svm import SVC
 import token_utils as tu
 import feature as ft
 import numpy as np
@@ -15,16 +15,16 @@ class Classifier:
         self.last_test_results = None
         self.last_train_paths = None
 
-        # for now we are using weight = 100 for actual classes,
+        # for now we are using weight = 10 for actual classes,
         # the ones we are not interested in will have {-1:1}
         cls_weights = {-1: 1, }
         for ev_label in tu.EvLabel:
-            cls_weights[ev_label.value] = 100
+            cls_weights[ev_label.value] = 10
 
         # Classify all labels
-        self.Phase1_clf = tree.DecisionTreeClassifier(class_weight=cls_weights)
-        # Classify OC labels
-        self.Phase2_clf = tree.DecisionTreeClassifier(class_weight=cls_weights)
+        self.svc_clf = SVC(kernel='poly', degree=2, gamma='auto', \
+                           probability=True, class_weight=cls_weights)
+        self.dt_clf = tree.DecisionTreeClassifier(class_weight=cls_weights)
 
     def train(self, paper_paths):
         paper_soups = util.load_paper_xmls(paper_paths)
@@ -35,7 +35,7 @@ class Classifier:
 
         # Extract feature vectors from all papers
         token_cols = [None] * paper_count
-        phase1_cum_feat_matrix = np.zeros(
+        cum_feat_matrix = np.zeros(
             (0, ft.feature_count + 1))  # +1 is bias
         cum_labels_vec = np.zeros((0, 1))
         cum_labels = np.zeros((0, len(tu.EvLabel.__members__.items())))
@@ -47,7 +47,7 @@ class Classifier:
             print("Paper #", paper_id)
             start = time.time()
             col = tu.TokenCollection(soup)
-            col.normalise()
+            col.build_tokens()
             feature_matrix = col.generate_feature_matrix()
             tokens_count, _ = feature_matrix.shape
             bias_vec = np.ones((tokens_count, 1))
@@ -66,8 +66,8 @@ class Classifier:
             cum_labels = np.vstack((cum_labels, labels))
 
             # append current feature_matrix to cum_feat_matrix
-            phase1_cum_feat_matrix = np.vstack(
-                (phase1_cum_feat_matrix, feature_matrix))
+            cum_feat_matrix = np.vstack(
+                (cum_feat_matrix, feature_matrix))
             cum_labels_vec = np.vstack((cum_labels_vec, labels_vec))
             token_cols[i] = col
 
@@ -75,23 +75,10 @@ class Classifier:
             print('Time elapsed on paper #{} ({}): {}'
                   .format(i + 1, paper_id, end - start))
 
-        # Phase 1: classify A1, A2, R1, R2, OC, P
-        self.Phase1_clf.fit(phase1_cum_feat_matrix, cum_labels_vec)
-
-        # Phase 2: classify OC
-        # build the cumulative feature matrix like phase1 but with different val
-        phase2_cum_feat_matrix = phase1_cum_feat_matrix.copy()
-        p_label_distr = cum_labels[:, tu.EvLabel.P.value]
-        phase2_cum_feat_matrix[:, ft.Feature.TOK_PROB_AFTER_P.value] \
-            = np.cumsum(p_label_distr) - p_label_distr
-
-        r_label_distr = cum_labels[:, tu.EvLabel.R1.value].copy()
-        r_label_distr += cum_labels[:, tu.EvLabel.R2.value]
-        r_label_distr /= 2
-        phase2_cum_feat_matrix[:, ft.Feature.TOK_PROB_BEFORE_R.value] \
-            = 1 - (np.cumsum(r_label_distr) - r_label_distr)
-
-        self.Phase2_clf.fit(phase2_cum_feat_matrix, cum_labels_vec)
+        # classify A1, A2, R1, R2, OC, P
+        # choose between decision tree or svm by uncommenting one of them
+        # self.dt_clf.fit(cum_feat_matrix, cum_labels_vec)
+        self.svc_clf.fit(cum_feat_matrix, cum_labels_vec)
 
         print('Done training.')
 
@@ -109,35 +96,17 @@ class Classifier:
             print('---- Paper #{} [{}]'.format(paper_i + 1, soup.pmid.text))
 
             col = tu.TokenCollection(soup)
-            col.normalise()
-            phase1_feature_matrix = col.generate_feature_matrix()
-            tokens_count, _ = phase1_feature_matrix.shape
+            col.build_tokens()
+            feature_matrix = col.generate_feature_matrix()
+            tokens_count, _ = feature_matrix.shape
             bias_vec = np.ones((tokens_count, 1))
-            phase1_feature_matrix = np.hstack([phase1_feature_matrix, bias_vec])
+            feature_matrix = np.hstack([feature_matrix, bias_vec])
 
-            # Phase 1: classify A1, A2, R1, R2, OC, P
-            phase1_prob_matrix = self.Phase1_clf.predict_proba(
-                phase1_feature_matrix)
+            # classify A1, A2, R1, R2, OC, P
+            # prob_matrix = self.dt_clf.predict_proba(feature_matrix)
+            prob_matrix = self.svc_clf.predict_proba(feature_matrix)
 
-            # Phase 2: classify OC
-            phase2_feature_matrix = phase1_feature_matrix.copy()
-            p_label_distr = phase1_prob_matrix[:, tu.EvLabel.P.value].copy()
-            p_label_distr /= np.sum(p_label_distr)
-            phase2_feature_matrix[:, ft.Feature.TOK_PROB_AFTER_P.value] \
-                = np.cumsum(p_label_distr) - p_label_distr
-
-            r_label_distr = phase1_prob_matrix[:, tu.EvLabel.R1.value].copy()
-            r_label_distr += phase1_prob_matrix[:, tu.EvLabel.R2.value]
-            r_label_distr /= np.sum(r_label_distr)
-            phase2_feature_matrix[:, ft.Feature.TOK_PROB_BEFORE_R.value] \
-                = 1 - (np.cumsum(r_label_distr) - r_label_distr)
-
-            phase2_prob_matrix = self.Phase2_clf.predict_proba(
-                phase2_feature_matrix)
-
-            final_prob_matrix = phase1_prob_matrix.copy()
-            final_prob_matrix[:, tu.EvLabel.OC.value] = phase2_prob_matrix[
-                                                        :, tu.EvLabel.OC.value]
+            final_prob_matrix = prob_matrix.copy()
 
             for tok_i in range(len(final_prob_matrix)):
                 final_prob_matrix[tok_i, :] /= np.sum(final_prob_matrix[tok_i,
@@ -149,7 +118,7 @@ class Classifier:
 
             label_assignment = self.assign_ev_labels(col, predictions)
             # loss = self.compute_loss(col, label_assignment)
-            loss = self.compute_loss(col, phase1_prob_matrix, label_assignment)
+            loss = self.compute_loss(col, prob_matrix, label_assignment)
             losses[paper_i] = loss
 
             for ev_label in tu.EvLabel:
@@ -164,6 +133,9 @@ class Classifier:
                         pred_string = ev_label_data.token.chunk.string
                     print("Predicted: ", ev_label.name, pred_string,
                           " --- True Label: ", true_ev_label_data.word)
+                    # if util.find_whole_word(true_ev_label_data.word)(
+                    #         pred_string) is not None:
+
 
             print('loss for this paper is: ', loss)
             test_result = {
@@ -172,7 +144,7 @@ class Classifier:
                 "token_collection": col,
                 "true_label_assignment": col.ev_labels,
                 "predicted_label_assignment": label_assignment,
-                "feature_matrix": phase2_feature_matrix,
+                "feature_matrix": feature_matrix,
                 "loss": loss
             }
             test_results[paper_i] = test_result
@@ -224,12 +196,19 @@ class Classifier:
         sorted_tuples = sorted(all_tuples, key=lambda x: x[0], reverse=True)
 
         token_labelled = {}
+        # for now we are picking the tokens by the highest likelihood
         for tup in sorted_tuples:
             likelihood, index, ev_label = tup
+            #
+            # if ev_label.name is "A1":
+
+            # skip if the token has been assigned
             if token_labelled.get(index):
                 continue
+            # skip if the ev_label has been assigned
             if label_assignment.get(ev_label) is not None:
                 continue
+
             token = tokens[index]
             ev_label_data = tu.EvLabelData(word=token.word)
             ev_label_data.token = token
@@ -301,7 +280,8 @@ class Classifier:
             "train_data": train_data,
             "test_data": test_data,
             "feature_names": [f.name for f in ft.Feature],
-            "label_names": [l.name for l in tu.EvLabel]
+            "label_names": [l.name for l in tu.EvLabel],
+            "total_loss": self.last_total_loss
         }
 
         util.save_dict(json_path, data)

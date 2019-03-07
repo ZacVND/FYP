@@ -72,8 +72,14 @@ def take_title(pmid):
 
 
 if __name__ == "__main__":
-    # take('1565457')
-    # populate data with title tags
+    new_pmids = [28777224, 28400374, 28178150, 25393036, 24844538, 28887006,
+                 27269279, 21921953, 27567675, 26907933, 24247999, 25907999,
+                 25893514, 25270273, 25908001, 25847610, 30022618, 29133641]
+
+    for pmid in new_pmids:
+        print("processing #{}".format(pmid))
+        take(str(pmid))
+    # # populate data with title tags
     # import util
     # paper_paths = util.get_paper_paths()
     # for file_path in sorted(paper_paths):
