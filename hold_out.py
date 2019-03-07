@@ -12,7 +12,7 @@ results_dir = path.join(script_dir, "results")
 if __name__ == "__main__":
     random = True
 
-    max_papers = 100
+    max_papers = 120
     paper_paths = util.get_paper_paths()[:max_papers]
 
     if random:

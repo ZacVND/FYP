@@ -10,7 +10,7 @@ import util
 
 
 class Classifier:
-    def __init__(self):
+    def __init__(self, clf_type='svm'):
         self.last_total_loss = None
         self.last_test_results = None
         self.last_train_paths = None
@@ -21,10 +21,12 @@ class Classifier:
         for ev_label in tu.EvLabel:
             cls_weights[ev_label.value] = 10
 
-        # Classify all labels
-        # self.svc_clf = SVC(kernel='poly', degree=3, gamma='auto', \
-        #                    probability=True, class_weight=cls_weights)
-        self.dt_clf = tree.DecisionTreeClassifier(class_weight=cls_weights)
+        # Classifier
+        if clf_type == 'tree':
+            self.clf = tree.DecisionTreeClassifier(class_weight=cls_weights)
+        else:
+            self.clf = SVC(kernel='poly', degree=3, gamma='auto', \
+                           probability=True, class_weight=cls_weights)
 
     def train(self, paper_paths):
         paper_soups = util.load_paper_xmls(paper_paths)
@@ -33,7 +35,6 @@ class Classifier:
         # each label has an empty list []
         train_start = time.time()
         print('Training on {} paper(s)...'.format(paper_count))
-
 
         # Extract feature vectors from all papers
         token_cols = [None] * paper_count
@@ -78,12 +79,10 @@ class Classifier:
             #       .format(i + 1, paper_id, np.round(end - start, 4)))
 
         # classify A1, A2, R1, R2, OC, P
-        # choose between decision tree or svm by uncommenting one of them
-        self.dt_clf.fit(cum_feat_matrix, cum_labels_vec)
-        # self.svc_clf.fit(cum_feat_matrix, cum_labels_vec.flatten())
+        self.clf.fit(cum_feat_matrix, cum_labels_vec.flatten())
 
         train_end = time.time()
-        print('Done training. Time elapsed: ', train_end-train_start)
+        print('Done training. Time elapsed: ', train_end - train_start)
         self.last_train_paths = paper_paths
 
     def test(self, paper_paths):
@@ -105,8 +104,7 @@ class Classifier:
             feature_matrix = np.hstack([feature_matrix, bias_vec])
 
             # classify A1, A2, R1, R2, OC, P
-            prob_matrix = self.dt_clf.predict_proba(feature_matrix)
-            # prob_matrix = self.svc_clf.predict_proba(feature_matrix)
+            prob_matrix = self.clf.predict_proba(feature_matrix)
 
             final_prob_matrix = prob_matrix.copy()
 
@@ -138,7 +136,6 @@ class Classifier:
                     # if util.find_whole_word(true_ev_label_data.word)(
                     #         pred_string) is not None:
 
-
             print('loss for this paper is: ', loss)
             test_result = {
                 "soup": soup,
@@ -155,7 +152,7 @@ class Classifier:
         print("\n\n\n---------------")
         dist_loss = np.round(total_loss, 4)
         print("total loss is: ", np.round(dist_loss, 4))
-        print("average loss is: ", np.round(dist_loss / paper_count,4))
+        print("average loss is: ", np.round(dist_loss / paper_count, 4))
         self.last_total_loss = total_loss
         self.last_test_results = test_results
         return total_loss
