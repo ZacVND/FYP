@@ -6,10 +6,9 @@ import feature as ft
 from os import path
 import numpy as np
 import unicodedata
-import util
 import nltk
 import math
-import bs4
+import util
 import re
 
 script_dir = path.dirname(path.abspath(__file__))
@@ -92,8 +91,8 @@ class Chunk:
             self.features[ft.Feature.CHUNK_TYPE_VP] = 1
         elif tok_1st.endswith("PP"):
             self.features[ft.Feature.CHUNK_TYPE_PP] = 1
-        elif tok_1st.endswith("ADVP"):
-            self.features[ft.Feature.CHUNK_TYPE_ADVP] = 1
+        # elif tok_1st.endswith("ADVP"):
+        #     self.features[ft.Feature.CHUNK_TYPE_ADVP] = 1
         elif tok_1st.endswith("ADJP"):
             self.features[ft.Feature.CHUNK_TYPE_ADJP] = 1
 
@@ -330,9 +329,9 @@ class TokenCollection:
             except ValueError:
                 feature_vectors[token_i, ft.Feature.TOK_IS_NUMBER.value] = 0
 
-            # is placebo
-            if token.g_tags[G_BASE_FORM] == "placebo":
-                feature_vectors[token_i, ft.Feature.TOK_IS_PLACEBO.value] = 1
+            # # is placebo
+            # if token.g_tags[G_BASE_FORM] == "placebo":
+            #     feature_vectors[token_i, ft.Feature.TOK_IS_PLACEBO.value] = 1
 
             # is Cardinal Digit
             if token.g_tags[G_POS_TAG] == "CD":
@@ -355,9 +354,9 @@ class TokenCollection:
             if token.para_cat == "RESULTS":
                 feature_vectors[token_i, ft.Feature.PARA_CAT_RESULTS.value] = 1
 
-            if token.para_cat == "CONCLUSIONS":
-                feature_vectors[
-                    token_i, ft.Feature.PARA_CAT_CONCLUSIONS.value] = 1
+            # if token.para_cat == "CONCLUSIONS":
+            #     feature_vectors[
+            #         token_i, ft.Feature.PARA_CAT_CONCLUSIONS.value] = 1
 
             O_and_M_para = ["OBJECTIVE", "METHODS"]
             # patients group only mentioned in either OBJECTIVE or METHODS
@@ -374,9 +373,11 @@ class TokenCollection:
             # A1 and A2 are only in OBJECTIVE or METHODS
             # A1 and A2 are either drug, placebo or procedure
             if ((token.para_cat in O_and_M_para) and
-                (feature_vectors[token_i, ft.Feature.TOK_IS_DRUG.value] or
-                 feature_vectors[token_i, ft.Feature.TOK_IS_PLACEBO.value] or
-                 feature_vectors[token_i, ft.Feature.TOK_IS_PROCEDURE.value])):
+                    (feature_vectors[token_i, ft.Feature.TOK_IS_DRUG.value] or
+                     # feature_vectors[
+                     #     token_i, ft.Feature.TOK_IS_PLACEBO.value] or
+                     feature_vectors[
+                         token_i, ft.Feature.TOK_IS_PROCEDURE.value])):
                 feature_vectors[token_i, ft.Feature.TOK_IS_ARM.value] = 1
 
             # if token.para_cat == "BACKGROUND":

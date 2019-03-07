@@ -4,7 +4,6 @@ from datetime import datetime
 import src.util as util
 from os import path
 import webbrowser
-import random
 
 script_dir = path.dirname(path.abspath(__file__))
 results_dir = path.join(script_dir, "results")
@@ -22,7 +21,7 @@ if __name__ == "__main__":
         train_pps = paper_paths[:int(i/2)]
         test_pps = paper_paths[int(i/2)+1:]
 
-    classifier = Classifier()
+    classifier = Classifier(clf_type='svm')
     # first paper will always take longer to run than the subsequent
     # papers because we starts genia tagger.
     classifier.train(train_pps)

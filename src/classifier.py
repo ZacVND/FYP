@@ -1,11 +1,18 @@
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import log_loss
-from sklearn import tree
 from sklearn.svm import SVC
-import token_utils as tu
-import feature as ft
+from os import path
 import numpy as np
 import heapq
 import time
+import sys
+
+script_dir = path.dirname(path.realpath(__file__))
+sys.path.append(script_dir)
+
+import token_utils as tu
+import feature as ft
 import util
 
 
@@ -23,10 +30,14 @@ class Classifier:
 
         # Classifier
         if clf_type == 'tree':
-            self.clf = tree.DecisionTreeClassifier(class_weight=cls_weights)
+            self.clf = DecisionTreeClassifier(class_weight=cls_weights)
+        elif clf_type == 'forest':
+            self.clf = RandomForestClassifier(class_weight=cls_weights,
+                                              n_jobs=-1, min_samples_leaf=20,
+                                              max_depth=15, n_estimators=15)
         else:
-            self.clf = SVC(kernel='poly', degree=3, gamma='auto', \
-                           probability=True, class_weight=cls_weights)
+            self.clf = SVC(kernel='poly', degree=3, gamma='auto',
+                      probability=True, class_weight=cls_weights)
 
     def train(self, paper_paths):
         paper_soups = util.load_paper_xmls(paper_paths)
@@ -47,7 +58,8 @@ class Classifier:
             # going through all papers
             soup = paper_soups[i]
             paper_id = soup.pmid.text
-            print("Paper #", paper_id)
+            print("Processing papers {} out of {}\r".format(i + 1, paper_count))
+            # print("Paper #", paper_id)
             # start = time.time()
             col = tu.TokenCollection(soup)
             col.build_tokens()
@@ -149,7 +161,7 @@ class Classifier:
             test_results[paper_i] = test_result
 
         total_loss = np.sum(losses)
-        print("\n\n\n---------------")
+        print("\n\n---------------")
         dist_loss = np.round(total_loss, 4)
         print("total loss is: ", np.round(dist_loss, 4))
         print("average loss is: ", np.round(dist_loss / paper_count, 4))

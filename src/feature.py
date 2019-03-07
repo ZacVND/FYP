@@ -11,26 +11,21 @@ class Feature(Enum):
     TOK_IS_BNP = 2
     TOK_IS_PROCEDURE = 3
     TOK_IS_IN_PDICT = 4  # is in patient dictionary, P can appear anywhere
-    TOK_IS_PLACEBO = 5  # sometimes A2 is a placebo
-    TOK_IS_ABBREV = 6
-    CHUNK_TYPE_NP = 7
-    CHUNK_TYPE_VP = 8
-    CHUNK_TYPE_PP = 9
-    CHUNK_TYPE_ADVP = 10
-    CHUNK_TYPE_ADJP = 11
-    CHUNK_BOW = 12
-    TOK_IS_NUMBER = 13
-    TOK_IS_CD = 14
-    PARA_CAT_OBJECTIVE = 15
-    PARA_CAT_METHODS = 16
-    PARA_CAT_RESULTS = 17
-    PARA_CAT_CONCLUSIONS = 18
-    # PARA_CAT_BACKGROUND = 19  # paragraph of category BACKGROUND is irrelevant
-    TOK_IS_PATIENTS = 19
-    TOK_IS_ARM = 20
-    TOK_IS_IN_ODICT = 21
-    SENT_POSITION = 22  # A/R 1 always appear before A/R 2 in a sentence
-    ABSTRACT_POSITION = 23  # A always appear before OC always appear before R
+    # TOK_IS_PLACEBO = 5  # sometimes A2 is a placebo
+    CHUNK_TYPE_NP = 5
+    CHUNK_TYPE_VP = 6
+    CHUNK_TYPE_PP = 7
+    CHUNK_TYPE_ADJP = 8
+    TOK_IS_NUMBER = 9
+    TOK_IS_CD = 10
+    PARA_CAT_OBJECTIVE = 11
+    PARA_CAT_METHODS = 12
+    PARA_CAT_RESULTS = 13
+    TOK_IS_PATIENTS = 14
+    TOK_IS_ARM = 15
+    TOK_IS_IN_ODICT = 16
+    SENT_POSITION = 17  # A/R 1 always appear before A/R 2 in a sentence
+    ABSTRACT_POSITION = 18  # A always appear before OC always appear before R
 
 
 
