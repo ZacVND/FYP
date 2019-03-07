@@ -47,7 +47,7 @@ outcome_dict_trie = util.Trie(strings=["pressure", "pressures", "iop", "change",
 
 class_to_feature_mapping = {
     Feature.TOK_IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
-                                'Organic Chemical'],
+                                'Organic Chemical', "Clinical Drug"],
     Feature.TOK_IS_PROCEDURE.value: ['Therapeutic or Preventive Procedure',
                                      'Medical Device'],
     Feature.TOK_IS_PATIENTS.value: ['Patient or Disabled Group',

@@ -5,6 +5,7 @@ from enum import Enum
 import feature as ft
 from os import path
 import numpy as np
+import unicodedata
 import util
 import nltk
 import math
@@ -140,14 +141,25 @@ class TokenCollection:
         # Populate the tokens list
         for abs_text in abstract.findAll('abstracttext'):
 
-            para_cat = abs_text['nlmcategory']
-            para_label = abs_text['label']
+            try:
+                para_cat = abs_text['nlmcategory']
+            except KeyError:
+                para_cat = 'None'
+            try:
+                para_label = abs_text['label']
+            except KeyError:
+                para_label = 'None'
+
             if para_cat == "BACKGROUND" or para_cat == "CONCLUSIONS":
                 # Background of abstract is irrelevant
                 # Conclusions of abstract does not contribute any info
                 continue
 
             sents_ = nltk.sent_tokenize(abs_text.text)
+            # This hack below is necessary because of the way bs4 encode texts
+            sents_ = [unicodedata.normalize("NFKD", s) for s in sents_]
+            sents_ = [s.replace('&lt;', '<') for s in sents_]
+            sents_ = [s.replace('&gt;', '>') for s in sents_]
             tags = []
             sent_lens = []
             for s in sents_:
@@ -164,7 +176,11 @@ class TokenCollection:
                 label = xml_tag_to_ev_label.get(xml_tag)
                 if label is not None:
                     # Dealing with specific tags
-                    word_tokens = nltk.word_tokenize(child.text)
+                    # This hack below is necessary because of the way bs4 encode texts
+                    child_text = unicodedata.normalize("NFKD", child.text)
+                    child_text = child_text.replace('&lt;', '<')
+                    child_text = child_text.replace('&gt;', '>')
+                    word_tokens = nltk.word_tokenize(child_text)
                     tokens_of_label = []
                     for tok in word_tokens:
                         token = Token(tok, g_tags=tags[tag_i])
@@ -189,14 +205,12 @@ class TokenCollection:
                         self.ev_labels[label] = tokens_of_label[0]
                 else:
                     # Dealing with text
+                    # This hack below is necessary because of the way bs4 encode texts
+                    child = unicodedata.normalize("NFKD", child)
+                    child = child.replace('&lt;', '<')
+                    child = child.replace('&gt;', '>')
                     word_tokens = nltk.word_tokenize(child)
-                    if not isinstance(child, bs4.NavigableString):
-                        continue  # We only want navigable strings
-
                     for tok in word_tokens:
-                        # NOTE: paper #21921953, #22458918 has list index out of range
-                        # because genia tagger returns missing "<15 mm Hg" causing tag_i to mismatch
-                        # for now we take some files out of dataset
                         token = Token(tok, g_tags=tags[tag_i])
                         # set sentence position in decile
                         sent_pos = math.ceil(
@@ -219,8 +233,9 @@ class TokenCollection:
             tokens = [x for x in tokens if x.word not in punctuation]
             # remove anything that is not alphabetic or of type num-chars
             pattern = re.compile(r'[\d\w]+(?:-\w+)+')
-            tokens = [x for x in tokens if ((x.word.isalpha()) or\
-                                            (re.match(pattern, x.word) is not None))]
+            tokens = [x for x in tokens if ((x.word.isalpha()) or \
+                                            (re.match(pattern,
+                                                      x.word) is not None))]
         else:
             # Chunking and assigning the correct chunk to each token
             # TODO: write code to check if a chunk has measurement in it
@@ -426,14 +441,22 @@ class TokenCollection:
 
 
 if __name__ == "__main__":
-    # testing out tagger
-    text = "Mean (+/-SD) preoperative and 1-year postoperative intraocular pressures in the 5-fluorouracil group were 26.9 (+/-9.5) and 15.3 (+/-5.8) mm Hg, respectively. In the control group these were 25.9 (+/-8.1) mm Hg, and 15.8 (+/-5.1) mm Hg, respectively."
+    import os
 
-    # text = "The objective of the study was to compare the long-term efficacy and safety of tafluprost 0.0015% with latanoprost 0.005% eye drops in patients with open-angle glaucoma or ocular hypertension"
+    xml_file = os.path.join(util.data_path, "30022618.xml")
+    ps = util.parse_paper(xml_file)
+    col = TokenCollection(ps)
+    col.build_tokens()
+    print("Done")
 
-    tags = list(tagger.tag(text))
-    for tag in list(tags):
-        print(tag)
+    # # testing out tagger
+    # text = "Mean (+/-SD) preoperative and 1-year postoperative intraocular pressures in the 5-fluorouracil group were 26.9 (+/-9.5) and 15.3 (+/-5.8) mm Hg, respectively. In the control group these were 25.9 (+/-8.1) mm Hg, and 15.8 (+/-5.1) mm Hg, respectively."
+    #
+    # # text = "The objective of the study was to compare the long-term efficacy and safety of tafluprost 0.0015% with latanoprost 0.005% eye drops in patients with open-angle glaucoma or ocular hypertension"
+    #
+    # tags = list(tagger.tag(text))
+    # for tag in list(tags):
+    #     print(tag)
 
     """
     text = "The study enrolled 148 patients with inadequately controlled " \

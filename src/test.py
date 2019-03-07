@@ -20,17 +20,20 @@ logger = util.get_logger("run")
 sw = stopwords.words('english') + ['non']
 
 if __name__ == "__main__":
-
+    xml_file = os.path.join(util.data_path, "25847610.xml")
+    ps = util.parse_paper(xml_file)
+    col = tu.TokenCollection(ps)
+    col.build_tokens()
     # extracting labels and nlmcategory
-    for ps in paper_soups:
-        for tag in ps.findAll("abstracttext"):
-            value = tag['nlmcategory']
-            key = tag['label']
-            label_dict[key] = value
-
-    label_dict = sorted(label_dict.items(), key=lambda x: x[1])
-    with open('label_dict.json', 'w') as fp:
-        json.dump(dict(label_dict), fp)
+    # for ps in paper_soups:
+    #     for tag in ps.findAll("abstracttext"):
+    #         value = tag['nlmcategory']
+    #         key = tag['label']
+    #         label_dict[key] = value
+    #
+    # label_dict = sorted(label_dict.items(), key=lambda x: x[1])
+    # with open('label_dict.json', 'w') as fp:
+    #     json.dump(dict(label_dict), fp)
 
     # # Prepare papers' XML
     # # paper_files = sorted(listdir(data_path))[:4]
@@ -79,3 +82,5 @@ if __name__ == "__main__":
     #
     #
     #     print('\n')
+
+    print("Done")

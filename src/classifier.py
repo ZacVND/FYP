@@ -19,10 +19,10 @@ class Classifier:
         # the ones we are not interested in will have {-1:1}
         cls_weights = {-1: 1, }
         for ev_label in tu.EvLabel:
-            cls_weights[ev_label.value] = 10
+            cls_weights[ev_label.value] = 100
 
         # Classify all labels
-        self.svc_clf = SVC(kernel='poly', degree=2, gamma='auto', \
+        self.svc_clf = SVC(kernel='poly', degree=3, gamma='auto', \
                            probability=True, class_weight=cls_weights)
         self.dt_clf = tree.DecisionTreeClassifier(class_weight=cls_weights)
 
