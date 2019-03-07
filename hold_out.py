@@ -4,6 +4,7 @@ from datetime import datetime
 import src.util as util
 from os import path
 import webbrowser
+import random
 
 script_dir = path.dirname(path.abspath(__file__))
 results_dir = path.join(script_dir, "results")

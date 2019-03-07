@@ -19,11 +19,11 @@ class Classifier:
         # the ones we are not interested in will have {-1:1}
         cls_weights = {-1: 1, }
         for ev_label in tu.EvLabel:
-            cls_weights[ev_label.value] = 100
+            cls_weights[ev_label.value] = 10
 
         # Classify all labels
-        self.svc_clf = SVC(kernel='poly', degree=3, gamma='auto', \
-                           probability=True, class_weight=cls_weights)
+        # self.svc_clf = SVC(kernel='poly', degree=3, gamma='auto', \
+        #                    probability=True, class_weight=cls_weights)
         self.dt_clf = tree.DecisionTreeClassifier(class_weight=cls_weights)
 
     def train(self, paper_paths):
@@ -31,7 +31,9 @@ class Classifier:
         paper_count = len(paper_soups)
         # initializing the label vectors
         # each label has an empty list []
+        train_start = time.time()
         print('Training on {} paper(s)...'.format(paper_count))
+
 
         # Extract feature vectors from all papers
         token_cols = [None] * paper_count
@@ -45,7 +47,7 @@ class Classifier:
             soup = paper_soups[i]
             paper_id = soup.pmid.text
             print("Paper #", paper_id)
-            start = time.time()
+            # start = time.time()
             col = tu.TokenCollection(soup)
             col.build_tokens()
             feature_matrix = col.generate_feature_matrix()
@@ -71,17 +73,17 @@ class Classifier:
             cum_labels_vec = np.vstack((cum_labels_vec, labels_vec))
             token_cols[i] = col
 
-            end = time.time()
-            print('Time elapsed on paper #{} ({}): {}'
-                  .format(i + 1, paper_id, end - start))
+            # end = time.time()
+            # print('Time elapsed on paper #{} ({}): {}'
+            #       .format(i + 1, paper_id, np.round(end - start, 4)))
 
         # classify A1, A2, R1, R2, OC, P
         # choose between decision tree or svm by uncommenting one of them
-        # self.dt_clf.fit(cum_feat_matrix, cum_labels_vec)
-        self.svc_clf.fit(cum_feat_matrix, cum_labels_vec)
+        self.dt_clf.fit(cum_feat_matrix, cum_labels_vec)
+        # self.svc_clf.fit(cum_feat_matrix, cum_labels_vec.flatten())
 
-        print('Done training.')
-
+        train_end = time.time()
+        print('Done training. Time elapsed: ', train_end-train_start)
         self.last_train_paths = paper_paths
 
     def test(self, paper_paths):
@@ -103,8 +105,8 @@ class Classifier:
             feature_matrix = np.hstack([feature_matrix, bias_vec])
 
             # classify A1, A2, R1, R2, OC, P
-            # prob_matrix = self.dt_clf.predict_proba(feature_matrix)
-            prob_matrix = self.svc_clf.predict_proba(feature_matrix)
+            prob_matrix = self.dt_clf.predict_proba(feature_matrix)
+            # prob_matrix = self.svc_clf.predict_proba(feature_matrix)
 
             final_prob_matrix = prob_matrix.copy()
 
@@ -152,8 +154,8 @@ class Classifier:
         total_loss = np.sum(losses)
         print("\n\n\n---------------")
         dist_loss = np.round(total_loss, 4)
-        print("total loss is: ", dist_loss)
-        print("average loss is: ", dist_loss / paper_count)
+        print("total loss is: ", np.round(dist_loss, 4))
+        print("average loss is: ", np.round(dist_loss / paper_count,4))
         self.last_total_loss = total_loss
         self.last_test_results = test_results
         return total_loss

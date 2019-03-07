@@ -365,14 +365,18 @@ class TokenCollection:
                     feature_vectors[token_i, ft.Feature.TOK_IS_IN_PDICT.value]):
                 feature_vectors[token_i, ft.Feature.TOK_IS_PATIENTS.value] = 1
 
+            result_tdict = ft.treatment_dict_trie.check(
+                token.g_tags[G_BASE_FORM])
+            if result_tdict:
+                feature_vectors[token_i, ft.Feature.TOK_IS_DRUG.value] = 1
+                feature_vectors[token_i, ft.Feature.TOK_IS_PROCEDURE.value] = 1
+
             # A1 and A2 are only in OBJECTIVE or METHODS
             # A1 and A2 are either drug, placebo or procedure
             if ((token.para_cat in O_and_M_para) and
-                    (feature_vectors[token_i, ft.Feature.TOK_IS_DRUG.value] or
-                     feature_vectors[
-                         token_i, ft.Feature.TOK_IS_PLACEBO.value] or
-                     feature_vectors[
-                         token_i, ft.Feature.TOK_IS_PROCEDURE.value])):
+                (feature_vectors[token_i, ft.Feature.TOK_IS_DRUG.value] or
+                 feature_vectors[token_i, ft.Feature.TOK_IS_PLACEBO.value] or
+                 feature_vectors[token_i, ft.Feature.TOK_IS_PROCEDURE.value])):
                 feature_vectors[token_i, ft.Feature.TOK_IS_ARM.value] = 1
 
             # if token.para_cat == "BACKGROUND":

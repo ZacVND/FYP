@@ -45,6 +45,9 @@ outcome_dict_trie = util.Trie(strings=["pressure", "pressures", "iop", "change",
                                        "density", "control", "proportion",
                                        "decrease", "loss"])
 
+treatment_dict_trie = util.Trie(strings=["combination", "fixed-combination",
+                                         "350-mm2", "500-mm2"])
+
 class_to_feature_mapping = {
     Feature.TOK_IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
                                 'Organic Chemical', "Clinical Drug"],
@@ -86,4 +89,10 @@ def get_feature_classes(word):
 
 
 if __name__ == "__main__":
-    print(get_feature_classes('44.7'))
+    losses = [0.5815, 0.4965, 0.4535, 0.4806, 0.4752, 0.4178, 0.466, 0.6158,
+              0.55, 0.4279, 0.4982, 0.3845, 0.5531, 0.4859, 0.4613, 0.635,
+              0.51, 0.3807, 0.5077, 0.4357, 0.6182, 0.4156, 0.4439, 0.5126,
+        0.4016, 0.4976, 0.5197, 0.4067, 0.5211, 0.4838, 0.6136, 0.4788, 0.4281]
+
+    print("Total loss: ", sum(losses))
+    print("Average loss: ", sum(losses)/len(losses))
