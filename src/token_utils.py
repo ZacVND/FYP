@@ -44,6 +44,7 @@ class EvLabelData:
         self.token = None
 
 
+# holds information of each token object
 class Token:
     def __init__(self, word, g_tags=[]):
         self.word = word.lower()
@@ -199,9 +200,12 @@ class TokenCollection:
                     # get only the first token of the label
                     if len(tokens_of_label) == 0:
                         print("The current paper doesn't have token"
-                              " associate with label: ", label)
+                              " associate with label:", label)
                     else:
-                        self.ev_labels[label] = tokens_of_label[0]
+                        if tokens_of_label[0].word in punctuation:
+                            self.ev_labels[label] = tokens_of_label[1]
+                        else:
+                            self.ev_labels[label] = tokens_of_label[0]
                 else:
                     # Dealing with text
                     # This hack below is necessary because of the way bs4 encode texts
@@ -446,23 +450,25 @@ class TokenCollection:
 
 
 if __name__ == "__main__":
-    import os
-
-    xml_file = os.path.join(util.data_path, "30022618.xml")
-    ps = util.parse_paper(xml_file)
-    col = TokenCollection(ps)
-    col.build_tokens()
-    print("Done")
+    # import os
+    #
+    # xml_file = os.path.join(util.data_path, "30022618.xml")
+    # ps = util.parse_paper(xml_file)
+    # col = TokenCollection(ps)
+    # col.build_tokens()
 
     # # testing out tagger
     # text = "Mean (+/-SD) preoperative and 1-year postoperative intraocular pressures in the 5-fluorouracil group were 26.9 (+/-9.5) and 15.3 (+/-5.8) mm Hg, respectively. In the control group these were 25.9 (+/-8.1) mm Hg, and 15.8 (+/-5.1) mm Hg, respectively."
     #
-    # # text = "The objective of the study was to compare the long-term efficacy and safety of tafluprost 0.0015% with latanoprost 0.005% eye drops in patients with open-angle glaucoma or ocular hypertension"
-    #
-    # tags = list(tagger.tag(text))
-    # for tag in list(tags):
-    #     print(tag)
+    # text = "The objective of the study was to compare the long-term efficacy and safety of tafluprost 0.0015% with latanoprost 0.005% eye drops in patients with open-angle glaucoma or ocular hypertension"
+    text = "Something increased by 25%. From an overall baseline mean " \
+           "intraocular pressure of 25.0 mm " \
+           "Hg, latanoprost monotherapy reduced mean diurnal intraocular pressure by 7.1 +/- 3.3 mmHg (mean +/- SD, P < 0.001), whereas brimonidine monotherapy yielded an intraocular-pressure reduction of 5.2 ± 3.5 mm Hg (P < 0.001)."
+    tags = list(tagger.tag(text))
+    for tag in list(tags):
+        print(tag)
 
+    print("Done")
     """
     text = "The study enrolled 148 patients with inadequately controlled " \
            "open-angle or pseudoexfoliation glaucoma"

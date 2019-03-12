@@ -48,10 +48,6 @@ def save_dict(file_path, dict):
     json.dump(dict, open(file_path, 'w'))
 
 
-def find_whole_word(w):
-    return re.compile(r'\b({0})\b'.format(w), flags=re.IGNORECASE).search
-
-
 def render_pug(template_path, out_path=None, out_file=None, json_path=None):
     if shutil.which("pug") is None:
         print("The command `pug` is not available! You will need to install it"
@@ -78,6 +74,7 @@ def render_pug(template_path, out_path=None, out_file=None, json_path=None):
 def get_paper_paths():
     paper_paths = []
     for file in sorted(listdir(data_path)):
+        # ignore .DS_Store files
         if file.startswith(".DS"):
             continue
         paper_paths.append(path.join(data_path, file))

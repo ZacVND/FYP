@@ -14,6 +14,9 @@ sys.path.append(script_dir)
 import token_utils as tu
 import feature as ft
 import util
+import re
+
+R_pattern = re.compile(r'%|mm\s*[Hh][Gg]|mg|\+\s*\/\s*\-|[Pp]atients')
 
 
 class Classifier:
@@ -37,7 +40,7 @@ class Classifier:
                                               max_depth=15, n_estimators=15)
         else:
             self.clf = SVC(kernel='poly', degree=3, gamma='auto',
-                      probability=True, class_weight=cls_weights)
+                           probability=True, class_weight=cls_weights)
 
     def train(self, paper_paths):
         paper_soups = util.load_paper_xmls(paper_paths)
@@ -191,6 +194,26 @@ class Classifier:
                 if seen.get(token.word):
                     continue
 
+                # # R1, R2 has to be a percentage or a measurement
+                # if "R" in ev_label.name:
+                #     if token.g_tags[tu.G_POS_TAG] != "CD":
+                #         continue
+                #     next_token = tokens[index + 1]
+                #     if re.match(R_pattern, next_token.g_tags[tu.G_WORD]):
+                #         continue
+                #
+                # # P has to be inside the patient trie
+                # if "P" in ev_label.name:
+                #     if not ft.patient_dict_trie.check(token.g_tags[
+                #                                           tu.G_BASE_FORM]):
+                #         continue
+                #
+                # # OC has to be inside the outcome trie
+                # if "OC" in ev_label.name:
+                #     if not ft.outcome_dict_trie.check(token.g_tags[
+                #                                           tu.G_BASE_FORM]):
+                #         continue
+
                 tup = (-min_x, i, ev_label)
                 results.append(tup)
                 seen[token.word] = True
@@ -210,9 +233,6 @@ class Classifier:
         # for now we are picking the tokens by the highest likelihood
         for tup in sorted_tuples:
             likelihood, index, ev_label = tup
-            #
-            # if ev_label.name is "A1":
-
             # skip if the token has been assigned
             if token_labelled.get(index):
                 continue
