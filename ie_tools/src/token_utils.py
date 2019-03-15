@@ -1,15 +1,16 @@
-from geniatagger import GENIATagger
 from nltk.corpus import stopwords
 from string import punctuation
 from enum import Enum
-import feature as ft
 from os import path
 import numpy as np
 import unicodedata
 import nltk
 import math
-import util
 import re
+
+import ie_tools.src.feature as ft
+from ie_tools.src import util
+from ie_tools.libraries.geniatagger import GENIATagger
 
 script_dir = path.dirname(path.abspath(__file__))
 
@@ -99,12 +100,11 @@ class Chunk:
 
 
 # genia tagger instance
-executable_path = path.join(script_dir, "..", "geniatagger-3.0.2",
-                            "geniatagger")
+genia_tagger_path = util.get_genia_tagger_path()
 
 # list(tagger.tag(text)) output (word, base, POStag, chunktag, NEtag)
 # NOTE: text has to be text, preferrably a sentence. NOT list of 'word'
-tagger = GENIATagger(executable_path)
+tagger = GENIATagger(genia_tagger_path)
 
 xml_tag_to_ev_label = {
     'a1': EvLabel.A1,
@@ -198,6 +198,8 @@ class TokenCollection:
                         tag_i += 1
 
                     # get only the first token of the label
+                    # this information is collected for displaying the true
+                    # results only, it is not used for any prediction
                     if len(tokens_of_label) == 0:
                         print("The current paper doesn't have token"
                               " associate with label:", label)

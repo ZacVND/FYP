@@ -1,6 +1,6 @@
 from nltk.corpus import stopwords
 import token_utils as tu
-import feature as ft
+import ie_tools.src.feature as ft
 import numpy as np
 import time
 import util
@@ -8,6 +8,7 @@ import os
 import json
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 max_papers = 100
 paper_paths = util.get_paper_paths()[:max_papers]

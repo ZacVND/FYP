@@ -5,14 +5,12 @@ genia-tagger-py/
 geniatagger-3.0.2/
 geniatagger-3.0.2.tar.gz
 IERCT/
-nltk_learn.ipynb
 GENIA-Tagger.pdf
 GeniaCorpus.pdf
 PyCharm/
 Reports/
 Previous\ Works/
 UGProjects2018.pdf
-CliNER/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

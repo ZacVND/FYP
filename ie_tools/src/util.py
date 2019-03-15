@@ -1,4 +1,3 @@
-from Authentication import Authentication
 from os import path, listdir
 import requests
 import logging
@@ -8,7 +7,8 @@ import json
 import time
 import bs4
 import os
-import re
+
+from ie_tools.libraries.Authentication import Authentication
 
 logging.basicConfig(format='[%(name)s|%(levelname)s] %(message)s',
                     level=logging.INFO)
@@ -20,9 +20,38 @@ tgt = auth_client.gettgt()
 _end = '__end'
 
 script_dir = path.dirname(path.abspath(__file__))
-data_path = path.join(script_dir, "..", 'data/annotation I/')
+results_dir = path.normpath(path.join(script_dir, "..", "..", "results"))
+data_dir = path.normpath(path.join(script_dir, "..", "..",
+                                   "data", "annotation I"))
+pretrained_dir = path.normpath(path.join(script_dir, "..", "..", "pretrained"))
+unstruct_data_dir = path.normpath(path.join(script_dir, "..", "..", 'data',
+                                            'annotation I excluded files',
+                                            'unstructured'))
 
+template_path = path.normpath(path.join(script_dir, "results.pug"))
+genia_tagger_path = path.normpath(path.join(script_dir, "..", "..",
+                                            "geniatagger-3.0.2", "geniatagger"))
 last_time = time.time()
+
+
+def get_unstruct_dir():
+    return unstruct_data_dir
+
+
+def get_pretrained_dir():
+    return pretrained_dir
+
+
+def get_result_dir():
+    return results_dir
+
+
+def get_genia_tagger_path():
+    return genia_tagger_path
+
+
+def get_template_path():
+    return template_path
 
 
 def log(string):
@@ -73,11 +102,11 @@ def render_pug(template_path, out_path=None, out_file=None, json_path=None):
 
 def get_paper_paths():
     paper_paths = []
-    for file in sorted(listdir(data_path)):
+    for file in sorted(listdir(data_dir)):
         # ignore .DS_Store files
         if file.startswith(".DS"):
             continue
-        paper_paths.append(path.join(data_path, file))
+        paper_paths.append(path.join(data_dir, file))
 
     return paper_paths
 

@@ -1,15 +1,15 @@
-from src.classifier import Classifier
 from datetime import datetime
-import src.util as util
 from os import path
 import numpy as np
 import webbrowser
 import random
 
-script_dir = path.dirname(path.abspath(__file__))
-results_dir = path.join(script_dir, "results", "cross_validation")
+from ie_tools.src import util
+from ie_tools.src.classifier import Classifier
 
 if __name__ == "__main__":
+    # choose between TypeRF, TypeDT, TypeSVM
+    classifier_type = Classifier.TypeRF
 
     max_papers = 120
     run_count = 10
@@ -27,7 +27,8 @@ if __name__ == "__main__":
             train_pps = paper_paths[:step_size * fold]
             train_pps += paper_paths[step_size * (fold + 1):]
             test_pps = paper_paths[step_size * fold:step_size * (fold + 1)]
-            classifier = Classifier(clf_type='forest')
+            classifier = Classifier(type=classifier_type, f_max_d=25,
+                                    f_min_l=12, f_n_est=70)
             # first paper will always take longer to run than the subsequent
             # papers because we starts genia tagger.
             classifier.train(train_pps)
@@ -41,7 +42,8 @@ if __name__ == "__main__":
     print("average total loss for 5-fold cross validation", avg_total_loss)
 
     date_str = datetime.now().strftime('%Y-%m-%d_%H-%M')
-    out_file = path.join(results_dir, "results-{}.txt".format(date_str))
+    out_file = path.join(util.get_result_dir(), "{}-results-{}.txt".format(
+        classifier_type, date_str))
     with open(out_file, 'w+') as file:
         file.write("Average total loss across 10 runs of 5-fold cross "
                    "validation:\n{}".format(avg_total_loss))

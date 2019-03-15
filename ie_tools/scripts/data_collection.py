@@ -1,9 +1,6 @@
 from joblib import Parallel, delayed
-from os import path
-import token_utils as tu
-import util
-
-script_dir = path.dirname(path.abspath(__file__))
+import ie_tools.src.token_utils as tu
+from ie_tools.src import util
 
 if __name__ == "__main__":
 
