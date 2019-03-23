@@ -21,28 +21,22 @@ html
                         p loss: #{test_result.loss}
 
 
-
-
                         table(class='table is-bordered is-striped')
                             thead
                                 tr
                                     th
-                                    for label in label_names
-                                        th #{label}
+                                    th True Token
+                                    th Predicted Token
+                                    th Predicted Phrase
                             tbody
                                 -
-                                    var assignment = test_result.label_assignment
-                                tr
-                                    td True
-                                    each ass, label in assignment
-                                        td #{ass.true}
-                                tr
-                                    td Predicted
-                                    each ass, label in assignment
-                                        td #{ass.predicted}
-
-
-
+                                    var assignments = test_result.label_assignment
+                                each assignment, label in assignments
+                                    tr
+                                        th #{label}
+                                        td #{assignment.true}
+                                        td #{assignment.predicted}
+                                        td #{assignment.predicted_phrase}
 
 
                         section.accordions

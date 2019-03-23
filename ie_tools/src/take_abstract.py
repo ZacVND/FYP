@@ -71,7 +71,7 @@ def take_title(pmid):
         return None
 
 
-if __name__ == "__main__":
+def main():
     new_pmids = [28777224, 28400374, 28178150, 25393036, 24844538, 28887006,
                  27269279, 21921953, 27567675, 26907933, 24247999, 25907999,
                  25893514, 25270273, 25908001, 25847610, 30022618, 29133641]
@@ -93,3 +93,7 @@ if __name__ == "__main__":
     #         title_tag.string = title
     #         f.write("\n" + str(title_tag))
     pass
+
+
+if __name__ == "__main__":
+    main()

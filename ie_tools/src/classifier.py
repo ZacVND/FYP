@@ -13,44 +13,45 @@ import ie_tools.src.token_utils as tu
 import ie_tools.src.feature as ft
 from ie_tools.src import util
 
-R_pattern = re.compile(r'%|vs|,|to|\(|mm|mm\s*[Hh]'
-                       r'[Gg]|mg|\+\s*\/\s*\-?|±|percent|patients|months')
+R_pattern = re.compile(r'mm|mm\s*[Hh][Gg]|mg|percent|patients|months|vs|'
+                       r'%|,|to|\(|\+\s*\/\s*\-?|±')
 
 
 class Classifier:
     TypeSVM = "svm"
-    TypeRF = "forest"
-    TypeDT = "tree"
+    TypeRF = "random_forest"
+    TypeDT = "decision_tree"
 
-    def __init__(self, type=None, f_max_d=15, f_n_est=15, f_min_l=20,
+    def __init__(self, clf_type=None, f_max_d=15, f_n_est=15, f_min_l=20,
                  persist=False):
-        if type is None:
-            type = Classifier.TypeSVM
+        if clf_type is None:
+            clf_type = Classifier.TypeSVM
         self.last_total_loss = None
         self.last_test_results = None
         self.last_train_paths = None
         self.persist = persist
-        self.clf_type = type
-        # for now we are using weight = 10 for actual classes,
+        self.clf_type = clf_type
+        # for now we are using weight = 100 for actual classes,
         # the ones we are not interested in will have {-1:1}
         cls_weights = {-1: 1, }
         for ev_label in tu.EvLabel:
-            cls_weights[ev_label.value] = 10
+            cls_weights[ev_label.value] = 100
 
         # Classifier
-        if type == self.TypeDT:
+        if clf_type == self.TypeDT:
             self.clf = DecisionTreeClassifier(class_weight=cls_weights)
-        elif type == self.TypeRF:
+        elif clf_type == self.TypeRF:
             self.clf = RandomForestClassifier(class_weight=cls_weights,
                                               n_jobs=-1,
                                               min_samples_leaf=f_min_l,
                                               max_depth=f_max_d,
                                               n_estimators=f_n_est)
-        elif type == self.TypeSVM:
+        elif clf_type == self.TypeSVM:
             self.clf = SVC(kernel='poly', degree=3, gamma='auto',
                            probability=True, class_weight=cls_weights)
         else:
-            raise ValueError("Unrecognised classifier type: {}".format(type))
+            raise ValueError(
+                "Unrecognised classifier clf_type: {}".format(clf_type))
 
     def save_model(self, output_path):
         joblib.dump(self.clf, output_path)
@@ -149,9 +150,10 @@ class Classifier:
                 predictions[ev_label] = final_prob_matrix[:, ev_label.value + 1]
 
             label_assignment = self.assign_ev_labels(col, predictions)
-            # loss = self.compute_loss(col, label_assignment)
-            loss = self.compute_loss(col, prob_matrix, label_assignment)
+            loss = self.eval_loss(col, prob_matrix, label_assignment)
             losses[paper_i] = loss
+
+            pred_phrases = [None] * 6
 
             for ev_label in tu.EvLabel:
                 true_ev_label_data = col.ev_labels.get(ev_label)
@@ -160,13 +162,28 @@ class Classifier:
                 else:
                     ev_label_data = label_assignment[ev_label]
                     if ev_label_data.token.chunk is None:
-                        pred_string = ev_label_data.token.word
+                        pred_phrase = ev_label_data.token.word
                     else:
-                        pred_string = ev_label_data.token.chunk.string
-                    print("Predicted: ", ev_label.name, pred_string,
+                        c_i = col.chunks.index(ev_label_data.token.chunk)
+                        pred_phrase = ev_label_data.token.chunk.string
+
+                        if len(ev_label_data.token.chunk.tokens) == 1:
+                            pred_phrase = pred_phrase + " {}".format(
+                                                    col.chunks[c_i+1].string)
+                            if col.chunks[c_i+1].string == 'with':
+                                pred_phrase = pred_phrase + " {}".format(
+                                                    col.chunks[c_i+2].string)
+                        elif ev_label == tu.EvLabel.P:
+                            c_i = col.chunks.index(ev_label_data.token.chunk)
+                            pred_phrase = pred_phrase + " {} {}".format(
+                                col.chunks[c_i+1].string,
+                                col.chunks[c_i+2].string)
+
+
+                    print("Predicted: ", ev_label.name, pred_phrase,
                           " --- True Label: ", true_ev_label_data.word)
-                    # if util.find_whole_word(true_ev_label_data.word)(
-                    #         pred_string) is not None:
+                    pred_phrases[ev_label.value] = pred_phrase
+
             loss = np.round(loss, 4)
             print('loss for this paper is: ', loss)
             test_result = {
@@ -175,6 +192,7 @@ class Classifier:
                 "token_collection": col,
                 "true_label_assignment": col.ev_labels,
                 "predicted_label_assignment": label_assignment,
+                "predicted_phrases": pred_phrases,
                 "feature_matrix": feature_matrix,
                 "loss": loss
             }
@@ -190,11 +208,14 @@ class Classifier:
         return total_loss
 
     def assign_ev_labels(self, token_collection, predictions):
-        label_assignment = {}
-        # label_data = {"word": "timolol"}
-        # ev_labels[tu.EvLabel.A1] = label_data
+        """
+        Assign evidence table labels
 
-        # TODO: Write better label assignment code
+        :param token_collection:
+        :param predictions:
+        :return:
+        """
+        label_assignment = {}
 
         best_words_count = 6
         tokens = token_collection.tokens
@@ -246,7 +267,6 @@ class Classifier:
         sorted_tuples = sorted(all_tuples, key=lambda x: x[0], reverse=True)
 
         token_labelled = {}
-        r_token_symbol = None
         # TODO: Is it better to assign labels in the order of Enum?
         # for now we are picking the tokens by the highest likelihood
         for tup in sorted_tuples:
@@ -260,7 +280,6 @@ class Classifier:
 
             token = tokens[index]
 
-            # TODO: Currently this pattern matching is passing over all
             # values in sorted tuples
             if "R" in ev_label.name:
                 if token.g_tags[tu.G_POS_TAG] != "CD":
@@ -273,17 +292,11 @@ class Classifier:
                     if prev_token == '(':
                         continue
 
-            # P has to be inside the patient trie
-            # if "P" in ev_label.name:
-            #     if not ft.patient_dict_trie.check(token.g_tags[
-            #                                           tu.G_BASE_FORM]):
-            #         continue
-
             # patients almost always to the left of "with" or "undergoing"
             # if ev_label.name == "P":
             #     next_token = tokens[index + 1]
             #     if (token.g_tags[tu.G_BASE_FORM] == 'patient') and \
-            #             (next_token not in ['with', 'without', 'aged'
+            #             (next_token.og_word not in ['with', 'without', 'aged'
             #                                 'who', 'undergoing']):
             #         continue
 
@@ -294,9 +307,12 @@ class Classifier:
 
         return label_assignment
 
-    def compute_loss(self, token_collection, prob_matrix, label_assignment):
+    def eval_precision(self, token_collection, label_assignment):
+        # TODO: Make Precision
+        pass
+
+    def eval_loss(self, token_collection, prob_matrix, label_assignment):
         """
-        TODO: Calculate the error between the desired labels and the true
         cross entropy loss
 
         labels(posterior)
@@ -306,11 +322,6 @@ class Classifier:
         :param ev_label_data:
         :return: loss
         """
-        # loss = 0
-        # for label, label_data in label_assignment.items():
-        #     true_label_data = token_collection.ev_labels[label]
-        #     if label_data.word != true_label_data.word:
-        #         loss += 1
         word_count, label_count = prob_matrix.shape
         true_mat = np.zeros((word_count, label_count))
         for i in range(word_count):
@@ -321,12 +332,7 @@ class Classifier:
         return log_loss(true_mat[:, 1:], prob_matrix[:, 1:])
 
     def save_result(self, json_path):
-        """
-        :param json_path:
-        :return:
-        """
         train_data = {}
-
         test_counts = len(self.last_test_results)
         test_data = [None] * test_counts
         for i in range(test_counts):
@@ -334,14 +340,14 @@ class Classifier:
             tokens = result["token_collection"].tokens
             assignment = {}
             for label in tu.EvLabel:
-                # TODO: Fix this bug where true_l is a tuple
                 true_l = result["true_label_assignment"].get(label)
                 if type(true_l) is tuple:
                     true_l = true_l[0]
                 predicted_l = result["predicted_label_assignment"][label]
                 assignment[label.name] = {
                     "true": true_l.word if true_l is not None else "undefined",
-                    "predicted": predicted_l.word
+                    "predicted": predicted_l.word,
+                    "predicted_phrase": result["predicted_phrases"][label.value]
                 }
             new_result = {
                 "pmid": result["soup"].pmid.text,

@@ -1,39 +1,40 @@
 from enum import Enum
+
 from ie_tools.src import util
 
 
 # Whenever you add more related to UMLS, you should probably delete the
-# `umls_cache.json`
+# `umls_cache.json` in data/
 class Feature(Enum):
-    # TODO: Add more features
-    TOK_IS_DRUG = 0
-    TOK_IS_IN_TITLE = 1
+    TOK_IS_CD = 0
+    TOK_IS_ARM = 1
     TOK_IS_BNP = 2
-    TOK_IS_PROCEDURE = 3
-    TOK_IS_IN_PDICT = 4  # is in patient dictionary, P can appear anywhere
-    CHUNK_TYPE_NP = 5
-    CHUNK_TYPE_VP = 6
-    CHUNK_TYPE_PP = 7
-    CHUNK_TYPE_ADJP = 8
-    TOK_IS_NUMBER = 9
-    TOK_IS_CD = 10
-    PARA_CAT_OBJECTIVE = 11
-    PARA_CAT_METHODS = 12
-    PARA_CAT_RESULTS = 13
-    TOK_IS_PATIENTS = 14
-    TOK_IS_ARM = 15
-    TOK_IS_IN_ODICT = 16
-    SENT_POSITION = 17  # A/R 1 always appear before A/R 2 in a sentence
+    TOK_IS_DRUG = 3
+    TOK_IS_NUMBER = 4
+    TOK_IS_IN_ODICT = 5
+    TOK_IS_IN_PDICT = 6  # is in patient dictionary, P can appear anywhere
+    TOK_IS_IN_TITLE = 7
+    TOK_IS_PATIENTS = 8
+    TOK_IS_PROCEDURE = 9
+    CHUNK_TYPE_NP = 10
+    CHUNK_TYPE_VP = 11
+    CHUNK_TYPE_PP = 12
+    CHUNK_TYPE_ADJP = 13
+    SENT_POSITION = 14  # A/R 1 always appear before A/R 2 in a sentence
+    PARA_CAT_OBJECTIVE = 15
+    PARA_CAT_METHODS = 16
+    PARA_CAT_RESULTS = 17
     ABSTRACT_POSITION = 18  # A always appear before OC always appear before R
 
 
 feature_count = len(Feature.__members__.items())
 
+# Hardcoding the features
 patient_dict_trie = util.Trie(strings=["patient", "patients", "eyes", "adults",
                                        "subjects", "individuals"])
 
-outcome_dict_trie = util.Trie(strings=["pressure", "pressures", "iop", "change",
-                                       "reduction", "lowering", "values",
+outcome_dict_trie = util.Trie(strings=["pressure", "iop", "change",
+                                       "reduction", "lowering", "value",
                                        "density", "control", "proportion",
                                        "decrease", "loss"])
 
@@ -61,10 +62,9 @@ def get_feature_classes(word):
         feature_i = class_to_feature_trie.check(cls)
         if feature_i is not None:
 
-            # When this is set to False, the code returns 1 if some feature
-            # is present.
             # When this is set to True, the code returns the number of
             # classes that suggest that a particular feature is true.
+            # When set to False, the code returns 1 if some feature is present.
             count_classes_suggesting_drug = False
 
             if count_classes_suggesting_drug:
@@ -80,7 +80,7 @@ def get_feature_classes(word):
     return feature_class_map
 
 
-if __name__ == "__main__":
+def main():
     losses = [0.5815, 0.4965, 0.4535, 0.4806, 0.4752, 0.4178, 0.466, 0.6158,
               0.55, 0.4279, 0.4982, 0.3845, 0.5531, 0.4859, 0.4613, 0.635,
               0.51, 0.3807, 0.5077, 0.4357, 0.6182, 0.4156, 0.4439, 0.5126,
@@ -89,3 +89,7 @@ if __name__ == "__main__":
 
     print("Total loss: ", sum(losses))
     print("Average loss: ", sum(losses) / len(losses))
+
+
+if __name__ == "__main__":
+    main()

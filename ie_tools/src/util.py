@@ -24,18 +24,19 @@ results_dir = path.normpath(path.join(script_dir, "..", "..", "results"))
 data_dir = path.normpath(path.join(script_dir, "..", "..",
                                    "data", "annotation I"))
 pretrained_dir = path.normpath(path.join(script_dir, "..", "..", "pretrained"))
-unstruct_data_dir = path.normpath(path.join(script_dir, "..", "..", 'data',
-                                            'annotation I excluded files',
-                                            'unstructured'))
-
+unstructured_dir = path.normpath(path.join(script_dir, "..", "..", 'data',
+                                           'annotation I excluded files',
+                                           'unstructured'))
 template_path = path.normpath(path.join(script_dir, "results.pug"))
 genia_tagger_path = path.normpath(path.join(script_dir, "..", "..",
                                             "geniatagger-3.0.2", "geniatagger"))
+umls_cache_path = path.normpath(path.join(script_dir, '..', '..', 'data',
+                                          'umls_cache.json'))
 last_time = time.time()
 
 
-def get_unstruct_dir():
-    return unstruct_data_dir
+def get_unstructured_dir():
+    return unstructured_dir
 
 
 def get_pretrained_dir():
@@ -198,7 +199,6 @@ class Trie:
         return None
 
 
-umls_cache_path = path.join(script_dir, 'umls_cache.json')
 umls_cache = Cache(file_path=umls_cache_path)
 
 
@@ -261,7 +261,7 @@ def get_umls_classes(string):
     return classes
 
 
-if __name__ == '__main__':
+def main():
     classes = get_umls_classes("timolol")
     assert ('Pharmacologic Substance' in classes)
     class_to_feature_mapping = {
@@ -269,3 +269,7 @@ if __name__ == '__main__':
              'Organic Chemical', 'Biomedical or Dental Material']
     }
     pass
+
+
+if __name__ == '__main__':
+    main()

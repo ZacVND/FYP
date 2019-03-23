@@ -3,17 +3,15 @@ from datetime import datetime
 from os import path, listdir
 import webbrowser
 
-import ie_tools.src.util as util
 from ie_tools.src.classifier import Classifier
-
+import ie_tools.src.util as util
 
 if __name__ == "__main__":
-    random = True
-    persist = True
-    unstruct = False
-
     # choose between TypeRF, TypeDT, TypeSVM
     classifier_type = Classifier.TypeRF
+    random = True
+    persist = True
+    unstructured = False
     max_papers = 120
     paper_paths = util.get_paper_paths()[:max_papers]
 
@@ -24,17 +22,18 @@ if __name__ == "__main__":
         train_pps = paper_paths[:int(i / 2)]
         test_pps = paper_paths[int(i / 2) + 1:]
 
-    prefix = ''
-    unstruct_dir = util.get_unstruct_dir()
-    if unstruct:
-        prefix = 'unstruct-'
-        for file in listdir(unstruct_dir):
+    prefix = classifier_type
+    unstructured_dir = util.get_unstructured_dir()
+    if unstructured:
+        prefix = prefix + '-unstructured'
+        for file in listdir(unstructured_dir):
             # ignore .DS_Store files
             if file.startswith(".DS"):
                 continue
-            test_pps.append(path.join(unstruct_dir, file))
+            test_pps.append(path.join(unstructured_dir, file))
 
-    classifier = Classifier(type=classifier_type, persist=True)
+    classifier = Classifier(clf_type=classifier_type, persist=True, f_max_d=25,
+                            f_min_l=12, f_n_est=70)
     pretrained = path.join(util.get_pretrained_dir(), "{}.sav".format(
         classifier_type))
 
@@ -42,10 +41,12 @@ if __name__ == "__main__":
           "subsequent papers because we starts genia tagger.\n\n")
 
     if path.isfile(pretrained):
-        print("Pretrained weights exist.")
+        print("Pretrained weights for {} exist. "
+              "Using existing weights.".format(classifier_type))
         classifier.load_model(pretrained)
     else:
-        print("Pretrained weights not found. Training from scratch.")
+        print("Pretrained weights for {} not found. "
+              "Training from scratch.".format(classifier_type))
         classifier.train(train_pps)
         classifier.save_model(pretrained)
 
@@ -54,10 +55,10 @@ if __name__ == "__main__":
     template_path = util.get_template_path()
     date_str = datetime.now().strftime('%Y-%m-%d_%H-%M')
     results_dir = util.get_result_dir()
-    out_file = path.join(results_dir, "{}results-{}.html".format(prefix,
-                                                                 date_str))
+    out_file = path.join(results_dir, "{}-results-{}.html".format(prefix,
+                                                                  date_str))
     json_path = path.join(results_dir,
-                          "{}results-{}.json".format(prefix, date_str))
+                          "{}-results-{}.json".format(prefix, date_str))
 
     classifier.save_result(json_path)
     util.render_pug(template_path, out_file=out_file, json_path=json_path)

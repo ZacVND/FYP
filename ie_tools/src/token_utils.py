@@ -8,9 +8,9 @@ import nltk
 import math
 import re
 
+from ie_tools.libraries.geniatagger import GENIATagger
 import ie_tools.src.feature as ft
 from ie_tools.src import util
-from ie_tools.libraries.geniatagger import GENIATagger
 
 script_dir = path.dirname(path.abspath(__file__))
 
@@ -26,6 +26,15 @@ G_POS_TAG = 2
 G_CHUNK = 3
 G_NAMED_ENTITY = 4
 
+# genia tagger instance
+genia_tagger_path = util.get_genia_tagger_path()
+
+# list(tagger.tag(text)) output (word, base, POStag, chunktag, NEtag)
+# NOTE: text has to be text, preferrably a sentence. NOT list of 'word'
+tagger = GENIATagger(genia_tagger_path)
+
+stopword_trie = util.Trie(strings=stopwords.words('english') + ['non'])
+
 
 class EvLabel(Enum):
     __order__ = 'A1 A2 R1 R2 OC P'
@@ -35,6 +44,16 @@ class EvLabel(Enum):
     R2 = 3
     OC = 4
     P = 5
+
+
+xml_tag_to_ev_label = {
+    'a1': EvLabel.A1,
+    'a2': EvLabel.A2,
+    'r1': EvLabel.R1,
+    'r2': EvLabel.R2,
+    'oc': EvLabel.OC,
+    'p': EvLabel.P,
+}
 
 
 # holds information for the evidence table output
@@ -93,29 +112,8 @@ class Chunk:
             self.features[ft.Feature.CHUNK_TYPE_VP] = 1
         elif tok_1st.endswith("PP"):
             self.features[ft.Feature.CHUNK_TYPE_PP] = 1
-        # elif tok_1st.endswith("ADVP"):
-        #     self.features[ft.Feature.CHUNK_TYPE_ADVP] = 1
         elif tok_1st.endswith("ADJP"):
             self.features[ft.Feature.CHUNK_TYPE_ADJP] = 1
-
-
-# genia tagger instance
-genia_tagger_path = util.get_genia_tagger_path()
-
-# list(tagger.tag(text)) output (word, base, POStag, chunktag, NEtag)
-# NOTE: text has to be text, preferrably a sentence. NOT list of 'word'
-tagger = GENIATagger(genia_tagger_path)
-
-xml_tag_to_ev_label = {
-    'a1': EvLabel.A1,
-    'a2': EvLabel.A2,
-    'r1': EvLabel.R1,
-    'r2': EvLabel.R2,
-    'oc': EvLabel.OC,
-    'p': EvLabel.P,
-}
-
-stopword_trie = util.Trie(strings=stopwords.words('english') + ['non'])
 
 
 class TokenCollection:
@@ -150,9 +148,8 @@ class TokenCollection:
             except KeyError:
                 para_label = 'None'
 
-            if para_cat == "BACKGROUND" or para_cat == "CONCLUSIONS":
-                # Background of abstract is irrelevant
-                # Conclusions of abstract does not contribute any info
+            # Conclusions of abstract does not contribute any info
+            if para_cat == "CONCLUSIONS":
                 continue
 
             sents_ = nltk.sent_tokenize(abs_text.text)
@@ -160,6 +157,7 @@ class TokenCollection:
             sents_ = [unicodedata.normalize("NFKD", s) for s in sents_]
             sents_ = [s.replace('&lt;', '<') for s in sents_]
             sents_ = [s.replace('&gt;', '>') for s in sents_]
+            sents_ = [s.replace('±', '+/-') for s in sents_]
             tags = []
             sent_lens = []
             for s in sents_:
@@ -180,6 +178,7 @@ class TokenCollection:
                     child_text = unicodedata.normalize("NFKD", child.text)
                     child_text = child_text.replace('&lt;', '<')
                     child_text = child_text.replace('&gt;', '>')
+                    child_text = child_text.replace('±', '+/-')
                     word_tokens = nltk.word_tokenize(child_text)
                     tokens_of_label = []
                     for tok in word_tokens:
@@ -214,6 +213,7 @@ class TokenCollection:
                     child = unicodedata.normalize("NFKD", child)
                     child = child.replace('&lt;', '<')
                     child = child.replace('&gt;', '>')
+                    child = child.replace('±', '+/-')
                     word_tokens = nltk.word_tokenize(child)
                     for tok in word_tokens:
                         token = Token(tok, g_tags=tags[tag_i])
@@ -238,12 +238,11 @@ class TokenCollection:
             tokens = [x for x in tokens if x.word not in punctuation]
             # remove anything that is not alphabetic or of type num-chars
             pattern = re.compile(r'[\d\w]+(?:-\w+)+')
-            tokens = [x for x in tokens if ((x.word.isalpha()) or \
+            tokens = [x for x in tokens if ((x.word.isalpha()) or
                                             (re.match(pattern,
                                                       x.word) is not None))]
         else:
             # Chunking and assigning the correct chunk to each token
-            # TODO: write code to check if a chunk has measurement in it
             chunk_tokens = None
             chunks = []
             for tok in tokens:
@@ -278,6 +277,7 @@ class TokenCollection:
         token_count = len(self.tokens)
         feature_count = len(ft.Feature.__members__.items())
         feature_vectors = np.zeros((token_count, feature_count))
+        # anything that is not alphabetic or of type num-chars
         pattern = re.compile(r'[\d\w]+(?:-\w+)+')
 
         title = self.bs_doc.title.text
@@ -360,10 +360,6 @@ class TokenCollection:
             if token.para_cat == "RESULTS":
                 feature_vectors[token_i, ft.Feature.PARA_CAT_RESULTS.value] = 1
 
-            # if token.para_cat == "CONCLUSIONS":
-            #     feature_vectors[
-            #         token_i, ft.Feature.PARA_CAT_CONCLUSIONS.value] = 1
-
             O_and_M_para = ["OBJECTIVE", "METHODS"]
             # patients group only mentioned in either OBJECTIVE or METHODS
             if ((token.para_cat in O_and_M_para) and
@@ -385,9 +381,6 @@ class TokenCollection:
                      feature_vectors[
                          token_i, ft.Feature.TOK_IS_PROCEDURE.value])):
                 feature_vectors[token_i, ft.Feature.TOK_IS_ARM.value] = 1
-
-            # if token.para_cat == "BACKGROUND":
-            #     feature_vectors[token_i, ft.Feature.PARA_CAT_OBJECTIVE] = 1
 
             # sentence position in decile
             feature_vectors[token_i,
@@ -451,7 +444,7 @@ class TokenCollection:
         return labels_matrix
 
 
-if __name__ == "__main__":
+def main():
     # import os
     #
     # xml_file = os.path.join(util.data_path, "30022618.xml")
@@ -488,3 +481,7 @@ if __name__ == "__main__":
     ('pseudoexfoliation', 'pseudoexfoliation', 'NN', 'I-NP', 'O')
     ('glaucoma', 'glaucoma', 'NN', 'I-NP', 'O')
     """
+
+
+if __name__ == "__main__":
+    main()
