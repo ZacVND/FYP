@@ -26,6 +26,7 @@ class Classifier:
                  persist=False):
         if clf_type is None:
             clf_type = Classifier.TypeSVM
+        self.last_precisions = None
         self.last_total_loss = None
         self.last_test_results = None
         self.last_train_paths = None
@@ -122,9 +123,11 @@ class Classifier:
         # Test how good our prediction is
         paper_soups = util.load_paper_xmls(paper_paths)
         paper_count = len(paper_soups)
+        print('Testing on {} paper(s)...'.format(paper_count))
         # Extract feature vectors from all papers
         test_results = [None] * paper_count
         losses = np.zeros((paper_count,))
+        precisions = [0] * 6
         for paper_i in range(paper_count):
             soup = paper_soups[paper_i]
             print('---- Paper #{} [{}]'.format(paper_i + 1, soup.pmid.text))
@@ -150,7 +153,7 @@ class Classifier:
                 predictions[ev_label] = final_prob_matrix[:, ev_label.value + 1]
 
             label_assignment = self.assign_ev_labels(col, predictions)
-            loss = self.eval_loss(col, prob_matrix, label_assignment)
+            loss = self.eval_loss(col, prob_matrix)
             losses[paper_i] = loss
 
             pred_phrases = [None] * 6
@@ -169,20 +172,26 @@ class Classifier:
 
                         if len(ev_label_data.token.chunk.tokens) == 1:
                             pred_phrase = pred_phrase + " {}".format(
-                                                    col.chunks[c_i+1].string)
-                            if col.chunks[c_i+1].string == 'with':
+                                col.chunks[c_i + 1].string)
+                            if col.chunks[c_i + 1].string == 'with':
                                 pred_phrase = pred_phrase + " {}".format(
-                                                    col.chunks[c_i+2].string)
+                                    col.chunks[c_i + 2].string)
                         elif ev_label == tu.EvLabel.P:
                             c_i = col.chunks.index(ev_label_data.token.chunk)
                             pred_phrase = pred_phrase + " {} {}".format(
-                                col.chunks[c_i+1].string,
-                                col.chunks[c_i+2].string)
-
+                                col.chunks[c_i + 1].string,
+                                col.chunks[c_i + 2].string)
 
                     print("Predicted: ", ev_label.name, pred_phrase,
                           " --- True Label: ", true_ev_label_data.word)
+
                     pred_phrases[ev_label.value] = pred_phrase
+                    if true_ev_label_data.word in pred_phrase or \
+                        (true_ev_label_data.word == 'iop' and
+                         'pressure' in pred_phrase) or \
+                        (true_ev_label_data.word == 'pressure' and
+                         'iop' in pred_phrase):
+                        precisions[ev_label.value] += 1
 
             loss = np.round(loss, 4)
             print('loss for this paper is: ', loss)
@@ -200,12 +209,21 @@ class Classifier:
 
         total_loss = np.sum(losses)
         print("\n\n---------------")
+        precisions = [np.round(p / paper_count, 4) for p in precisions]
+        print('Average precisions for this run is: \nA1:{}\t A2:{}\t R1:'
+              '{}\t R2:{}\t OC:{}\t P:{}'.format(precisions[0],
+                                                 precisions[1],
+                                                 precisions[2],
+                                                 precisions[3],
+                                                 precisions[4],
+                                                 precisions[5]))
         dist_loss = np.round(total_loss, 4)
         print("total loss is: ", np.round(dist_loss, 4))
         print("average loss is: ", np.round(dist_loss / paper_count, 4))
         self.last_total_loss = dist_loss
+        self.last_precisions = precisions
         self.last_test_results = test_results
-        return total_loss
+        return total_loss, precisions
 
     def assign_ev_labels(self, token_collection, predictions):
         """
@@ -244,11 +262,6 @@ class Classifier:
                         continue
                     # comment 3 lines below out if it doesn't work
                     next_tok = tokens[i + 1]
-                    # print('curr token: {}, abs_pos: {}'.format(token.og_word,
-                    #                                            token.abs_pos))
-                    # print('next token: {}, abs_pos: {}\n'.format(
-                    #     next_tok.og_word,
-                    #     next_tok.abs_pos))
                     if not re.match(R_pattern, next_tok.og_word):
                         continue
 
@@ -267,8 +280,7 @@ class Classifier:
         sorted_tuples = sorted(all_tuples, key=lambda x: x[0], reverse=True)
 
         token_labelled = {}
-        # TODO: Is it better to assign labels in the order of Enum?
-        # for now we are picking the tokens by the highest likelihood
+        # Pick the tokens by the highest likelihood
         for tup in sorted_tuples:
             likelihood, index, ev_label = tup
             # skip if the token has been assigned
@@ -292,14 +304,6 @@ class Classifier:
                     if prev_token == '(':
                         continue
 
-            # patients almost always to the left of "with" or "undergoing"
-            # if ev_label.name == "P":
-            #     next_token = tokens[index + 1]
-            #     if (token.g_tags[tu.G_BASE_FORM] == 'patient') and \
-            #             (next_token.og_word not in ['with', 'without', 'aged'
-            #                                 'who', 'undergoing']):
-            #         continue
-
             ev_label_data = tu.EvLabelData(word=token.word)
             ev_label_data.token = token
             label_assignment[ev_label] = ev_label_data
@@ -307,11 +311,7 @@ class Classifier:
 
         return label_assignment
 
-    def eval_precision(self, token_collection, label_assignment):
-        # TODO: Make Precision
-        pass
-
-    def eval_loss(self, token_collection, prob_matrix, label_assignment):
+    def eval_loss(self, token_collection, prob_matrix):
         """
         cross entropy loss
 
@@ -319,7 +319,7 @@ class Classifier:
         Loss small -> result is good
         Loss high -> result is bad
         :param token_collection:
-        :param ev_label_data:
+        :param prob_matrix:
         :return: loss
         """
         word_count, label_count = prob_matrix.shape
@@ -360,11 +360,11 @@ class Classifier:
             test_data[i] = new_result
 
         data = {
-            "train_data": train_data,
             "test_data": test_data,
             "feature_names": [f.name for f in ft.Feature],
             "label_names": [l.name for l in tu.EvLabel],
-            "total_loss": self.last_total_loss
+            "total_loss": self.last_total_loss,
+            "precisions": self.last_precisions
         }
 
         util.save_dict(json_path, data)
