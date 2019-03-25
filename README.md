@@ -62,7 +62,7 @@ The top row is default to be bold in Github Markdown, therefore it is left as em
 **Results rendering**
 * [pugjs](https://pugjs.org/api/getting-started.html)
 
-## Installing ##
+## Setup and Run ##
 **Step 1:** Fork this repository, install all requirements
 
 **Step 2:** Install the [GENIA Tagger](http://www.nactem.ac.uk/GENIA/tagger/) in the project root repository
