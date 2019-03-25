@@ -14,13 +14,13 @@ Our system uses conditional random field to automatically read the abstracts and
 * scipy
 * numpy
 * nltk (\*)
-* [GeniaTagger 3.0.2](http://www.nactem.ac.uk/GENIA/tagger/) or later
+* GeniaTagger 3.0.2 or later
 * [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py) by bornabesic
 
 (\*) The stopword corpus is needed. Instructions [here](http://www.nltk.org/data.html). 
 
 **Data collection**
-* **[UMLS API key](https://uts.nlm.nih.gov/home.html)**
+* Sign up and request your **[UMLS API key](https://uts.nlm.nih.gov/home.html)**
 * requests 
 * [beatifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
 * html5lib
@@ -31,6 +31,12 @@ Our system uses conditional random field to automatically read the abstracts and
 
 **Results rendering**
 * [pugjs](https://pugjs.org/api/getting-started.html)
+
+## Installing ##
+**Step 1:** Fork this repository, install all requirements
+**Step 2:** Install the [GENIA Tagger](http://www.nactem.ac.uk/GENIA/tagger/) in the project root repository
+**Step 3:** Get [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py) and put `geniatagger.py` in ./ie_tools/libraries/
+**Step 4:** Replace your UMLS API key with the current `api_key` in ./ie_tools/src/util.py 
 
 The project structure should look something like this:
 ```bash
@@ -72,7 +78,7 @@ The project structure should look something like this:
 └── results
     └── ...
 ```
-Please replace your UMLS API key with the current ```api_key``` in ./ie_tools/src/util.py 
+**Step 4:** Run the code.
 
 Due to absolute import python structure, please run the code as follows:
 
@@ -84,8 +90,3 @@ Due to absolute import python structure, please run the code as follows:
 
 ### Cross validation:
 ```python -m ie_tools.scripts.cross_validation```
-
-
-Genia Tagger wrapper gonna be based on this: https://github.com/bornabesic/genia-tagger-py
-
-Genia Tagger output help: https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
