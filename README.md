@@ -11,9 +11,9 @@ We compare the performance between Decision Tree, Random Forest and SVM classifi
 
 |               | Intervention (A1) | Comparison (A2) | Intervention Result (R1) | Comparison Result (A2) | Outcome Measure (OC) | Patient Group (P) |
 |---------------|:-----------------:|:---------------:|:------------------------:|:----------------------:|:--------------------:|:-----------------:|
-| Random Forest |       0.619       |      0.5105     |           0.398          |          0.304         |         0.719        |       0.863       |
-| SVM           |       0.534       |      0.4795     |          0.3375          |         0.2795         |        0.6855        |       0.823       |
-| Decision Tree |       0.4185      |      0.4805     |          0.3335          |          0.304         |        0.6135        |       0.767       |
+| **Random Forest** |       0.619       |      0.5105     |           0.398          |          0.304         |         0.719        |       0.863       |
+| **SVM**           |       0.534       |      0.4795     |          0.3375          |         0.2795         |        0.6855        |       0.823       |
+| **Decision Tree** |       0.4185      |      0.4805     |          0.3335          |          0.304         |        0.6135        |       0.767       |
 
 ## Requirements ##
 **General**
