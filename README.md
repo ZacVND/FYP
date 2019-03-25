@@ -25,8 +25,6 @@ Below is the comparison between the classifiers' precisions. Precision is the a 
 
 ## Sample Output ##
 
-The top row is default to be bold in Github Markdown, therefore it is left as empty as a workaround to achieve this look.
-
 **Paper 25393036:** Phacoemulsification Versus Combined Phacoemulsification and Viscogonioplasty in Primary Angle-Closure Glaucoma: A Randomized Clinical Trial.
 
 |      |                    |
@@ -37,6 +35,8 @@ The top row is default to be bold in Github Markdown, therefore it is left as em
 | **Outcome Measure**        |                    the mean iop                   |
 | **Result of Intervention** |           22.3+/-6.3 to 14.0+/-3.7 mm hg          |
 | **Result of Comparison**   |           23.3+/-7.3 to 14.5+/-2.5 mm hg          |
+
+The top row bold by default in Github Markdown, therefore it is left as empty as a workaround to achieve this look.
 
 ## Requirements ##
 **General**
