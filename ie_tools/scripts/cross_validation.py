@@ -6,7 +6,8 @@ import random
 from ie_tools.src.classifier import Classifier
 from ie_tools.src import util
 
-if __name__ == "__main__":
+
+def run():
     # choose between TypeRF, TypeDT, TypeSVM
     classifier_type = Classifier.TypeRF
     run_count = 20
@@ -18,9 +19,7 @@ if __name__ == "__main__":
 
     curr_i = 1
     running_sum = 0
-    running_avg = 0
     running_pre_sum = [0] * 6
-    running_pre_avg = [0] * 6
 
     print("---- INFO: First paper will always take longer to run than the "
           "subsequent papers because we starts genia tagger.\n\n")
@@ -84,3 +83,7 @@ if __name__ == "__main__":
                                          avg_total_precisions[3],
                                          avg_total_precisions[4],
                                          avg_total_precisions[5]))
+
+
+if __name__ == "__main__":
+    run()
