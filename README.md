@@ -88,7 +88,7 @@ The project structure should look something like this:
 └── results
     └── ...
 ```
-**Step 5:** Run the code. Due to absolute import python structure, please run the code as follows:
+**Step 5:** Run the code. Due to absolute import python structure, please run the code from the root directory as follows:
 ### Demo:
 ```python -m ie_tools.scripts.demo```
 
@@ -97,3 +97,5 @@ The project structure should look something like this:
 
 ### Cross validation:
 ```python -m ie_tools.scripts.cross_validation```
+Results from running the code are saved in ./results/ as `.json` and `.html` files
+
