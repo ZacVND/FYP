@@ -97,5 +97,6 @@ The project structure should look something like this:
 
 ### Cross validation:
 ```python -m ie_tools.scripts.cross_validation```
+
 Results from running the code are saved in ./results/ as `.json` and `.html` files
 
