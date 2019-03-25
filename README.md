@@ -7,7 +7,7 @@ The PICO (Patients, Intervention, Comparison, Outcome) framework is used to asse
 
 Our system uses conditional random field to automatically read the abstracts and extracting these evidence: Intervention arm, Comparison arm, Patient group, Outcome measure, and results of the 2 arms respectively.
 
-We compare the performance between Decision Tree, Random Forest and SVM classifiers for this task:
+We compare the performance between Decision Tree, Random Forest and SVM classifiers using **the average of 20 runs of 10-fold cross validation**:
 
 Cross entropy loss shows how close the predicted probability distribution (of tokens) is to the true probability distribution. Lower is better.
 
