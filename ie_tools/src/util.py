@@ -20,19 +20,27 @@ tgt = auth_client.gettgt()
 _end = '__end'
 
 script_dir = path.dirname(path.abspath(__file__))
+
 results_dir = path.normpath(path.join(script_dir, "..", "..", "results"))
+
 data_dir = path.normpath(path.join(script_dir, "..", "..",
-                                   "data", "annotation I"))
+                                   "data", "abstracts_structured"))
+
 pretrained_dir = path.normpath(path.join(script_dir, "..", "..", "pretrained"))
+
 unstructured_dir = path.normpath(path.join(script_dir, "..", "..", 'data',
-                                           'annotation I excluded files',
-                                           'unstructured'))
+                                           'abstracts_unstructured'))
+
 template_path = path.normpath(path.join(script_dir, "results.pug"))
+
 demo_template_path = path.normpath(path.join(script_dir, "demo.pug"))
+
 genia_tagger_path = path.normpath(path.join(script_dir, "..", "..",
                                             "geniatagger-3.0.2", "geniatagger"))
+
 umls_cache_path = path.normpath(path.join(script_dir, '..', '..', 'data',
                                           'umls_cache.json'))
+
 last_time = time.time()
 
 

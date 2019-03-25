@@ -373,7 +373,7 @@ class Classifier:
 def main():
     script_dir = path.dirname(path.realpath(__file__))
     # paper_paths = util.get_paper_paths()[:1]
-    paper_path = path.join(script_dir, pardir, "data", "annotation I",
+    paper_path = path.join(script_dir, pardir, "data", "abstracts_structured",
                            "9034838.xml")
     classifier = Classifier()
     classifier.train([paper_path])
