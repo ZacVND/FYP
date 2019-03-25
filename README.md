@@ -81,10 +81,7 @@ The project structure should look something like this:
 └── results
     └── ...
 ```
-**Step 5:** Run the code.
-
-Due to absolute import python structure, please run the code as follows:
-
+**Step 5:** Run the code. Due to absolute import python structure, please run the code as follows:
 ### Demo:
 ```python -m ie_tools.scripts.demo```
 
