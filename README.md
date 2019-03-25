@@ -7,6 +7,13 @@ The PICO (Patients, Intervention, Comparison, Outcome) framework is used to asse
 
 Our system uses conditional random field to automatically read the abstracts and extracting these evidence: Intervention arm, Comparison arm, Patient group, Outcome measure, and results of the 2 arms respectively.
 
+We compare the performance between Decision Tree, Random Forest and SVM classifiers for this task:
+|               | Intervention (A1) | Comparison (A2) | Intervention Result (R1) | Comparison Result (A2) | Outcome Measure (OC) | Patient Group (P) |
+|---------------|:-----------------:|:---------------:|:------------------------:|:----------------------:|:--------------------:|:-----------------:|
+| Random Forest |       0.619       |      0.5105     |           0.398          |          0.304         |         0.719        |       0.863       |
+| SVM           |       0.534       |      0.4795     |          0.3375          |         0.2795         |        0.6855        |       0.823       |
+| Decision Tree |       0.4185      |      0.4805     |          0.3335          |          0.304         |        0.6135        |       0.767       |
+
 ## Requirements ##
 **General**
 * Python 3.7 or higher
