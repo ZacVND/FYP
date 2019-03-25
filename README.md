@@ -111,6 +111,7 @@ The project structure should look something like this:
 * Saves results in `.json` format
 
 **Step 5:** Run *data_collection.py* to build the knowledge base for our model, output file is `umls_cache.json`:
+
 ```python -m ie_tools.scripts.data_collection```
 
 **NOTE:** Due to absolute import python structure, we have to use `python -m <module>` to run from command line. Otherwise running from PyCharm (2018) works by default.
@@ -122,16 +123,19 @@ Specify the classifier type with: `classifier_type = Classifier.TypeRF`. Choose 
 ### Hold out:
 ***hold_out.py***:
 Train the classifier on 80% of the abstract and test the classifier on the remaining 20%, if no pretrained classifier exist in *./pretrained/* it will train a new classifier.
+
 ```python -m ie_tools.scripts.hold_out```
 
 ### Demo:
 ***demo.py***:
 Runs hold_out script but with different final output being rendered
+
 ```python -m ie_tools.scripts.demo```
 
 ### Cross validation:
 ***cross_validation.py***:
 Train a new classifier at every run. There are 20 runs of 10-fold cross validation, these values can be modified in the file.
+
 ```python -m ie_tools.scripts.cross_validation```
 
 Results from running the code are saved in *./results/* as `.json` and `.html` files
