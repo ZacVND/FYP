@@ -91,19 +91,47 @@ The project structure should look something like this:
     └── ...
 ```
 
-***take_abstract.py***
+***take_abstract.py***: 
+* `take_abstract.take(pmid)` retrieves the abstract of a RCT report (identified by `pmid`) from the PubMed website and saves it in *./new_data/* folder.
+* `take_title(pmid)` retrieves the title of a RCT report from its `pmid` and write it to the corresponding abstract file.
 
-`take_abstract.take(pmid)` retrieves the abstract of a RCT report (identified by "pmid") from the PubMed website, 
-and saves it in *./new_data/* folder
+***feature.py***: 
+* `feature.get_feature_classes(word)` retrieves the corresponding semantic classes of a given `word`
+* Defines the features which the classifier uses in class `Feature`
 
-**Step 5:** Run the code. Due to absolute import python structure, please run the code from the root directory as follows:
-### Demo:
-```python -m ie_tools.scripts.demo```
+***util.py***: 
+* Defines all paths to necessary directories and files, **if you would like to change the structure please change this file accordingly**
+* Defines utilities functions such as rendering results into HTML, query UMLS Metathesaurus, building knowledge base, loading and parsing abstracts, etc...
+
+***token_utils.py***: 
+* Define functions to tokenise the abstract, do preprocessing tasks (tokenizing, chunking, shallow parsing), generate feature matrix for classifiers
+
+***classifier.py***: 
+* Define classifier functions, training and test, calculating precision and loss, pattern matching and selecting best tokens/phrases.
+* Saves results in `.json` format
+
+**Step 5:** Run *data_collection.py* to build the knowledge base for our model, output file is `umls_cache.json`:
+```python -m ie_tools.scripts.data_collection```
+
+**NOTE:** Due to absolute import python structure, we have to use `python -m <module>` to run from command line. Otherwise running from PyCharm (2018) works by default.
+
+**Step 6:** Run the code.
+
+Specify the classifier type with: `classifier_type = Classifier.TypeRF`. Choose between TypeRF, TypeSVM or TypeDT.
 
 ### Hold out:
+***hold_out.py***:
+Train the classifier on 80% of the abstract and test the classifier on the remaining 20%, if no pretrained classifier exist in *./pretrained/* it will train a new classifier.
 ```python -m ie_tools.scripts.hold_out```
 
+### Demo:
+***demo.py***:
+Runs hold_out script but with different final output being rendered
+```python -m ie_tools.scripts.demo```
+
 ### Cross validation:
+***cross_validation.py***:
+Train a new classifier at every run. There are 20 runs of 10-fold cross validation, these values can be modified in the file.
 ```python -m ie_tools.scripts.cross_validation```
 
 Results from running the code are saved in *./results/* as `.json` and `.html` files
