@@ -121,7 +121,7 @@ The project structure should look something like this:
     └── ...
 ```
 
-***take_abstract.py***: 
+***take_abstract.py***: This file is used to retrieve new abstracts, should you want to collect new data, please modify the `main()` function of this file, the new retrieved data will be in *./new_data/*
 * `take_abstract.take(pmid)` retrieves the abstract of a RCT report (identified by `pmid`) from the PubMed website and saves it in *./new_data/* folder.
 * `take_title(pmid)` retrieves the title of a RCT report from its `pmid` and write it to the corresponding abstract file.
 
