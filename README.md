@@ -34,8 +34,11 @@ Our system uses conditional random field to automatically read the abstracts and
 
 ## Installing ##
 **Step 1:** Fork this repository, install all requirements
+
 **Step 2:** Install the [GENIA Tagger](http://www.nactem.ac.uk/GENIA/tagger/) in the project root repository
+
 **Step 3:** Get [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py) and put `geniatagger.py` in ./ie_tools/libraries/
+
 **Step 4:** Replace your UMLS API key with the current `api_key` in ./ie_tools/src/util.py 
 
 The project structure should look something like this:
@@ -78,7 +81,7 @@ The project structure should look something like this:
 └── results
     └── ...
 ```
-**Step 4:** Run the code.
+**Step 5:** Run the code.
 
 Due to absolute import python structure, please run the code as follows:
 
