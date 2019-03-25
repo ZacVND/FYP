@@ -25,6 +25,7 @@ Below is the comparison between the classifiers' precisions. Precision is the a 
 
 ## Sample Output ##
 
+The top row is default to be bold in Github Markdown, therefore it is left as empty as a workaround to achieve this look.
 |      |                    |
 |:------------------------|:-------------------------------------------------:|
 | **Intervention Arm**       |           phacoemulsification ( phaco )           |
