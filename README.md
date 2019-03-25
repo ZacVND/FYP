@@ -9,11 +9,28 @@ Our system uses conditional random field to automatically read the abstracts and
 
 We compare the performance between Decision Tree, Random Forest and SVM classifiers for this task:
 
+Cross entropy loss shows how close the predicted probability distribution (of tokens) is to the true probability distribution.
+
+|                    | Random Forest |  SVM  | Decision Tree |
+|--------------------|:-------------:|:-----:|:-------------:|
+| **Cross Entropy Loss** |     0.2063    | 0.236 |     1.5371    |
+
+Below is the comparison between the classifiers' precisions. Precision is the a simple metric showing how well the system selected the phrases that contain the key information. The more phrases that contain the true token, the higher the precision.
+
 |               | Intervention (A1) | Comparison (A2) | Intervention Result (R1) | Comparison Result (A2) | Outcome Measure (OC) | Patient Group (P) |
 |---------------|:-----------------:|:---------------:|:------------------------:|:----------------------:|:--------------------:|:-----------------:|
 | **Random Forest** |       0.619       |      0.5105     |           0.398          |          0.304         |         0.719        |       0.863       |
 | **SVM**           |       0.534       |      0.4795     |          0.3375          |         0.2795         |        0.6855        |       0.823       |
 | **Decision Tree** |       0.4185      |      0.4805     |          0.3335          |          0.304         |        0.6135        |       0.767       |
+
+## Sample Output ##
+
+| **Intervention Arm**       |           phacoemulsification ( phaco )           |
+| **Comparison Arm**         | combined phacoemulsification and viscogonioplasty |
+| **Patient Group**          |               82 patients with pacg               |
+| **Outcome Measure**        |                    the mean iop                   |
+| **Result of Intervention** |           22.3+/-6.3 to 14.0+/-3.7 mm hg          |
+| **Result of Comparison**   |           23.3+/-7.3 to 14.5+/-2.5 mm hg          |
 
 ## Requirements ##
 **General**
