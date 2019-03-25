@@ -140,15 +140,19 @@ The project structure should look something like this:
 * Define classifier functions, training and test, calculating precision and loss, pattern matching and selecting best tokens/phrases.
 * Saves results in `.json` format
 
+
+
 **Step 5:** Run *data_collection.py* to build the knowledge base for our model, output file is `umls_cache.json`:
 
 ```python -m ie_tools.scripts.data_collection```
 
 **NOTE:** Due to absolute import python structure, we have to use `python -m <module>` to run from command line. Otherwise running from PyCharm (2018) works by default.
 
+
+
 **Step 6:** Run the code.
 
-Specify the classifier type with: `classifier_type = Classifier.TypeRF`. Choose between TypeRF, TypeSVM or TypeDT.
+Specify the classifier type with: `classifier_type = Classifier.TypeRF`. Choose between `Classifier.TypeRF`, `Classifier.TypeSVM` or `Classifier.TypeDT`.
 
 ### Hold out:
 ***hold_out.py***:
