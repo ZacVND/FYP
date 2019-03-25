@@ -25,8 +25,9 @@ Below is the comparison between the classifiers' precisions. Precision is the a 
 
 ## Sample Output ##
 
+|      |                    |
+|:------------------------|:-------------------------------------------------:|
 | **Intervention Arm**       |           phacoemulsification ( phaco )           |
-|------------------------|:-------------------------------------------------:|
 | **Comparison Arm**         | combined phacoemulsification and viscogonioplasty |
 | **Patient Group**          |               82 patients with pacg               |
 | **Outcome Measure**        |                    the mean iop                   |
