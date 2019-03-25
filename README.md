@@ -8,7 +8,7 @@ The PICO (Patients, Intervention, Comparison, Outcome) framework is used to asse
 Our system uses conditional random field to automatically read the abstracts and extracting these evidence: Intervention arm, Comparison arm, Patient group, Outcome measure, and results of the 2 arms respectively.
 
 ## Requirements ##
-General
+**General**
 * Python 3.7 or higher
 * sklearn
 * scipy
@@ -19,7 +19,8 @@ General
 
 (\*) The stopword corpus is needed. Instructions [here](http://www.nltk.org/data.html). 
 
-Data collection
+**Data collection**
+* **[UMLS API key](https://uts.nlm.nih.gov/home.html)**
 * requests 
 * [beatifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
 * html5lib
@@ -28,7 +29,7 @@ Data collection
 * urllib3
 * certifi
 
-Results rendering
+**Results rendering**
 * [pugjs](https://pugjs.org/api/getting-started.html)
 
 The project structure should look something like this:
@@ -67,11 +68,11 @@ The project structure should look something like this:
 │       ├── token_utils.py
 │       └── util.py
 ├── pretrained
-│   ├── decision_tree.sav
-│   └── random_forest.sav
+│   └── ...
 └── results
     └── ...
 ```
+Please replace your UMLS API key with the current ```api_key``` in ./ie_tools/src/util.py 
 
 Due to absolute import python structure, please run the code as follows:
 
