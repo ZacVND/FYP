@@ -24,7 +24,7 @@ Below is the comparison between the classifiers' precisions. Precision is the a 
 | **Decision Tree** |       0.4185      |      0.4805     |          0.3335          |          0.304         |        0.6135        |       0.767       |
 
 ## Sample Output ##
-
+|------------------------|:-------------------------------------------------:|
 | **Intervention Arm**       |           phacoemulsification ( phaco )           |
 | **Comparison Arm**         | combined phacoemulsification and viscogonioplasty |
 | **Patient Group**          |               82 patients with pacg               |
