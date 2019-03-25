@@ -9,15 +9,15 @@ Our system uses conditional random field to automatically read the abstracts and
 
 We compare the performance between Decision Tree, Random Forest and SVM classifiers for this task:
 
-Cross entropy loss shows how close the predicted probability distribution (of tokens) is to the true probability distribution.
+Cross entropy loss shows how close the predicted probability distribution (of tokens) is to the true probability distribution. Lower is better.
 
 |                    | Random Forest |  SVM  | Decision Tree |
 |--------------------|:-------------:|:-----:|:-------------:|
 | **Cross Entropy Loss** |     0.2063    | 0.236 |     1.5371    |
 
-Below is the comparison between the classifiers' precisions. Precision is the a simple metric showing how well the system selected the phrases that contain the key information. The more phrases that contain the true token, the higher the precision.
+Below is the comparison between the classifiers' precisions. Precision is the a simple metric showing how well the system selected the phrases that contain the key information. The more phrases that contain the true token, the higher the precision. Higher is better.
 
-|               | Intervention (A1) | Comparison (A2) | Intervention Result (R1) | Comparison Result (A2) | Outcome Measure (OC) | Patient Group (P) |
+|               | Intervention (A1) | Comparison (A2) | Intervention Result (R1) | Comparison Result (R2) | Outcome Measure (OC) | Patient Group (P) |
 |---------------|:-----------------:|:---------------:|:------------------------:|:----------------------:|:--------------------:|:-----------------:|
 | **Random Forest** |       0.619       |      0.5105     |           0.398          |          0.304         |         0.719        |       0.863       |
 | **SVM**           |       0.534       |      0.4795     |          0.3375          |         0.2795         |        0.6855        |       0.823       |
