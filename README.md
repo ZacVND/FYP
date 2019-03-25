@@ -39,7 +39,14 @@ Our system uses conditional random field to automatically read the abstracts and
 
 **Step 3:** Get [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py) and put `geniatagger.py` in ./ie_tools/libraries/
 
-**Step 4:** Replace your UMLS API key with the current `api_key` in ./ie_tools/src/util.py 
+**Step 4:** Insert your UMLS API key
+```python
+# ./ie_tools/src/util.py 
+
+...
+api_key = "<Your API key here>"
+...
+```
 
 The project structure should look something like this:
 ```bash
