@@ -37,7 +37,7 @@ Our system uses conditional random field to automatically read the abstracts and
 
 **Step 2:** Install the [GENIA Tagger](http://www.nactem.ac.uk/GENIA/tagger/) in the project root repository
 
-**Step 3:** Get [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py) and put `geniatagger.py` in ./ie_tools/libraries/
+**Step 3:** Get [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py) and put `geniatagger.py` in *./ie_tools/libraries/*
 
 **Step 4:** Insert your UMLS API key
 ```python
@@ -83,11 +83,19 @@ The project structure should look something like this:
 │       ├── take_abstract.py
 │       ├── token_utils.py
 │       └── util.py
+├── new_data
+│   └── ...
 ├── pretrained
 │   └── ...
 └── results
     └── ...
 ```
+
+***take_abstract.py***
+
+`take_abstract.take(pmid)` retrieves the abstract of a RCT report (identified by "pmid") from the PubMed website, 
+and saves it in *./new_data/* folder
+
 **Step 5:** Run the code. Due to absolute import python structure, please run the code from the root directory as follows:
 ### Demo:
 ```python -m ie_tools.scripts.demo```
@@ -98,5 +106,5 @@ The project structure should look something like this:
 ### Cross validation:
 ```python -m ie_tools.scripts.cross_validation```
 
-Results from running the code are saved in ./results/ as `.json` and `.html` files
+Results from running the code are saved in *./results/* as `.json` and `.html` files
 
