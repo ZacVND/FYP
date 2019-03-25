@@ -27,6 +27,8 @@ Below is the comparison between the classifiers' precisions. Precision is the a 
 
 The top row is default to be bold in Github Markdown, therefore it is left as empty as a workaround to achieve this look.
 
+**Paper 25393036:** Phacoemulsification Versus Combined Phacoemulsification and Viscogonioplasty in Primary Angle-Closure Glaucoma: A Randomized Clinical Trial.
+
 |      |                    |
 |:------------------------|:-------------------------------------------------:|
 | **Intervention Arm**       |           phacoemulsification ( phaco )           |
@@ -40,7 +42,6 @@ The top row is default to be bold in Github Markdown, therefore it is left as em
 **General**
 * Python 3.7 or higher
 * sklearn
-* scipy
 * numpy
 * nltk (\*)
 * GeniaTagger 3.0.2 or later
