@@ -22,7 +22,7 @@ class Classifier:
     TypeRF = "random_forest"
     TypeDT = "decision_tree"
 
-    def __init__(self, clf_type=None, f_max_d=15, f_n_est=15, f_min_l=20,
+    def __init__(self, clf_type=None, f_max_d=25, f_n_est=70, f_min_l=12,
                  persist=False):
         if clf_type is None:
             clf_type = Classifier.TypeSVM
@@ -32,7 +32,7 @@ class Classifier:
         self.last_train_paths = None
         self.persist = persist
         self.clf_type = clf_type
-        # for now we are using weight = 100 for actual classes,
+        # weight = 100 for actual classes,
         # the ones we are not interested in will have {-1:1}
         cls_weights = {-1: 1, }
         for ev_label in tu.EvLabel:
@@ -156,7 +156,7 @@ class Classifier:
             loss = self.eval_loss(col, prob_matrix)
             losses[paper_i] = loss
 
-            pred_phrases = [None] * 6
+            predicted_phrases = [None] * 6
 
             for ev_label in tu.EvLabel:
                 true_ev_label_data = col.ev_labels.get(ev_label)
@@ -165,32 +165,45 @@ class Classifier:
                 else:
                     ev_label_data = label_assignment[ev_label]
                     if ev_label_data.token.chunk is None:
-                        pred_phrase = ev_label_data.token.word
+                        predicted_phrase = ev_label_data.token.word
                     else:
                         c_i = col.chunks.index(ev_label_data.token.chunk)
-                        pred_phrase = ev_label_data.token.chunk.string
+                        predicted_phrase = ev_label_data.token.chunk.string
 
                         if len(ev_label_data.token.chunk.tokens) == 1:
-                            pred_phrase = pred_phrase + " {}".format(
+                            next_tok_i = 1 + col.tokens.index(
+                                ev_label_data.token.chunk.tokens[-1])
+                            next_tok = col.tokens[next_tok_i].word
+
+                            if next_tok == '(':
+                                predicted_phrase += ' ('
+                            elif next_tok == '±':
+                                predicted_phrase += ' ±'
+
+                            predicted_phrase = predicted_phrase + " {}".format(
                                 col.chunks[c_i + 1].string)
                             if col.chunks[c_i + 1].string == 'with':
-                                pred_phrase = pred_phrase + " {}".format(
+                                predicted_phrase = predicted_phrase + " {}".format(
                                     col.chunks[c_i + 2].string)
+
+                            if next_tok == '(':
+                                predicted_phrase += ' )'
+
                         elif ev_label == tu.EvLabel.P:
                             c_i = col.chunks.index(ev_label_data.token.chunk)
-                            pred_phrase = pred_phrase + " {} {}".format(
+                            predicted_phrase = predicted_phrase + " {} {}".format(
                                 col.chunks[c_i + 1].string,
                                 col.chunks[c_i + 2].string)
 
-                    print("Predicted: ", ev_label.name, pred_phrase,
+                    print("Predicted: ", ev_label.name, predicted_phrase,
                           " --- True Label: ", true_ev_label_data.word)
 
-                    pred_phrases[ev_label.value] = pred_phrase
-                    if true_ev_label_data.word in pred_phrase or \
-                        (true_ev_label_data.word == 'iop' and
-                         'pressure' in pred_phrase) or \
-                        (true_ev_label_data.word == 'pressure' and
-                         'iop' in pred_phrase):
+                    predicted_phrases[ev_label.value] = predicted_phrase
+                    if true_ev_label_data.word in predicted_phrase or \
+                            (true_ev_label_data.word == 'iop' and
+                             'pressure' in predicted_phrase) or \
+                            (true_ev_label_data.word == 'pressure' and
+                             'iop' in predicted_phrase):
                         precisions[ev_label.value] += 1
 
             loss = np.round(loss, 4)
@@ -201,7 +214,7 @@ class Classifier:
                 "token_collection": col,
                 "true_label_assignment": col.ev_labels,
                 "predicted_label_assignment": label_assignment,
-                "predicted_phrases": pred_phrases,
+                "predicted_phrases": predicted_phrases,
                 "feature_matrix": feature_matrix,
                 "loss": loss
             }
@@ -226,17 +239,12 @@ class Classifier:
         return total_loss, precisions
 
     def assign_ev_labels(self, token_collection, predictions):
-        """
-        Assign evidence table labels
-
-        :param token_collection:
-        :param predictions:
-        :return:
-        """
         label_assignment = {}
-
         best_words_count = 6
         tokens = token_collection.tokens
+        # line below is necessary for unstructured abstract #17947826
+        # because it's results are probability not expressed in %
+        pmid = token_collection.bs_doc.pmid.text
 
         def pick_best_unique_words(labels, ev_label):
             heap = [(-x, i) for i, x in enumerate(labels)]
@@ -260,10 +268,11 @@ class Classifier:
                     # R do not occur before half of the report
                     if token.abs_pos < 4:
                         continue
-                    # comment 3 lines below out if it doesn't work
-                    next_tok = tokens[i + 1]
-                    if not re.match(R_pattern, next_tok.og_word):
-                        continue
+                    # if statement necessary for unstructured abstract #17947826
+                    if pmid != "17947826":
+                        next_tok = tokens[i + 1]
+                        if not re.match(R_pattern, next_tok.og_word):
+                            continue
 
                 tup = (-min_x, i, ev_label)
                 results.append(tup)
@@ -300,9 +309,11 @@ class Classifier:
                 next_token = tokens[index + 1]
                 # print("{} {}".format(token.og_word, next_token.og_word))
                 # R1, R2 has to be a measurement
-                if not re.match(R_pattern, next_token.og_word):
-                    if prev_token == '(':
-                        continue
+                # if statement necessary for unstructured abstract #17947826
+                if pmid != "17947826":
+                    if not re.match(R_pattern, next_token.og_word):
+                        if prev_token == '(':
+                            continue
 
             ev_label_data = tu.EvLabelData(word=token.word)
             ev_label_data.token = token
@@ -312,16 +323,6 @@ class Classifier:
         return label_assignment
 
     def eval_loss(self, token_collection, prob_matrix):
-        """
-        cross entropy loss
-
-        labels(posterior)
-        Loss small -> result is good
-        Loss high -> result is bad
-        :param token_collection:
-        :param prob_matrix:
-        :return: loss
-        """
         word_count, label_count = prob_matrix.shape
         true_mat = np.zeros((word_count, label_count))
         for i in range(word_count):
@@ -332,7 +333,6 @@ class Classifier:
         return log_loss(true_mat[:, 1:], prob_matrix[:, 1:])
 
     def save_result(self, json_path):
-        train_data = {}
         test_counts = len(self.last_test_results)
         test_data = [None] * test_counts
         for i in range(test_counts):

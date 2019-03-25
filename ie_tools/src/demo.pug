@@ -1,0 +1,43 @@
+html
+    head
+        title Results
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css')
+        link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/bulma-extensions@4.0.1/dist/css/bulma-extensions.min.css')
+        script(src='https://use.fontawesome.com/releases/v5.3.1/js/all.js')
+        script(src='https://cdn.jsdelivr.net/npm/bulma-extensions@4.0.1/dist/js/bulma-extensions.min.js')
+        script(src='https://cdn.jsdelivr.net/npm/bulma-extensions@4.0.1/bulma-accordion/dist/js/bulma-accordion.min.js')
+    body
+        br
+
+        div(class='container')
+            for test_result in test_data
+                div(class='message is-dark')
+                    div(class='message-body')
+                        h2(class='title') Paper #{test_result.pmid}
+                        p Path: #{test_result.paper_path}
+
+                        table(class='table is-bordered is-striped')
+                            -
+                                var assignments = test_result.label_assignment
+                            tr
+                                th Intervention Arm
+                                td #{assignments.A1.predicted_phrase}
+                            tr
+                                th Comparison Arm
+                                td #{assignments.A2.predicted_phrase}
+                            tr
+                                th Patient Group
+                                td #{assignments.P.predicted_phrase}
+                            tr
+                                th Outcome Measure
+                                td #{assignments.OC.predicted_phrase}
+                            tr
+                                th Result of Intervention
+                                td #{assignments.R1.predicted_phrase}
+                            tr
+                                th Result of Comparison
+                                td #{assignments.R2.predicted_phrase}
+
+        br

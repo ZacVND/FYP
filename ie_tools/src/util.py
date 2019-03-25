@@ -28,6 +28,7 @@ unstructured_dir = path.normpath(path.join(script_dir, "..", "..", 'data',
                                            'annotation I excluded files',
                                            'unstructured'))
 template_path = path.normpath(path.join(script_dir, "results.pug"))
+demo_template_path = path.normpath(path.join(script_dir, "demo.pug"))
 genia_tagger_path = path.normpath(path.join(script_dir, "..", "..",
                                             "geniatagger-3.0.2", "geniatagger"))
 umls_cache_path = path.normpath(path.join(script_dir, '..', '..', 'data',
@@ -53,6 +54,10 @@ def get_genia_tagger_path():
 
 def get_template_path():
     return template_path
+
+
+def get_demo_template_path():
+    return demo_template_path
 
 
 def log(string):
