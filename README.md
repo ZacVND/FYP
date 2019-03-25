@@ -7,6 +7,30 @@ The PICO (Patients, Intervention, Comparison, Outcome) framework is used to asse
 
 Our system uses conditional random field to automatically read the abstracts and extracting these evidence: Intervention arm, Comparison arm, Patient group, Outcome measure, and results of the 2 arms respectively.
 
+## Requirements ##
+General
+* Python 3.7 or higher
+* sklearn
+* scipy
+* numpy
+* nltk (\*)
+* [GeniaTagger 3.0.2](http://www.nactem.ac.uk/GENIA/tagger/) or later
+* [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py) by bornabesic
+
+(\*) The stopword corpus is needed. Instructions [here](http://www.nltk.org/data.html). 
+
+Data collection
+* requests 
+* [beatifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
+* html5lib
+* lxml 
+* json
+* urllib3
+* certifi
+
+Results rendering
+* [pugjs](https://pugjs.org/api/getting-started.html)
+
 The project structure should look something like this:
 ```bash
 .
