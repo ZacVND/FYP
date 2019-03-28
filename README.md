@@ -25,8 +25,6 @@ Below is the comparison between the classifiers' precisions. Precision is the a 
 
 ## Sample Output ##
 
-The top row is default to be bold in Github Markdown, therefore it is left as empty as a workaround to achieve this look.
-
 **Paper 25393036:** Phacoemulsification Versus Combined Phacoemulsification and Viscogonioplasty in Primary Angle-Closure Glaucoma: A Randomized Clinical Trial.
 
 |      |                    |
@@ -37,6 +35,8 @@ The top row is default to be bold in Github Markdown, therefore it is left as em
 | **Outcome Measure**        |                    the mean iop                   |
 | **Result of Intervention** |           22.3+/-6.3 to 14.0+/-3.7 mm hg          |
 | **Result of Comparison**   |           23.3+/-7.3 to 14.5+/-2.5 mm hg          |
+
+The top row bold by default in Github Markdown, therefore it is left as empty as a workaround to achieve this look.
 
 ## Requirements ##
 **General**
@@ -121,7 +121,7 @@ The project structure should look something like this:
     └── ...
 ```
 
-***take_abstract.py***: 
+***take_abstract.py***: This file is used to retrieve new abstracts, should you want to collect new data, please modify the `main()` function of this file, the new retrieved data will be in *./new_data/*
 * `take_abstract.take(pmid)` retrieves the abstract of a RCT report (identified by `pmid`) from the PubMed website and saves it in *./new_data/* folder.
 * `take_title(pmid)` retrieves the title of a RCT report from its `pmid` and write it to the corresponding abstract file.
 
