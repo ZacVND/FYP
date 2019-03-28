@@ -12,6 +12,7 @@ def run(demo=False):
     classifier_type = Classifier.TypeRF
     random = True
     persist = True
+    pretrain = False
     unstructured = False
     max_papers = 120
     paper_paths = util.get_paper_paths()[:max_papers]
@@ -19,9 +20,8 @@ def run(demo=False):
     if random:
         train_pps, test_pps = ms.train_test_split(paper_paths, test_size=0.2)
     else:
-        i = len(paper_paths)
-        train_pps = paper_paths[:int(i / 2)]
-        test_pps = paper_paths[int(i / 2) + 1:]
+        train_pps, test_pps = ms.train_test_split(paper_paths, test_size=0.2,
+                                                  random_state=1)
 
     prefix = classifier_type
     unstructured_dir = util.get_unstructured_dir()
@@ -38,9 +38,9 @@ def run(demo=False):
         classifier_type))
 
     print("---- INFO: First paper will always take longer to run than the "
-          "subsequent papers because we starts genia tagger.\n\n")
+          "subsequent papers because we start genia tagger.\n\n")
 
-    if path.isfile(pretrained):
+    if path.isfile(pretrained) and pretrain:
         print("Pretrained weights for {} exist. "
               "Using existing weights.".format(classifier_type))
         classifier.load_model(pretrained)

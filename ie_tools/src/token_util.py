@@ -73,7 +73,7 @@ class Token:
         self.abs_pos = 1
         self.para_cat = None
         self.para_label = None
-        self.bow = 0
+        self.freq = 0
 
     def set_sent_pos(self, sent_pos):
         if sent_pos > self.sent_pos:
@@ -95,8 +95,8 @@ class Token:
     def set_para_label(self, para_label):
         self.para_label = para_label
 
-    def set_bow(self, bow):
-        self.bow = bow
+    def set_freq(self, freq):
+        self.freq = freq
 
 
 class Chunk:
@@ -125,7 +125,10 @@ class TokenCollection:
         self.feature_vectors = None
         self.labels = None
         self.chunks = None
-        self.bow = None
+        self.freq_dict = None
+
+    def set_freq_dict(self, freq_dict):
+        self.freq_dict = freq_dict
 
     def build_tokens(self, umls_cache=False):
 
@@ -291,12 +294,14 @@ class TokenCollection:
             title_words = nltk.word_tokenize(title)
             title_trie = util.Trie(strings=title_words)
 
-        bow_representation = {}
+        freq_dict = {}
         for tok in self.tokens:
-            if bow_representation.get(tok.word) is None:
-                bow_representation[tok.word] = 1
+            if freq_dict.get(tok.word) is None:
+                freq_dict[tok.word] = 1
             else:
-                bow_representation[tok.word] += 1
+                freq_dict[tok.word] += 1
+
+        self.set_freq_dict(freq_dict)
 
         for chunk in self.chunks:
             chunk.extract_features()
@@ -404,11 +409,11 @@ class TokenCollection:
             feature_vectors[token_i,
                             ft.Feature.ABSTRACT_POSITION.value] = token.abs_pos
 
-            # abstract bow feature
-            bow = bow_representation.get(token.word)
-            token.set_bow(bow)
+            # abstract freq_dict feature
+            freq = freq_dict.get(token.word)
+            token.set_freq(freq)
             feature_vectors[token_i,
-                            ft.Feature.ABSTRACT_BOW.value] = token.bow
+                            ft.Feature.TOK_FREQ.value] = token.freq
 
         # expand the cache if encounters new words
         util.umls_cache.save()

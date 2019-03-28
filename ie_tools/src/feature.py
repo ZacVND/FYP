@@ -25,7 +25,7 @@ class Feature(Enum):
     PARA_CAT_METHODS = 16
     PARA_CAT_RESULTS = 17
     ABSTRACT_POSITION = 18  # A always appear before OC always appear before R
-    ABSTRACT_BOW = 19
+    TOK_FREQ = 19
 
 
 feature_count = len(Feature.__members__.items())
@@ -55,7 +55,6 @@ class_to_feature_mapping = {
 
 class_to_feature_trie = util.Trie(mapping=class_to_feature_mapping)
 
-print("hello")
 
 def get_feature_classes(word):
     feature_class_map = {}

@@ -144,11 +144,38 @@ class Classifier:
             # classify A1, A2, R1, R2, OC, P
             prob_matrix = self.clf.predict_proba(feature_matrix)
 
+            tokens = col.tokens
+            for i in range(len(tokens)):
+                tok = tokens[i]
+                next_token = tokens[i + 1] if i < len(tokens) - 1 else None
+                prev_token = tokens[i - 1] if i > 0 else None
+
+                # R do not occur before half of the report
+                if tok.abs_pos < 4:
+                    prob_matrix[i, tu.EvLabel.R1.value+1] = 0
+                    prob_matrix[i, tu.EvLabel.R2.value+1] = 0
+
+                if tok.g_tags[tu.G_POS_TAG] != "CD":
+                    prob_matrix[i, tu.EvLabel.R1.value+1] = 0
+                    prob_matrix[i, tu.EvLabel.R2.value+1] = 0
+
+                else:
+                    followed_by_unit = re.match(R_pattern, next_token.og_word) \
+                        if next_token else False
+                    prefix_by_bracket = prev_token == "("
+                    if not followed_by_unit or prefix_by_bracket:
+                        prob_matrix[i, tu.EvLabel.R1.value+1] *= 0.2
+                        prob_matrix[i, tu.EvLabel.R2.value+1] *= 0.2
+
             final_prob_matrix = prob_matrix.copy()
 
-            for tok_i in range(len(final_prob_matrix)):
-                final_prob_matrix[tok_i, :] /= np.sum(final_prob_matrix[tok_i,
-                                                      :])
+            for col_i in range(final_prob_matrix.shape[1]):
+                final_prob_matrix[:, col_i] /= np.sum(final_prob_matrix[:, col_i])
+
+
+            # for tok_i in range(len(final_prob_matrix)):
+            #     final_prob_matrix[tok_i, :] /= np.sum(final_prob_matrix[tok_i,
+            #                                           :])
 
             predictions = {}
             for ev_label in tu.EvLabel:
@@ -249,7 +276,6 @@ class Classifier:
             heap = [(-x, i) for i, x in enumerate(labels)]
             heapq.heapify(heap)
             results = []
-            bad_results = []
             seen = {}
             best_word_index = 0
             while best_word_index < best_words_count:
@@ -261,33 +287,10 @@ class Classifier:
                 if seen.get(token.word):
                     continue
 
-                good = True
-
-                # Results has to be a Cardinal Digit
-                if "R" in ev_label.name:
-                    if token.g_tags[tu.G_POS_TAG] != "CD":
-                        good = False
-
-                    # R do not occur before half of the report
-                    elif token.abs_pos < 4:
-                        good = False
-
-                    else:
-                        next_tok = tokens[i + 1]
-                        if not re.match(R_pattern, next_tok.og_word):
-                            good = False
-
                 tup = (-min_x, i, ev_label)
-                if good:
-                    results.append(tup)
-                    seen[token.word] = True
-                    best_word_index += 1
-                else:
-                    bad_results.append(tup)
-
-            if len(results) < best_words_count:
-                results = (results + bad_results)[:best_words_count]
-
+                results.append(tup)
+                seen[token.word] = True
+                best_word_index += 1
             return results
 
         all_tuples = []
