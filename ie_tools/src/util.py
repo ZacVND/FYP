@@ -10,14 +10,14 @@ import os
 
 from ie_tools.libraries.Authentication import Authentication
 
-logging.basicConfig(format='[%(name)s|%(levelname)s] %(message)s',
+logging.basicConfig(format="[%(name)s|%(levelname)s] %(message)s",
                     level=logging.INFO)
 
 api_key = "bea4b3d4-f1ef-439e-b68f-3564c8c7a231"
 auth_client = Authentication(api_key)
 tgt = auth_client.gettgt()
 
-_end = '__end'
+_end = "__end"
 
 script_dir = path.dirname(path.abspath(__file__))
 
@@ -26,10 +26,15 @@ results_dir = path.normpath(path.join(script_dir, "..", "..", "results"))
 data_dir = path.normpath(path.join(script_dir, "..", "..",
                                    "data", "abstracts_structured"))
 
-pretrained_dir = path.normpath(path.join(script_dir, "..", "..", "pretrained"))
+unstructured_dir = path.normpath(path.join(script_dir, "..", "..", "data",
+                                           "abstracts_unstructured"))
 
-unstructured_dir = path.normpath(path.join(script_dir, "..", "..", 'data',
-                                           'abstracts_unstructured'))
+testing_dir = path.normpath(path.join(script_dir, "..", "..", "data",
+                                           "testing"))
+
+new_data_dir = path.normpath(path.join(script_dir, "..", "..", "new_data"))
+
+pretrained_dir = path.normpath(path.join(script_dir, "..", "..", "pretrained"))
 
 template_path = path.normpath(path.join(script_dir, "results.pug"))
 
@@ -38,8 +43,8 @@ demo_template_path = path.normpath(path.join(script_dir, "demo.pug"))
 genia_tagger_path = path.normpath(path.join(script_dir, "..", "..",
                                             "geniatagger-3.0.2", "geniatagger"))
 
-umls_cache_path = path.normpath(path.join(script_dir, '..', '..', 'data',
-                                          'umls_cache.json'))
+umls_cache_path = path.normpath(path.join(script_dir, "..", "..", "data",
+                                          "umls_cache.json"))
 
 last_time = time.time()
 
@@ -48,8 +53,16 @@ def get_unstructured_dir():
     return unstructured_dir
 
 
+def get_testing_dir():
+    return testing_dir
+
+
 def get_pretrained_dir():
     return pretrained_dir
+
+
+def get_new_data_dir():
+    return new_data_dir
 
 
 def get_result_dir():
@@ -81,20 +94,22 @@ def get_logger(name):
 
 def load_dict(file_path):
     try:
-        cache = json.load(open(file_path, 'r'))
+        cache = json.load(open(file_path, "r"))
     except (IOError, ValueError):
         cache = {}
+
     return cache
 
 
 def save_dict(file_path, dict):
-    json.dump(dict, open(file_path, 'w'))
+    json.dump(dict, open(file_path, "w"))
 
 
 def render_pug(template_path, out_path=None, out_file=None, json_path=None):
     if shutil.which("pug") is None:
         print("The command `pug` is not available! You will need to install it"
               " yourself - https://pugjs.org")
+
         return
 
     command = "pug"
@@ -139,6 +154,7 @@ def parse_paper(paper_path):
     with open(paper_path) as f:
         raw = f.read()
         soup = bs4.BeautifulSoup(raw, "html5lib")
+
     return soup
 
 
@@ -184,6 +200,7 @@ class Trie:
                 for letter in string:
                     current_dict = current_dict.setdefault(letter, {})
                 current_dict[_end] = key
+
         return root
 
     @staticmethod
@@ -195,6 +212,7 @@ class Trie:
             for letter in string:
                 current_dict = current_dict.setdefault(letter, {})
             current_dict[_end] = True
+
         return root
 
     def check(self, string):
@@ -235,54 +253,56 @@ def get_umls_classes(string):
     # REQUIRED: generate a ticket for each request
     ticket = auth_client.getst(tgt)
 
-    query = {'string': string, 'ticket': ticket, 'pageNumber': 1,
-             'pageSize': 1,
-             'searchType': 'exact'}
+    query = {"string": string, "ticket": ticket, "pageNumber": 1,
+             "pageSize": 1,
+             "searchType": "exact"}
     search_result = requests.get(uri + content_endpoint, params=query)
-    search_result.encoding = 'utf-8'
+    search_result.encoding = "utf-8"
     results = json.loads(search_result.text)["result"]["results"]
 
-    uri_2 = 'https://uts-ws.nlm.nih.gov/rest'
-    content_endpoint_2 = '/content/' + version + '/CUI/'
+    uri_2 = "https://uts-ws.nlm.nih.gov/rest"
+    content_endpoint_2 = "/content/" + version + "/CUI/"
 
     classes = []
 
     for result in results:
 
         uid = result["ui"]
-        if uid is None or uid == 'NONE':
+        if uid is None or uid == "NONE":
             continue
 
         try:
             ticket = auth_client.getst(tgt)
-            query_2 = {'ticket': ticket}
+            query_2 = {"ticket": ticket}
             r_2 = requests.get(uri_2 + content_endpoint_2 + uid,
                                params=query_2)
 
             if not 200 <= r_2.status_code < 300:
                 continue
 
-            r_2.encoding = 'utf-8'
+            r_2.encoding = "utf-8"
             items = json.loads(r_2.text)
-            json_sem = items['result']['semanticTypes']
+            json_sem = items["result"]["semanticTypes"]
             for result in json_sem:
-                classes.append(result['name'])
+                classes.append(result["name"])
+
         except json.JSONDecodeError:
-            print('Got bad JSON!')
+            print("Got bad JSON!")
 
     umls_cache.set(string, classes)
+
     return classes
 
 
 def main():
     classes = get_umls_classes("timolol")
-    assert ('Pharmacologic Substance' in classes)
+    assert ("Pharmacologic Substance" in classes)
     class_to_feature_mapping = {
-        13: ['Pharmacologic Substance', 'Antibiotic',
-             'Organic Chemical', 'Biomedical or Dental Material']
+        13: ["Pharmacologic Substance", "Antibiotic",
+             "Organic Chemical", "Biomedical or Dental Material"]
     }
     pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

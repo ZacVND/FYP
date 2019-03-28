@@ -11,7 +11,7 @@ def run():
     # choose between TypeRF, TypeDT, TypeSVM
     classifier_type = Classifier.TypeRF
     run_count = 20
-    fold_count = 10
+    fold_count = 8
     max_papers = 120
     paper_paths = util.get_paper_paths()[:max_papers]
     paper_count = len(paper_paths)

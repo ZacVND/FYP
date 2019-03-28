@@ -1,6 +1,6 @@
 from joblib import Parallel, delayed
 
-import ie_tools.src.token_utils as tu
+import ie_tools.src.token_util as tu
 from ie_tools.src import util
 
 if __name__ == "__main__":
@@ -13,8 +13,6 @@ if __name__ == "__main__":
     paper_count = len(paper_paths)
     paper_soups = [None] * paper_count
 
-    import util as our_util
-
 
     def process_word(word_i, word):
         # print('Processing word {}'.format(word_i + 1))
@@ -22,7 +20,7 @@ if __name__ == "__main__":
         if cached_classes is not None:
             return word, cached_classes
 
-        classes = our_util.get_umls_classes(word)
+        classes = util.get_umls_classes(word)
         return word, classes
 
 

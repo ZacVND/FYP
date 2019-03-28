@@ -25,6 +25,7 @@ class Feature(Enum):
     PARA_CAT_METHODS = 16
     PARA_CAT_RESULTS = 17
     ABSTRACT_POSITION = 18  # A always appear before OC always appear before R
+    ABSTRACT_BOW = 19
 
 
 feature_count = len(Feature.__members__.items())
@@ -43,7 +44,8 @@ treatment_dict_trie = util.Trie(strings=["combination", "fixed-combination",
 
 class_to_feature_mapping = {
     Feature.TOK_IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
-                                'Organic Chemical', "Clinical Drug"],
+                                'Organic Chemical', "Clinical Drug",
+                                "Substance"],
     Feature.TOK_IS_PROCEDURE.value: ['Therapeutic or Preventive Procedure',
                                      'Medical Device'],
     Feature.TOK_IS_PATIENTS.value: ['Patient or Disabled Group',
@@ -53,6 +55,7 @@ class_to_feature_mapping = {
 
 class_to_feature_trie = util.Trie(mapping=class_to_feature_mapping)
 
+print("hello")
 
 def get_feature_classes(word):
     feature_class_map = {}

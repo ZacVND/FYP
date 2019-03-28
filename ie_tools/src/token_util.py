@@ -1,7 +1,6 @@
 from nltk.corpus import stopwords
 from string import punctuation
 from enum import Enum
-from os import path
 import numpy as np
 import unicodedata
 import nltk
@@ -11,8 +10,6 @@ import re
 from ie_tools.libraries.geniatagger import GENIATagger
 import ie_tools.src.feature as ft
 from ie_tools.src import util
-
-script_dir = path.dirname(path.abspath(__file__))
 
 # constants to extract info from genia tagger output.
 # Example:
@@ -33,11 +30,11 @@ genia_tagger_path = util.get_genia_tagger_path()
 # NOTE: text has to be text, preferrably a sentence. NOT list of 'word'
 tagger = GENIATagger(genia_tagger_path)
 
-stopword_trie = util.Trie(strings=stopwords.words('english') + ['non'])
+stopword_trie = util.Trie(strings=stopwords.words("english") + ["non"])
 
 
 class EvLabel(Enum):
-    __order__ = 'A1 A2 R1 R2 OC P'
+    __order__ = "A1 A2 R1 R2 OC P"
     A1 = 0
     A2 = 1
     R1 = 2
@@ -47,12 +44,12 @@ class EvLabel(Enum):
 
 
 xml_tag_to_ev_label = {
-    'a1': EvLabel.A1,
-    'a2': EvLabel.A2,
-    'r1': EvLabel.R1,
-    'r2': EvLabel.R2,
-    'oc': EvLabel.OC,
-    'p': EvLabel.P,
+    "a1": EvLabel.A1,
+    "a2": EvLabel.A2,
+    "r1": EvLabel.R1,
+    "r2": EvLabel.R2,
+    "oc": EvLabel.OC,
+    "p": EvLabel.P,
 }
 
 
@@ -76,6 +73,7 @@ class Token:
         self.abs_pos = 1
         self.para_cat = None
         self.para_label = None
+        self.bow = 0
 
     def set_sent_pos(self, sent_pos):
         if sent_pos > self.sent_pos:
@@ -96,6 +94,9 @@ class Token:
 
     def set_para_label(self, para_label):
         self.para_label = para_label
+
+    def set_bow(self, bow):
+        self.bow = bow
 
 
 class Chunk:
@@ -124,6 +125,7 @@ class TokenCollection:
         self.feature_vectors = None
         self.labels = None
         self.chunks = None
+        self.bow = None
 
     def build_tokens(self, umls_cache=False):
 
@@ -133,8 +135,16 @@ class TokenCollection:
 
         # for unstructured abstracts
         if len(abstract.abstracttext.attrs) == 0:
-            abstract.abstracttext['label'] = 'None'
-            abstract.abstracttext['nlmcategory'] = 'None'
+            abstract.abstracttext["label"] = "None"
+            abstract.abstracttext["nlmcategory"] = "None"
+
+        for element in abstract.find_all(text=True):
+            new = unicodedata.normalize("NFKD", element)
+            new = re.sub("&lt;", "<", new)
+            new = re.sub("&gt;", ">", new)
+            new = re.sub("±", "+/-", new)
+            new = re.sub("[Mm]+\s*[Hh][Gg]", "mmHg", new)
+            element.replace_with(new)
 
         # Populate the tokens list
         for abs_text in abstract.findAll('abstracttext'):
@@ -153,13 +163,9 @@ class TokenCollection:
                 continue
 
             sents_ = nltk.sent_tokenize(abs_text.text)
-            # This hack below is necessary because of the way bs4 encode texts
-            sents_ = [unicodedata.normalize("NFKD", s) for s in sents_]
-            sents_ = [s.replace('&lt;', '<') for s in sents_]
-            sents_ = [s.replace('&gt;', '>') for s in sents_]
-            sents_ = [s.replace('±', '+/-') for s in sents_]
             tags = []
             sent_lens = []
+
             for s in sents_:
                 tags_list = list(tagger.tag(s))
                 sent_lens.append(len(tags_list))
@@ -174,22 +180,19 @@ class TokenCollection:
                 label = xml_tag_to_ev_label.get(xml_tag)
                 if label is not None:
                     # Dealing with specific tags
-                    # This hack below is necessary because of the way bs4 encode texts
-                    child_text = unicodedata.normalize("NFKD", child.text)
-                    child_text = child_text.replace('&lt;', '<')
-                    child_text = child_text.replace('&gt;', '>')
-                    child_text = child_text.replace('±', '+/-')
-                    word_tokens = nltk.word_tokenize(child_text)
+                    word_tokens = nltk.word_tokenize(child.text)
                     tokens_of_label = []
                     for tok in word_tokens:
                         token = Token(tok, g_tags=tags[tag_i])
                         token.set_ev_label(label)
+
                         # set sentence position in decile
                         sent_pos = math.ceil(sent_i / (sent_lens[sent_len_i] /
                                                        10))
                         token.set_sent_pos(sent_pos)
                         token.set_para_cat(para_cat)
                         token.set_para_label(para_label)
+
                         # append to full tokens list
                         tokens.append(token)
                         tokens_of_label.append(EvLabelData(token.word))
@@ -209,20 +212,17 @@ class TokenCollection:
                             self.ev_labels[label] = tokens_of_label[0]
                 else:
                     # Dealing with text
-                    # This hack below is necessary because of the way bs4 encode texts
-                    child = unicodedata.normalize("NFKD", child)
-                    child = child.replace('&lt;', '<')
-                    child = child.replace('&gt;', '>')
-                    child = child.replace('±', '+/-')
                     word_tokens = nltk.word_tokenize(child)
                     for tok in word_tokens:
                         token = Token(tok, g_tags=tags[tag_i])
+
                         # set sentence position in decile
                         sent_pos = math.ceil(
                             sent_i / (sent_lens[sent_len_i] / 10))
                         token.set_sent_pos(sent_pos)
                         token.set_para_cat(para_cat)
                         token.set_para_label(para_label)
+
                         # append to full tokens list
                         tokens.append(token)
                         sent_i += 1
@@ -234,8 +234,10 @@ class TokenCollection:
         if umls_cache:
             # remove stopwords
             tokens = [x for x in tokens if not stopword_trie.check(x.word)]
+
             # remove punctuations
             tokens = [x for x in tokens if x.word not in punctuation]
+
             # remove anything that is not alphabetic or of type num-chars
             pattern = re.compile(r'[\d\w]+(?:-\w+)+')
             tokens = [x for x in tokens if ((x.word.isalpha()) or
@@ -277,6 +279,7 @@ class TokenCollection:
         token_count = len(self.tokens)
         feature_count = len(ft.Feature.__members__.items())
         feature_vectors = np.zeros((token_count, feature_count))
+
         # anything that is not alphabetic or of type num-chars
         pattern = re.compile(r'[\d\w]+(?:-\w+)+')
 
@@ -287,6 +290,13 @@ class TokenCollection:
             # title_words = pp.normalise_sentence(title)
             title_words = nltk.word_tokenize(title)
             title_trie = util.Trie(strings=title_words)
+
+        bow_representation = {}
+        for tok in self.tokens:
+            if bow_representation.get(tok.word) is None:
+                bow_representation[tok.word] = 1
+            else:
+                bow_representation[tok.word] += 1
 
         for chunk in self.chunks:
             chunk.extract_features()
@@ -300,8 +310,10 @@ class TokenCollection:
                      re.match(pattern, token.word) is not None)):
                 # extracting features from UMLS class
                 feature_class_map = ft.get_feature_classes(token.word)
+
                 for feature_i, val in feature_class_map.items():
                     feature_vectors[token_i, int(feature_i)] = val
+
             # sys.stdout.write(
             #     'UMLS Progress {}/{}\r'.format(token_i + 1, token_count))
             # sys.stdout.flush()
@@ -391,6 +403,12 @@ class TokenCollection:
             token.set_abs_pos(abs_pos)
             feature_vectors[token_i,
                             ft.Feature.ABSTRACT_POSITION.value] = token.abs_pos
+
+            # abstract bow feature
+            bow = bow_representation.get(token.word)
+            token.set_bow(bow)
+            feature_vectors[token_i,
+                            ft.Feature.ABSTRACT_BOW.value] = token.bow
 
         # expand the cache if encounters new words
         util.umls_cache.save()

@@ -9,12 +9,12 @@ import heapq
 import time
 import re
 
-import ie_tools.src.token_utils as tu
+import ie_tools.src.token_util as tu
 import ie_tools.src.feature as ft
 from ie_tools.src import util
 
-R_pattern = re.compile(r'mm|mm\s*[Hh][Gg]|mg|percent|patients|months|vs|'
-                       r'%|,|to|\(|\+\s*\/\s*\-?|±')
+R_pattern = re.compile(r"mm|mm\s*[Hh][Gg]|mg|percent|patients|months|vs|"
+                       r"%|,|to|\(|\+\s*\/\s*\-?|±")
 
 
 class Classifier:
@@ -32,6 +32,7 @@ class Classifier:
         self.last_train_paths = None
         self.persist = persist
         self.clf_type = clf_type
+
         # weight = 100 for actual classes,
         # the ones we are not interested in will have {-1:1}
         cls_weights = {-1: 1, }
@@ -48,7 +49,7 @@ class Classifier:
                                               max_depth=f_max_d,
                                               n_estimators=f_n_est)
         elif clf_type == self.TypeSVM:
-            self.clf = SVC(kernel='poly', degree=3, gamma='auto',
+            self.clf = SVC(kernel="poly", degree=3, gamma="auto",
                            probability=True, class_weight=cls_weights)
         else:
             raise ValueError(
@@ -64,10 +65,11 @@ class Classifier:
     def train(self, paper_paths):
         paper_soups = util.load_paper_xmls(paper_paths)
         paper_count = len(paper_soups)
+
         # initializing the label vectors
         # each label has an empty list []
         train_start = time.time()
-        print('Training on {} paper(s)...'.format(paper_count))
+        print("Training on {} paper(s)...".format(paper_count))
 
         # Extract feature vectors from all papers
         token_cols = [None] * paper_count
@@ -109,28 +111,28 @@ class Classifier:
             token_cols[i] = col
 
             # end = time.time()
-            # print('Time elapsed on paper #{} ({}): {}'
+            # print("Time elapsed on paper #{} ({}): {}"
             #       .format(i + 1, paper_id, np.round(end - start, 4)))
 
-        # classify A1, A2, R1, R2, OC, P
         self.clf.fit(cum_feat_matrix, cum_labels_vec.flatten())
 
         train_end = time.time()
-        print('Done training. Time elapsed: ', train_end - train_start)
+        print("Done training. Time elapsed: ", train_end - train_start)
         self.last_train_paths = paper_paths
 
     def test(self, paper_paths):
         # Test how good our prediction is
         paper_soups = util.load_paper_xmls(paper_paths)
         paper_count = len(paper_soups)
-        print('Testing on {} paper(s)...'.format(paper_count))
+        print("Testing on {} paper(s)...".format(paper_count))
+
         # Extract feature vectors from all papers
         test_results = [None] * paper_count
         losses = np.zeros((paper_count,))
         precisions = [0] * 6
         for paper_i in range(paper_count):
             soup = paper_soups[paper_i]
-            print('---- Paper #{} [{}]'.format(paper_i + 1, soup.pmid.text))
+            print("---- Paper #{} [{}]".format(paper_i + 1, soup.pmid.text))
 
             col = tu.TokenCollection(soup)
             col.build_tokens()
@@ -175,19 +177,19 @@ class Classifier:
                                 ev_label_data.token.chunk.tokens[-1])
                             next_tok = col.tokens[next_tok_i].word
 
-                            if next_tok == '(':
-                                predicted_phrase += ' ('
-                            elif next_tok == '±':
-                                predicted_phrase += ' ±'
+                            if next_tok == "(":
+                                predicted_phrase += " ("
+                            elif next_tok == "±":
+                                predicted_phrase += " ±"
 
                             predicted_phrase = predicted_phrase + " {}".format(
                                 col.chunks[c_i + 1].string)
-                            if col.chunks[c_i + 1].string == 'with':
+                            if col.chunks[c_i + 1].string == "with":
                                 predicted_phrase = predicted_phrase + " {}".format(
                                     col.chunks[c_i + 2].string)
 
-                            if next_tok == '(':
-                                predicted_phrase += ' )'
+                            if next_tok == "(":
+                                predicted_phrase += " )"
 
                         elif ev_label == tu.EvLabel.P:
                             c_i = col.chunks.index(ev_label_data.token.chunk)
@@ -200,14 +202,14 @@ class Classifier:
 
                     predicted_phrases[ev_label.value] = predicted_phrase
                     if true_ev_label_data.word in predicted_phrase or \
-                            (true_ev_label_data.word == 'iop' and
-                             'pressure' in predicted_phrase) or \
-                            (true_ev_label_data.word == 'pressure' and
-                             'iop' in predicted_phrase):
+                            (true_ev_label_data.word == "iop" and
+                             "pressure" in predicted_phrase) or \
+                            (true_ev_label_data.word == "pressure" and
+                             "iop" in predicted_phrase):
                         precisions[ev_label.value] += 1
 
             loss = np.round(loss, 4)
-            print('loss for this paper is: ', loss)
+            print("loss for this paper is: ", loss)
             test_result = {
                 "soup": soup,
                 "paper_path": paper_paths[paper_i],
@@ -223,8 +225,8 @@ class Classifier:
         total_loss = np.sum(losses)
         print("\n\n---------------")
         precisions = [np.round(p / paper_count, 4) for p in precisions]
-        print('Average precisions for this run is: \nA1:{}\t A2:{}\t R1:'
-              '{}\t R2:{}\t OC:{}\t P:{}'.format(precisions[0],
+        print("Average precisions for this run is: \nA1:{}\t A2:{}\t R1:"
+              "{}\t R2:{}\t OC:{}\t P:{}".format(precisions[0],
                                                  precisions[1],
                                                  precisions[2],
                                                  precisions[3],
@@ -242,9 +244,14 @@ class Classifier:
         label_assignment = {}
         best_words_count = 6
         tokens = token_collection.tokens
+
         # line below is necessary for unstructured abstract #17947826
-        # because it's results are probability not expressed in %
+        # because it"s results are probability not expressed in %
         pmid = token_collection.bs_doc.pmid.text
+
+        # TODO: Implement picking R1, R2 using BOW
+        # below is to sort the bow_representation by values in descending
+        # sorted(bow_representation.items(), key=lambda x: x[1], reverse=True)
 
         def pick_best_unique_words(labels, ev_label):
             heap = [(-x, i) for i, x in enumerate(labels)]
@@ -265,9 +272,11 @@ class Classifier:
                 if "R" in ev_label.name:
                     if token.g_tags[tu.G_POS_TAG] != "CD":
                         continue
+
                     # R do not occur before half of the report
                     if token.abs_pos < 4:
                         continue
+
                     # if statement necessary for unstructured abstract #17947826
                     if pmid != "17947826":
                         next_tok = tokens[i + 1]
@@ -285,16 +294,19 @@ class Classifier:
             labels = predictions[ev_label]
             best_words = pick_best_unique_words(labels, ev_label)
             all_tuples += best_words
-        # sorted by overall likelihood, we don't care which class yet
+
+        # sorted by overall likelihood, we don"t care which class yet
         sorted_tuples = sorted(all_tuples, key=lambda x: x[0], reverse=True)
 
         token_labelled = {}
         # Pick the tokens by the highest likelihood
         for tup in sorted_tuples:
             likelihood, index, ev_label = tup
+
             # skip if the token has been assigned
             if token_labelled.get(index):
                 continue
+
             # skip if the ev_label has been assigned
             if label_assignment.get(ev_label) is not None:
                 continue
@@ -308,11 +320,12 @@ class Classifier:
                 prev_token = tokens[index - 1]
                 next_token = tokens[index + 1]
                 # print("{} {}".format(token.og_word, next_token.og_word))
+
                 # R1, R2 has to be a measurement
                 # if statement necessary for unstructured abstract #17947826
                 if pmid != "17947826":
                     if not re.match(R_pattern, next_token.og_word):
-                        if prev_token == '(':
+                        if prev_token == "(":
                             continue
 
             ev_label_data = tu.EvLabelData(word=token.word)
@@ -325,6 +338,7 @@ class Classifier:
     def eval_loss(self, token_collection, prob_matrix):
         word_count, label_count = prob_matrix.shape
         true_mat = np.zeros((word_count, label_count))
+
         for i in range(word_count):
             if token_collection.tokens[i].ev_label is not None:
                 label = token_collection.tokens[i].ev_label.value
@@ -335,12 +349,15 @@ class Classifier:
     def save_result(self, json_path):
         test_counts = len(self.last_test_results)
         test_data = [None] * test_counts
+
         for i in range(test_counts):
             result = self.last_test_results[i]
             tokens = result["token_collection"].tokens
             assignment = {}
+
             for label in tu.EvLabel:
                 true_l = result["true_label_assignment"].get(label)
+
                 if type(true_l) is tuple:
                     true_l = true_l[0]
                 predicted_l = result["predicted_label_assignment"][label]
@@ -349,6 +366,7 @@ class Classifier:
                     "predicted": predicted_l.word,
                     "predicted_phrase": result["predicted_phrases"][label.value]
                 }
+
             new_result = {
                 "pmid": result["soup"].pmid.text,
                 "paper_path": result["paper_path"],
@@ -357,6 +375,7 @@ class Classifier:
                 "feature_matrix": result["feature_matrix"].tolist(),
                 "loss": result["loss"]
             }
+
             test_data[i] = new_result
 
         data = {

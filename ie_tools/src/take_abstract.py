@@ -1,6 +1,10 @@
-import urllib3, re, os
 from bs4 import BeautifulSoup
+import urllib3
 import certifi
+import re
+import os
+
+import ie_tools.src.util as util
 
 http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
@@ -12,7 +16,7 @@ def take(pmid):
     '''
     global http
 
-    path = os.path.join(os.getcwd(), '../new_data')
+    path = util.get_new_data_dir()
 
     url = 'https://www.ncbi.nlm.nih.gov/pubmed/' + str(pmid) + \
           '?report=xml&format=text'
@@ -50,9 +54,9 @@ def take(pmid):
 
 def take_title(pmid):
     '''
-    returns the title of the document registered with pmid
-    :param pmid:str
+    Use to populate the old dataset with their corresponding titles
     '''
+
     global http
 
     url = 'https://www.ncbi.nlm.nih.gov/pubmed/' + str(pmid) + \
@@ -72,6 +76,7 @@ def take_title(pmid):
 
 
 def main():
+    # change new_pmids to values you want to collect the abstracts
     new_pmids = [28777224, 28400374, 28178150, 25393036, 24844538, 28887006,
                  27269279, 21921953, 27567675, 26907933, 24247999, 25907999,
                  25893514, 25270273, 25908001, 25847610, 30022618, 29133641]
@@ -79,8 +84,8 @@ def main():
     for pmid in new_pmids:
         print("processing #{}".format(pmid))
         take(str(pmid))
-    # # populate data with title tags
-    # import util
+
+    # populate data with title tags
     # paper_paths = util.get_paper_paths()
     # for file_path in sorted(paper_paths):
     #     with open(file_path, 'r+') as f:
@@ -92,7 +97,6 @@ def main():
     #         title_tag = soup.new_tag('title')
     #         title_tag.string = title
     #         f.write("\n" + str(title_tag))
-    pass
 
 
 if __name__ == "__main__":
