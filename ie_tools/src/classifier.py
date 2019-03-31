@@ -13,8 +13,7 @@ import ie_tools.src.token_util as tu
 import ie_tools.src.feature as ft
 from ie_tools.src import util
 
-R_pattern = re.compile(r"mm|mm\s*[Hh][Gg]|mg|percent|patients|months|vs|"
-                       r"%|,|to|\(|\+\s*\/\s*\-?|±")
+umls_cache = False
 
 
 class Classifier:
@@ -84,9 +83,10 @@ class Classifier:
             paper_id = soup.pmid.text
             # print("Processing papers {} out of {}\r".format(i + 1, paper_count))
             # print("Paper #", paper_id)
+
             # start = time.time()
             col = tu.TokenCollection(soup)
-            col.build_tokens()
+            col.build_tokens(umls_cache=umls_cache)
             feature_matrix = col.generate_feature_matrix()
             tokens_count, _ = feature_matrix.shape
             bias_vec = np.ones((tokens_count, 1))
@@ -135,7 +135,7 @@ class Classifier:
             print("---- Paper #{} [{}]".format(paper_i + 1, soup.pmid.text))
 
             col = tu.TokenCollection(soup)
-            col.build_tokens()
+            col.build_tokens(umls_cache=umls_cache)
             feature_matrix = col.generate_feature_matrix()
             tokens_count, _ = feature_matrix.shape
             bias_vec = np.ones((tokens_count, 1))
@@ -274,7 +274,8 @@ class Classifier:
 
                     else:
                         next_tok = tokens[i + 1]
-                        if not re.match(R_pattern, next_tok.og_word):
+                        pattern_r = util.get_pattern_r()
+                        if not re.match(pattern_r, next_tok.og_word):
                             good = False
 
                 tup = (-min_x, i, ev_label)

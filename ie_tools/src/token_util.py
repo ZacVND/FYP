@@ -23,6 +23,8 @@ G_POS_TAG = 2
 G_CHUNK = 3
 G_NAMED_ENTITY = 4
 
+pattern_num_char = util.get_pattern_num_char()
+
 # genia tagger instance
 genia_tagger_path = util.get_genia_tagger_path()
 
@@ -125,10 +127,6 @@ class TokenCollection:
         self.feature_vectors = None
         self.labels = None
         self.chunks = None
-        self.freq_dict = None
-
-    def set_freq_dict(self, freq_dict):
-        self.freq_dict = freq_dict
 
     def build_tokens(self, umls_cache=False):
 
@@ -141,6 +139,8 @@ class TokenCollection:
             abstract.abstracttext["label"] = "None"
             abstract.abstracttext["nlmcategory"] = "None"
 
+        # normalising escaped symbols by BeautifulSoup,
+        # convert all "mm Hg" or similar to "mmHg"
         for element in abstract.find_all(text=True):
             new = unicodedata.normalize("NFKD", element)
             new = re.sub("&lt;", "<", new)
@@ -242,12 +242,12 @@ class TokenCollection:
             tokens = [x for x in tokens if x.word not in punctuation]
 
             # remove anything that is not alphabetic or of type num-chars
-            pattern = re.compile(r'[\d\w]+(?:-\w+)+')
             tokens = [x for x in tokens if ((x.word.isalpha()) or
-                                            (re.match(pattern,
+                                            (re.match(pattern_num_char,
                                                       x.word) is not None))]
         else:
             # Chunking and assigning the correct chunk to each token
+            # Leveraging the IOB output of GENIA Tagger
             chunk_tokens = None
             chunks = []
             for tok in tokens:
@@ -275,16 +275,13 @@ class TokenCollection:
 
             self.chunks = chunks
 
-        # NOTE: Token count should not change after this point!!
+        # NOTE: Tokens count should not change after this point!!
         self.tokens = tokens
 
     def generate_feature_matrix(self):
         token_count = len(self.tokens)
         feature_count = len(ft.Feature.__members__.items())
         feature_vectors = np.zeros((token_count, feature_count))
-
-        # anything that is not alphabetic or of type num-chars
-        pattern = re.compile(r'[\d\w]+(?:-\w+)+')
 
         title = self.bs_doc.title.text
         if title is None:
@@ -301,8 +298,6 @@ class TokenCollection:
             else:
                 freq_dict[tok.word] += 1
 
-        self.set_freq_dict(freq_dict)
-
         for chunk in self.chunks:
             chunk.extract_features()
 
@@ -312,7 +307,7 @@ class TokenCollection:
             if (not stopword_trie.check(token.word) and
                     token.word not in punctuation and
                     (token.word.isalpha() or
-                     re.match(pattern, token.word) is not None)):
+                     re.match(pattern_num_char, token.word) is not None)):
                 # extracting features from UMLS class
                 feature_class_map = ft.get_feature_classes(token.word)
 

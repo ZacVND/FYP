@@ -129,7 +129,8 @@ The project structure should look something like this:
 * `feature.get_feature_classes(word)` retrieves the corresponding semantic classes of a given `word`
 * Defines the features which the classifier uses in class `Feature`
 
-***util.py***: 
+***util.py***:
+* Modify the API key in this file 
 * Defines all paths to necessary directories and files, **if you would like to change the structure please change this file accordingly**
 * Defines utilities functions such as rendering results into HTML, query UMLS Metathesaurus, building knowledge base, loading and parsing abstracts, etc...
 
@@ -139,6 +140,8 @@ The project structure should look something like this:
 ***classifier.py***: 
 * Define classifier functions, training and test, calculating precision and loss, pattern matching and selecting best tokens/phrases.
 * Saves results in `.json` format
+* `umls_cache=False` set this to True to rebuild the umls_cache.json (aka 
+knowledge base of this system)
 
 
 
@@ -157,6 +160,15 @@ Specify the classifier type with: `classifier_type = Classifier.TypeRF`. Choose 
 ### Hold out:
 ***hold_out.py***:
 Train the classifier on 80% of the abstract and test the classifier on the remaining 20%, if no pretrained classifier exist in *./pretrained/* it will train a new classifier.
+* `random` this boolean defines whether the data is split randomly or 
+not
+* `persist` defines whether the system will save the classifier after 
+training
+* `pretrain` defines whether the system will use pretrained classifiers or 
+not (if True and no pretrained found, the system will train a new classifier)
+* `unstructured` defines whether the system will use the unstructured
+ abstracts
+  
 
 ```python -m ie_tools.scripts.hold_out```
 
@@ -169,8 +181,11 @@ Runs hold_out script but with different final output being rendered
 ### Cross validation:
 ***cross_validation.py***:
 Train a new classifier at every run. There are 20 runs of 10-fold cross validation, these values can be modified in the file.
+* `run_count` defines number of runs
+* `fold_count` defines number of folds in data
 
 ```python -m ie_tools.scripts.cross_validation```
 
-Results from running the code are saved in *./results/* as `.json` and `.html` files
+Results from running the code are saved in *./results/* as `.json` and 
+rendered as `.html` files using `.pug` templates in *./ie_tools/src/*
 

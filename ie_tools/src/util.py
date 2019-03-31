@@ -7,17 +7,20 @@ import json
 import time
 import bs4
 import os
+import re
 
 from ie_tools.libraries.Authentication import Authentication
 
-logging.basicConfig(format="[%(name)s|%(levelname)s] %(message)s",
-                    level=logging.INFO)
-
+# PLEASE CHANGE THE API KEY HERE!!!
+# Refer to README on how to get one
 api_key = "bea4b3d4-f1ef-439e-b68f-3564c8c7a231"
 auth_client = Authentication(api_key)
 tgt = auth_client.gettgt()
 
 _end = "__end"
+
+logging.basicConfig(format="[%(name)s|%(levelname)s] %(message)s",
+                    level=logging.INFO)
 
 script_dir = path.dirname(path.abspath(__file__))
 
@@ -30,7 +33,7 @@ unstructured_dir = path.normpath(path.join(script_dir, "..", "..", "data",
                                            "abstracts_unstructured"))
 
 testing_dir = path.normpath(path.join(script_dir, "..", "..", "data",
-                                           "testing"))
+                                      "testing"))
 
 new_data_dir = path.normpath(path.join(script_dir, "..", "..", "new_data"))
 
@@ -46,7 +49,22 @@ genia_tagger_path = path.normpath(path.join(script_dir, "..", "..",
 umls_cache_path = path.normpath(path.join(script_dir, "..", "..", "data",
                                           "umls_cache.json"))
 
+# anything that is of type num-chars
+pattern_num_char = re.compile(r'[\d\w]+(?:-\w+)+')
+
+# pattern that matches Results tokens/phrases
+pattern_r = re.compile(r"mm|mm\s*[Hh][Gg]|mg|percent|patients|months|vs|"
+                       r"%|,|to|\(|\+\s*\/\s*\-?|±")
+
 last_time = time.time()
+
+
+def get_pattern_num_char():
+    return pattern_num_char
+
+
+def get_pattern_r():
+    return pattern_r
 
 
 def get_unstructured_dir():
