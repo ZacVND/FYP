@@ -7,21 +7,22 @@ The PICO (Patients, Intervention, Comparison, Outcome) framework is used to asse
 
 Our system uses conditional random field to automatically read the abstracts and extracting these evidence: Intervention arm, Comparison arm, Patient group, Outcome measure, and results of the 2 arms respectively.
 
-We compare the performance between Decision Tree, Random Forest and SVM classifiers using **the average of 20 runs of 10-fold cross validation**:
+We compare the performance between Decision Tree, Random Forest and SVM 
+classifiers using **the average of 20 runs of 8-fold cross validation**:
 
 Cross entropy loss shows how close the predicted probability distribution (of tokens) is to the true probability distribution. Lower is better.
 
 |                    | Random Forest |  SVM  | Decision Tree |
 |--------------------|:-------------:|:-----:|:-------------:|
-| **Cross Entropy Loss** |     0.2063    | 0.236 |     1.5371    |
+| **Cross Entropy Loss** |     0.2609    | 0.3075 |     2.078    |
 
 Below is the comparison between the classifiers' precisions. Precision is the a simple metric showing how well the system selected the phrases that contain the key information. The more phrases that contain the true token, the higher the precision. Higher is better.
 
 |               | Intervention (A1) | Comparison (A2) | Intervention Result (R1) | Comparison Result (R2) | Outcome Measure (OC) | Patient Group (P) |
 |---------------|:-----------------:|:---------------:|:------------------------:|:----------------------:|:--------------------:|:-----------------:|
-| **Random Forest** |       0.619       |      0.5105     |           0.398          |          0.304         |         0.719        |       0.863       |
-| **SVM**           |       0.534       |      0.4795     |          0.3375          |         0.2795         |        0.6855        |       0.823       |
-| **Decision Tree** |       0.4185      |      0.4805     |          0.3335          |          0.304         |        0.6135        |       0.767       |
+| **Random Forest** |       0.6591       |      0.5418     |           0.3726          |          0.2899         |         0.7101        |       0.8673       |
+| **SVM**           |       0.5486       |      0.5188     |          0.2846          |         0.2692         |        0.6404        |       0.8159       |
+| **Decision Tree** |       0.5264      |      0.401     |          0.388          |          0.2312         |        0.4596        |       0.6351       |
 
 ## Sample Output ##
 
@@ -45,7 +46,6 @@ The top row bold by default in Github Markdown, therefore it is left as empty as
 * numpy
 * nltk (\*)
 * GeniaTagger 3.0.2 or later
-* [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py) by bornabesic
 
 (\*) The stopword corpus is needed. Instructions [here](http://www.nltk.org/data.html). 
 
@@ -62,14 +62,16 @@ The top row bold by default in Github Markdown, therefore it is left as empty as
 **Results rendering**
 * [pugjs](https://pugjs.org/api/getting-started.html)
 
+This system uses [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py), a python wrapper for GENIA tagger created by 
+bornabesic, already included in
+ *./ie_tools/libraries/*
+
 ## Setup and Run ##
 **Step 1:** Fork this repository, install all requirements
 
 **Step 2:** Install the [GENIA Tagger](http://www.nactem.ac.uk/GENIA/tagger/) in the project root repository
 
-**Step 3:** Get [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py) and put `geniatagger.py` in *./ie_tools/libraries/*
-
-**Step 4:** Insert your UMLS API key
+**Step 3:** Insert your UMLS API key
 ```python
 # ./ie_tools/src/util.py 
 
@@ -145,7 +147,8 @@ knowledge base of this system)
 
 
 
-**Step 5:** Run *data_collection.py* to build the knowledge base for our model, output file is `umls_cache.json`:
+**Step 4:** Run *data_collection.py* to build the knowledge base for our 
+model, output file is `umls_cache.json`:
 
 ```python -m ie_tools.scripts.data_collection```
 
@@ -153,7 +156,7 @@ knowledge base of this system)
 
 
 
-**Step 6:** Run the code.
+**Step 5:** Run the code.
 
 Specify the classifier type with: `classifier_type = Classifier.TypeRF`. Choose between `Classifier.TypeRF`, `Classifier.TypeSVM` or `Classifier.TypeDT`.
 
@@ -163,9 +166,10 @@ Train the classifier on 80% of the abstract and test the classifier on the remai
 * `random` this boolean defines whether the data is split randomly or 
 not
 * `persist` defines whether the system will save the classifier after 
-training
+training. Saves into *./pretrained/*
 * `pretrain` defines whether the system will use pretrained classifiers or 
 not (if True and no pretrained found, the system will train a new classifier)
+. It looks for pretrained classifiers in *./pretrained/*
 * `unstructured` defines whether the system will use the unstructured
  abstracts
   

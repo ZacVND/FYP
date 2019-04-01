@@ -105,7 +105,7 @@ class Chunk:
     def __init__(self, tokens):
         self.tokens = tokens
         self.features = {}
-        self.string = " ".join([tok.word for tok in tokens])
+        self.string = " ".join([tok.og_word for tok in tokens])
 
     def extract_features(self):
         tok_1st = self.tokens[0].g_tags[G_CHUNK]
@@ -287,7 +287,6 @@ class TokenCollection:
         if title is None:
             print('Cannot fetch the title, assuming no title.')
         else:
-            # title_words = pp.normalise_sentence(title)
             title_words = nltk.word_tokenize(title)
             title_trie = util.Trie(strings=title_words)
 
@@ -347,10 +346,6 @@ class TokenCollection:
             except ValueError:
                 feature_vectors[token_i, ft.Feature.TOK_IS_NUMBER.value] = 0
 
-            # # is placebo
-            # if token.g_tags[G_BASE_FORM] == "placebo":
-            #     feature_vectors[token_i, ft.Feature.TOK_IS_PLACEBO.value] = 1
-
             # is Cardinal Digit
             if token.g_tags[G_POS_TAG] == "CD":
                 feature_vectors[token_i, ft.Feature.TOK_IS_CD.value] = 1
@@ -402,7 +397,8 @@ class TokenCollection:
             abs_pos = math.ceil(token_i / (token_count / 10))
             token.set_abs_pos(abs_pos)
             feature_vectors[token_i,
-                            ft.Feature.ABSTRACT_POSITION.value] = token.abs_pos
+                            ft.Feature.ABSTRACT_POSITION.value] = \
+                token.abs_pos / 10
 
             # abstract freq_dict feature
             freq = freq_dict.get(token.word)

@@ -31,23 +31,23 @@ class Feature(Enum):
 feature_count = len(Feature.__members__.items())
 
 # Hardcoding the features
-patient_dict_trie = util.Trie(strings=["patient", "patients", "eyes", "adults",
-                                       "subjects", "individuals"])
+patient_dict_trie = util.Trie(strings=["patient", "patients", "eyes",
+                                       "adults", "subjects", "individuals"])
 
 outcome_dict_trie = util.Trie(strings=["pressure", "iop", "change",
-                                       "reduction", "lowering", "value",
-                                       "density", "control", "proportion",
-                                       "decrease", "loss"])
+                                       "reduction", "lowering", "density",
+                                       "proportion", "decrease", "loss"])
 
-treatment_dict_trie = util.Trie(strings=["combination", "fixed-combination",
-                                         "350-mm2", "500-mm2"])
+treatment_dict_trie = util.Trie(strings=["combination", "fixed-combination"])
 
 class_to_feature_mapping = {
     Feature.TOK_IS_DRUG.value: ['Pharmacologic Substance', 'Antibiotic',
                                 'Organic Chemical', "Clinical Drug",
                                 "Substance"],
+
     Feature.TOK_IS_PROCEDURE.value: ['Therapeutic or Preventive Procedure',
                                      'Medical Device'],
+
     Feature.TOK_IS_PATIENTS.value: ['Patient or Disabled Group',
                                     'Body Part, Organ, or Organ Component',
                                     'Age Group', 'Group']

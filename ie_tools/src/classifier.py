@@ -13,8 +13,6 @@ import ie_tools.src.token_util as tu
 import ie_tools.src.feature as ft
 from ie_tools.src import util
 
-umls_cache = False
-
 
 class Classifier:
     TypeSVM = "svm"
@@ -86,7 +84,7 @@ class Classifier:
 
             # start = time.time()
             col = tu.TokenCollection(soup)
-            col.build_tokens(umls_cache=umls_cache)
+            col.build_tokens()
             feature_matrix = col.generate_feature_matrix()
             tokens_count, _ = feature_matrix.shape
             bias_vec = np.ones((tokens_count, 1))
@@ -135,7 +133,7 @@ class Classifier:
             print("---- Paper #{} [{}]".format(paper_i + 1, soup.pmid.text))
 
             col = tu.TokenCollection(soup)
-            col.build_tokens(umls_cache=umls_cache)
+            col.build_tokens()
             feature_matrix = col.generate_feature_matrix()
             tokens_count, _ = feature_matrix.shape
             bias_vec = np.ones((tokens_count, 1))
@@ -179,8 +177,8 @@ class Classifier:
 
                             if next_tok == "(":
                                 predicted_phrase += " ("
-                            elif next_tok == "±":
-                                predicted_phrase += " ±"
+                            elif next_tok == ",":
+                                predicted_phrase += ","
 
                             predicted_phrase = predicted_phrase + " {}".format(
                                 col.chunks[c_i + 1].string)
@@ -201,11 +199,12 @@ class Classifier:
                           " --- True Label: ", true_ev_label_data.word)
 
                     predicted_phrases[ev_label.value] = predicted_phrase
-                    if true_ev_label_data.word in predicted_phrase or \
+                    phrase_lowered = predicted_phrase.lower()
+                    if true_ev_label_data.word in phrase_lowered or \
                             (true_ev_label_data.word == "iop" and
-                             "pressure" in predicted_phrase) or \
+                             "pressure" in phrase_lowered) or \
                             (true_ev_label_data.word == "pressure" and
-                             "iop" in predicted_phrase):
+                             "iop" in phrase_lowered):
                         precisions[ev_label.value] += 1
 
             loss = np.round(loss, 4)
@@ -275,7 +274,7 @@ class Classifier:
                     else:
                         next_tok = tokens[i + 1]
                         pattern_r = util.get_pattern_r()
-                        if not re.match(pattern_r, next_tok.og_word):
+                        if not re.match(pattern_r, next_tok.word):
                             good = False
 
                 tup = (-min_x, i, ev_label)
@@ -315,7 +314,7 @@ class Classifier:
 
             token = tokens[index]
 
-            ev_label_data = tu.EvLabelData(word=token.word)
+            ev_label_data = tu.EvLabelData(word=token.og_word)
             ev_label_data.token = token
             label_assignment[ev_label] = ev_label_data
             token_labelled[index] = True
