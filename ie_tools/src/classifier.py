@@ -19,7 +19,7 @@ class Classifier:
     TypeRF = "random_forest"
     TypeDT = "decision_tree"
 
-    def __init__(self, clf_type=None, f_max_d=25, f_n_est=70, f_min_l=12,
+    def __init__(self, clf_type=None, f_max_d=25, f_n_est=200, f_min_l=50,
                  persist=False):
         if clf_type is None:
             clf_type = Classifier.TypeSVM
