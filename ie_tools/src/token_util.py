@@ -146,6 +146,7 @@ class TokenCollection:
             new = re.sub("&lt;", "<", new)
             new = re.sub("&gt;", ">", new)
             new = re.sub("±", "+/-", new)
+            new = re.sub("\s+\+/-\s+", "+/-", new)
             new = re.sub("[Mm]+\s*[Hh][Gg]", "mmHg", new)
             element.replace_with(new)
 
@@ -358,8 +359,8 @@ class TokenCollection:
                     feature_vectors[token_i, ft_enum.value] = value
 
             if token.para_cat == "OBJECTIVE":
-                feature_vectors[token_i, ft.Feature.PARA_CAT_OBJECTIVE.value] \
-                    = 1
+                feature_vectors[token_i,
+                                ft.Feature.PARA_CAT_OBJECTIVE.value] = 1
 
             if token.para_cat == "METHODS":
                 feature_vectors[token_i, ft.Feature.PARA_CAT_METHODS.value] = 1
@@ -397,8 +398,7 @@ class TokenCollection:
             abs_pos = math.ceil(token_i / (token_count / 10))
             token.set_abs_pos(abs_pos)
             feature_vectors[token_i,
-                            ft.Feature.ABSTRACT_POSITION.value] = \
-                token.abs_pos / 10
+                            ft.Feature.ABSTRACT_POSITION.value] = token.abs_pos
 
             # abstract freq_dict feature
             freq = freq_dict.get(token.word)
