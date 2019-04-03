@@ -54,7 +54,7 @@ pattern_num_char = re.compile(r'[\d\w]+(?:-\w+)+')
 
 # pattern that matches Results tokens/phrases
 pattern_r = re.compile(r"mm|mm\s*[Hh][Gg]|mg|percent|patients|months|vs|"
-                       r"%|,|to|\(|\+\s*\/\s*\-?|±")
+                       r"%|,|to|\(|\+\s*/\s*-?|±")
 
 last_time = time.time()
 
