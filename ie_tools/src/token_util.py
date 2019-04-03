@@ -146,7 +146,7 @@ class TokenCollection:
             new = re.sub("&lt;", "<", new)
             new = re.sub("&gt;", ">", new)
             new = re.sub("±", "+/-", new)
-            new = re.sub("\s+\+/-\s+", "+/-", new)
+            new = re.sub("\s+\+/-\s+", " +/- ", new)
             new = re.sub("[Mm]+\s*[Hh][Gg]", "mmHg", new)
             element.replace_with(new)
 
