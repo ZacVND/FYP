@@ -146,7 +146,6 @@ class TokenCollection:
             new = re.sub("&lt;", "<", new)
             new = re.sub("&gt;", ">", new)
             new = re.sub("±", "+/-", new)
-            new = re.sub("\s+\+/-\s+", "+/-", new)
             new = re.sub("[Mm]+\s*[Hh][Gg]", "mmHg", new)
             element.replace_with(new)
 
@@ -345,10 +344,7 @@ class TokenCollection:
                 float(token.g_tags[G_WORD])
                 feature_vectors[token_i, ft.Feature.TOK_IS_NUMBER.value] = 1
             except ValueError:
-                if re.match("\d+\+/-\d+", token.g_tags[G_WORD]):
-                    feature_vectors[token_i, ft.Feature.TOK_IS_NUMBER.value] = 1
-                else:
-                    feature_vectors[token_i, ft.Feature.TOK_IS_NUMBER.value] = 0
+                feature_vectors[token_i, ft.Feature.TOK_IS_NUMBER.value] = 0
 
             # is Cardinal Digit
             if token.g_tags[G_POS_TAG] == "CD":
@@ -401,13 +397,10 @@ class TokenCollection:
             abs_pos = math.ceil(token_i / (token_count / 10))
             token.set_abs_pos(abs_pos)
             feature_vectors[token_i,
-                            ft.Feature.ABSTRACT_POSITION.value] = \
-                token.abs_pos / 10
+                            ft.Feature.ABSTRACT_POSITION.value] = token.abs_pos
 
             # abstract freq_dict feature
             freq = freq_dict.get(token.word)
-            # if token.word in punctuation:
-            #     freq = 0
             token.set_freq(freq)
             feature_vectors[token_i,
                             ft.Feature.TOK_FREQ.value] = token.freq
