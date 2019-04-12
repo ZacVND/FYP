@@ -14,6 +14,7 @@ def run(demo=False):
     persist = True
     pretrain = False
     unstructured = False
+    new_for_test = True
     max_papers = 120
     paper_paths = util.get_paper_paths()[:max_papers]
 
@@ -24,6 +25,16 @@ def run(demo=False):
                                                   random_state=1)
 
     prefix = classifier_type
+    new_data_dir = util.get_new_data_dir()
+    if new_for_test:
+        prefix = prefix + '-unstructured'
+        for file in listdir(new_data_dir):
+            # ignore .DS_Store files
+            if file.startswith(".DS"):
+                continue
+            test_pps.append(path.join(new_data_dir, file))
+
+
     unstructured_dir = util.get_unstructured_dir()
     if unstructured:
         prefix = prefix + '-unstructured'
