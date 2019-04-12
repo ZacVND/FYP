@@ -1,3 +1,10 @@
+"""
+@author: ZacVND
+
+Based on Antonio Trenta's take_abstract.py which was written in Python 2
+"""
+
+
 from bs4 import BeautifulSoup
 import urllib3
 import certifi

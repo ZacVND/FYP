@@ -1,0 +1,50 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   19860553
+  </pmid>
+  <abstract>
+   <abstracttext label="INTRODUCTION AND PURPOSE" nlmcategory="OBJECTIVE">
+    Bimatoprost and the fixed combination of latanoprost with timolol maleate are 2 medications widely used to treat glaucoma and ocular hypertension . The aim of the study is to compare the efficacy of these 2 drugs in reducing intraocular pressure after _POFT_ of treatment in
+    <p>
+     patients
+    </p>
+    with primary open angle glaucoma or Ocular Hypertension.
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    In this randomized, open label trial, 44 patients with Primary Open Angle Glaucoma or Ocular Hypertension were allocated to receive either
+    <a1>
+     bimatoprost
+    </a1>
+    (1 drop QD) or
+    <a2>
+     latanoprost/timolol
+    </a2>
+    (1 drop QD). Primary outcome was the mean diurnal Intraocular Pressure
+    <oc>
+     measurement
+    </oc>
+    at the 8th week, calculated as the mean Intraocular Pressure measurements taken at _TIME_, _TIME_, and _TIME_ Secondary outcomes included the baseline change in Intraocular Pressure measured 3 times a day, after the water drinking test (performed after the last Intraocular Pressure measurement), and the assessment of side effects of each therapy.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    The mean Intraocular Pressure levels of latanoprost/timolol (
+    <r2>
+     13.83
+    </r2>
+    , Surgery , Mean _CRI_) was significantly lower than of bimatoprost (
+    <r1>
+     16.16
+    </r1>
+    , Surgery , Mean _CRI_; _PVAL_) at _POFT_. Also, the change in mean Intraocular Pressure values was significantly higher in the latanoprost/timolol group at _TIME_ _PVAL_ and _TIME_ _PVAL_, but not at _TIME_ (P = ns). During the water drinking test, there was no significant difference in Intraocular Pressure increase (absolute and percentage) between groups; however, there was a significant decrease in mean heart rate in the latanoprost/timolol group. Finally, no significant changes in blood pressure and lung spirometry were observed in either groups.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    The fixed combination of latanoprost/timolol was significantly superior to bimatoprost alone in reducing Intraocular Pressure in patients with Primary Open Angle Glaucoma or Ocular Hypertension. Further studies with large sample sizes should be taken to support the superior efficacy of latanoprost/timolol, as well as to better assess its profile of side effects.
+   </abstracttext>
+  </abstract>
+  <title>
+   A comparison of bimatoprost 0.03% versus the fixed-combination of latanoprost 0.005% and timolol 0.5% in adult patients with elevated intraocular pressure: an eight-week, randomized, open-label trial.
+  </title>
+ </body>
+</html>

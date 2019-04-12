@@ -1,0 +1,50 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   20420586
+  </pmid>
+  <abstract>
+   <abstracttext label="PURPOSE" nlmcategory="OBJECTIVE">
+    The objective of the study was to compare the long term efficacy and safety of
+    <a1>
+     tafluprost
+    </a1>
+    0.0015% with
+    <a2>
+     latanoprost
+    </a2>
+    0.005% eye drops in
+    <p>
+     patients
+    </p>
+    with open angle glaucoma or ocular hypertension.
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    This double masked, active controlled, parallel group, multinational, multicentre, phase III study was conducted at 49 centres in 8 countries. Eligible patients were assigned to treatment administered once daily at _TIME_ _TIME_ for up to _POFT_.
+    <oc>
+     Change
+    </oc>
+    from baseline intraocular pressure was the primary efficacy variable. Adverse events were recorded and ocular safety was evaluated. Both tafluprost and latanoprost were preserved with benzalkonium chloride.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    From 533 patients randomized, 402 patients completed _POFT_ of therapy. Both treatments had a substantial Intraocular Pressure lowering effect which persisted throughout the study (
+    <r1>
+     7.1 mmHg
+    </r1>
+    for tafluprost and
+    <r2>
+     7.7 mmHg
+    </r2>
+    for latanoprost at _POFT_). Although the Intraocular Pressure lowering effect during the study was slightly larger with latanoprost, this difference was clinically small and the noninferiority of tafluprost to latanoprost over all diurnal Intraocular Pressure measurements was shown with anova and almost reached with ancova (upper limits of the 95% confidence intervals 1.38 and 1.52 for the overall period, respectively). The noninferiority limit was 1.5 mmHg.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Tafluprost is a new effective and well tolerated treatment for glaucoma and ocular hypertension.
+   </abstracttext>
+  </abstract>
+  <title>
+   Efficacy and safety of tafluprost 0.0015% versus latanoprost 0.005% eye drops in open-angle glaucoma and ocular hypertension: 24-month results of a randomized, double-masked phase III study.
+  </title>
+ </body>
+</html>

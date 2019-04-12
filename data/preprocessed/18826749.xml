@@ -1,0 +1,51 @@
+<html>
+ <head>
+ </head>
+ <body>
+  ﻿
+  <pmid version="1">
+   18826749
+  </pmid>
+  <abstract>
+   <abstracttext label="OBJECTIVE" nlmcategory="OBJECTIVE">
+    To compare the Intraocular Pressure lowering efficacy of a.m. dosed
+    <a1>
+     travoprost
+    </a1>
+    and
+    <a2>
+     latanoprost
+    </a2>
+    at 24 h post dose.
+   </abstracttext>
+   <abstracttext label="RESEARCH DESIGN AND METHODS" nlmcategory="METHODS">
+    Open angle glaucoma
+    <p>
+     patients
+    </p>
+    not naïve to prostaglandin therapy and currently controlled on p.m. dosed (_YEAR_) latanoprost (_POP_) or travoprost (_POP_) had baseline Intraocular Pressures measured at 0900. In a randomized, single masked, crossover design, patients received travoprost (Travatan † ) or latanoprost (Xalatan ‡ ) at 0900 for _POFT_, then were crossed over to receive the second prostaglandin for another _POFT_. Treatment Intraocular Pressure was measured at 0900 prior to morning dose at both 4 and _POFT_ visits. Patient dosing preference (a.m./p.m.) was surveyed on exit. Main outcome measure: Intraocular
+    <oc>
+     pressure
+    </oc>
+    . † Travatan is a registered trade name of Alcon Laboratories, Inc., Fort Worth, TX, United states of america ‡ Xalatan is a registered trade name of Pfizer, New York, NY, United states of america.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    The mean Intraocular Pressure in the first period when all patients were dosed in the evening was assessed 12 h after dosing at _TIME_ and it was similar in the two treatment groups (mean +/ standard deviation:
+    <r1>
+     17.9 +/ 2.7 mmHg
+    </r1>
+    for travoprost versus
+    <r2>
+     17.7 +/ 2.5 mmHg
+    </r2>
+    for latanoprost, _PVAL_). In the a.m. dosing crossover comparison, the 24 h post dose Intraocular Pressure was significantly lower ( _PVAL_) on travoprost (16.9 +/ 3.1 mmHg) compared to latanoprost (18.6 +/ 3.3 mmHg). In the exit survey, 51% of patients preferred a.m. dosing.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    a.m. dosed travoprost is superior to a.m. dosed latanoprost by 1.7 mmHg at 24 h post dose.
+   </abstracttext>
+  </abstract>
+  <title>
+   Comparison of morning versus evening dosing and 24-h post-dose efficacy of travoprost compared with latanoprost in patients with open-angle glaucoma .
+  </title>
+ </body>
+</html>

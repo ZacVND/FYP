@@ -1,0 +1,50 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   21183518
+  </pmid>
+  <abstract>
+   <abstracttext label="AIMS" nlmcategory="OBJECTIVE">
+    To determine the analgesic effect of supplemental intracameral lidocaine 1% during phacoemulsification under topical anaesthesia, and to assess the risk factors associated with pain.
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    In a double masked, randomised, clinical trial, 506
+    <p>
+     patients
+    </p>
+    undergoing phacoemulsification under topical anaesthesia were randomised to receive a supplemental intracameral injection of either 0.5 cc of 1%
+    <a1>
+     lidocaine
+    </a1>
+    (277 patients, 54.7%) or balanced salt
+    <a2>
+     solution
+    </a2>
+    (229 patients, 45.3%). Patients were interviewed by a trained interviewer using a standardised questionnaire. The main outcome measure was intraoperative
+    <oc>
+     pain
+    </oc>
+    , scored on a visual analogue scale of 0 10. Logistic regression was performed to assess ORs.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    125 of 277 patients (
+    <r1>
+     45.1%
+    </r1>
+    ) experienced pain in the lidocaine group, compared with 123 of 229 patients (
+    <r2>
+     53.7%
+    </r2>
+    ) in the Balanced Salt Solution group. The proportion of patients who experienced pain was significantly lower in the intracameral lidocaine group compared with the Balanced Salt Solution group (multivariate OR 0.68, 95% Confidence Interval 0.47 to 0.97; _PVAL_). The median pain score (range) was 0.0 for intracameral lidocaine group compared with 1.0 for Balanced Salt Solution group _PVAL_. Pain was more common in females (54.3% versus 43.6%; OR 1.56), non Chinese (62.3% versus 46.9%; OR 2.13) and those who had previous cataract surgery to the fellow eye (55.3% versus 44.7%; OR 1.61).
+   </abstracttext>
+   <abstracttext label="CONCLUSION" nlmcategory="CONCLUSIONS">
+    The use of 0.5 cc of 1% intracameral lidocaine during phacoemulsification under topical anaesthesia significantly reduces pain experienced by patients. Risk factors for pain include females, non Chinese and previous cataract surgery.
+   </abstracttext>
+  </abstract>
+  <title>
+   Analgesic effect of supplemental intracameral lidocaine during phacoemulsification under topical anaesthesia: a randomised controlled trial.
+  </title>
+ </body>
+</html>

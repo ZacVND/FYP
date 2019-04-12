@@ -1,0 +1,53 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   19427617
+  </pmid>
+  <abstract>
+   <abstracttext label="PURPOSE" nlmcategory="OBJECTIVE">
+    To compare
+    <a1>
+     latanoprost
+    </a1>
+    and
+    <a2>
+     timolol
+    </a2>
+    with regard to changes in the intervisit intraocular pressure range, a measure of long term Intraocular Pressure fluctuation.
+   </abstracttext>
+   <abstracttext label="DESIGN" nlmcategory="METHODS">
+    Post hoc analysis of three _POFT_, multicenter, randomized (_RATIO_), double masked registration trials of latanoprost (_POP_) versus timolol (_POP_).
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    Analyses included
+    <p>
+     patients
+    </p>
+    with glaucoma or ocular hypertension who instilled latanoprost once daily in the evening and vehicle in the morning and those instilling timolol twice daily. Pretreatment intervisit Intraocular Pressure range: highest Intraocular Pressure minus lowest Intraocular Pressure of 4 measurements obtained at screening and baseline. Posttreatment intervisit Intraocular Pressure range: highest Intraocular Pressure minus lowest Intraocular Pressure of 4 measurements obtained at _POFT_8 and 26. Ranges were dichotomized to high (_CRI_) and low (_CRI_).
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    Both treatments resulted in significant reductions in mean intervisit Intraocular Pressure range during _POFT_. Pretreatment, comparable proportions of patients treated with latanoprost and timolol had high intervisit Intraocular Pressure ranges (22% [_RATIO_13] and 23% [_RATIO_18], respectively; _PVAL_). After treatment,
+    <r1>
+     6%
+    </r1>
+    (_RATIO_13) and
+    <r2>
+     11%
+    </r2>
+    (_RATIO_18) of patients in the latanoprost and timolol groups, respectively, had high intervisit Intraocular Pressure
+    <oc>
+     ranges
+    </oc>
+    _PVAL_. Significant risk factors for high posttreatment intervisit range (multivariate logistic regression) were high pretreatment intervisit Intraocular Pressure range, treatment with timolol, Black race, longer time since diagnosis, and higher mean pretreatment Intraocular Pressure.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Compared with timolol, treatment with latanoprost results in significantly fewer patients with a high Intraocular Pressure fluctuation. The impact of reducing high Intraocular Pressure fluctuation on progressive glaucomatous damage deserves further investigation in prospective studies.
+   </abstracttext>
+  </abstract>
+  <title>
+   Assessing the efficacy of latanoprost vs timolol using an alternate efficacy parameter: the intervisit intraocular pressure range.
+  </title>
+ </body>
+</html>

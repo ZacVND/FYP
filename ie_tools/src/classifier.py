@@ -15,13 +15,14 @@ import ie_tools.src.token_util as tu
 import ie_tools.src.feature as ft
 from ie_tools.src import util
 
+# f_max_d=25, f_n_est=200, f_min_l=50
 
 class Classifier:
     TypeSVM = "svm"
     TypeRF = "random_forest"
     TypeDT = "decision_tree"
 
-    def __init__(self, clf_type=None, f_max_d=25, f_n_est=200, f_min_l=50,
+    def __init__(self, clf_type=None, f_max_d=10, f_n_est=200, f_min_l=50,
                  persist=False):
         if clf_type is None:
             clf_type = Classifier.TypeSVM
@@ -282,6 +283,9 @@ class Classifier:
                 if token.word in punctuation:
                     good = False
 
+                if token.word in util.pat_ordered:
+                    good = False
+
                 tup = (-min_x, i, ev_label)
                 if good:
                     results.append(tup)
@@ -324,72 +328,72 @@ class Classifier:
             label_assignment[ev_label] = ev_label_data
             token_labelled[index] = True
 
-        l_1 = [e for e in sorted_tuples if "R1" == e[2].name
-                and tokens[e[1]].word not in punctuation]
-
-        l_2 = [e for e in sorted_tuples if "R2" == e[2].name
-                and tokens[e[1]].word not in punctuation]
-
-        with open("logging.txt", "a+") as log_file:
-            log_file.write("\n{}\n".format(token_collection.bs_doc.pmid.text))
-
-            for e in l_1:
-                log_file.write("{}, {}, {}\n".format(e, tokens[e[1]].og_word,
-                                                     tokens[e[1]].chunk.string))
-
-            log_file.write("\n")
-
-            for e in l_2:
-                log_file.write("{}, {}, {}\n".format(e, tokens[e[1]].og_word,
-                                                     tokens[e[1]].chunk.string))
-
-            log_file.write("-------\n\n")
-
-        freq_l1 = {}
-        freq_l2 = {}
-
-        # l_1 and l_2 may not have the same length
-        for e in l_1:
-            for tok in word_tokenize(tokens[e[1]].chunk.string):
-                if freq_l1.get(tok) is None:
-                    freq_l1[tok] = 1
-                else:
-                    freq_l1[tok] += 1
-
-        for e in l_2:
-            for tok in word_tokenize(tokens[e[1]].chunk.string):
-                if freq_l2.get(tok) is None:
-                    freq_l2[tok] = 1
-                else:
-                    freq_l2[tok] += 1
-
-        unit_1 = [k for k, v in freq_l1.items() if v == max(freq_l1.values())]
-        unit_2 = [k for k, v in freq_l2.items() if v == max(freq_l2.values())]
-
-        l_1 = [e for e in l_1 if any(u in unit_1 for
-                                     u in word_tokenize(tokens[e[1]].chunk.string))]
-
-        l_2 = [e for e in l_2 if any(u in unit_2 for
-                                     u in word_tokenize(tokens[e[1]].chunk.string))]
-
-        # sorting based on prob*pos
-        # sorted(l_1, key=lambda e: e[0]*e[1], reverse=True)
-
-        likelihood, index, ev_label = l_1[0]
-        token = tokens[index]
-
-        ev_label_data = tu.EvLabelData(word=token.word)
-        ev_label_data.token = token
-        label_assignment[ev_label] = ev_label_data
-
-        _, _, ev_label = l_2[0]
-        foo = [e[1] for e in l_2 if e[1] != index]
-        index = np.argmin([np.abs(n-index) for n in foo])
-        token = tokens[foo[index]]
-
-        ev_label_data = tu.EvLabelData(word=token.word)
-        ev_label_data.token = token
-        label_assignment[ev_label] = ev_label_data
+        # l_1 = [e for e in sorted_tuples if "R1" == e[2].name
+        #         and tokens[e[1]].word not in punctuation]
+        #
+        # l_2 = [e for e in sorted_tuples if "R2" == e[2].name
+        #         and tokens[e[1]].word not in punctuation]
+        #
+        # with open("logging.txt", "a+") as log_file:
+        #     log_file.write("\n{}\n".format(token_collection.bs_doc.pmid.text))
+        #
+        #     for e in l_1:
+        #         log_file.write("{}, {}, {}\n".format(e, tokens[e[1]].og_word,
+        #                                              tokens[e[1]].chunk.string))
+        #
+        #     log_file.write("\n")
+        #
+        #     for e in l_2:
+        #         log_file.write("{}, {}, {}\n".format(e, tokens[e[1]].og_word,
+        #                                              tokens[e[1]].chunk.string))
+        #
+        #     log_file.write("-------\n\n")
+        #
+        # freq_l1 = {}
+        # freq_l2 = {}
+        #
+        # # l_1 and l_2 may not have the same length
+        # for e in l_1:
+        #     for tok in word_tokenize(tokens[e[1]].chunk.string):
+        #         if freq_l1.get(tok) is None:
+        #             freq_l1[tok] = 1
+        #         else:
+        #             freq_l1[tok] += 1
+        #
+        # for e in l_2:
+        #     for tok in word_tokenize(tokens[e[1]].chunk.string):
+        #         if freq_l2.get(tok) is None:
+        #             freq_l2[tok] = 1
+        #         else:
+        #             freq_l2[tok] += 1
+        #
+        # unit_1 = [k for k, v in freq_l1.items() if v == max(freq_l1.values())]
+        # unit_2 = [k for k, v in freq_l2.items() if v == max(freq_l2.values())]
+        #
+        # l_1 = [e for e in l_1 if any(u in unit_1 for
+        #                              u in word_tokenize(tokens[e[1]].chunk.string))]
+        #
+        # l_2 = [e for e in l_2 if any(u in unit_2 for
+        #                              u in word_tokenize(tokens[e[1]].chunk.string))]
+        #
+        # # sorting based on prob*pos
+        # # sorted(l_1, key=lambda e: e[0]*e[1], reverse=True)
+        #
+        # likelihood, index, ev_label = l_1[0]
+        # token = tokens[index]
+        #
+        # ev_label_data = tu.EvLabelData(word=token.word)
+        # ev_label_data.token = token
+        # label_assignment[ev_label] = ev_label_data
+        #
+        # _, _, ev_label = l_2[0]
+        # foo = [e[1] for e in l_2 if e[1] != index]
+        # index = np.argmin([np.abs(n-index) for n in foo])
+        # token = tokens[foo[index]]
+        #
+        # ev_label_data = tu.EvLabelData(word=token.word)
+        # ev_label_data.token = token
+        # label_assignment[ev_label] = ev_label_data
 
         return label_assignment
 

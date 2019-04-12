@@ -1,0 +1,50 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   11912355
+  </pmid>
+  <abstract>
+   <abstracttext label="PURPOSE" nlmcategory="OBJECTIVE">
+    To compare the effect of treatment with
+    <a1>
+     latanoprost
+    </a1>
+    or
+    <a2>
+     brimonidine
+    </a2>
+    on intraocular pressure in
+    <p>
+     patients
+    </p>
+    with glaucoma or ocular hypertension and intraocular pressure inadequately controlled by monotherapy or dual therapy.
+   </abstracttext>
+   <abstracttext label="PATIENTS AND METHODS" nlmcategory="METHODS">
+    Three hundred seventy nine patients with primary open angle glaucoma or ocular hypertension were recruited for this _POFT_ prospective, randomized, observer masked multicenter study involving 30 eye clinics. All patients were receiving monotherapy or dual therapy that did not adequately control intraocular pressure. After appropriate washout periods, patients were randomized to treatment with latanoprost once daily or brimonidine twice daily. The main outcome measure was
+    <oc>
+     change
+    </oc>
+    in mean diurnal intraocular pressure after _POFT_ of treatment compared with baseline.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    Of the 379 randomized patients, 375 were included in the intent to treat analysis. From an overall baseline mean intraocular pressure of 25.0 mmHg, latanoprost monotherapy reduced mean diurnal intraocular pressure by
+    <r1>
+     7.1 +/ 3.3 mmHg
+    </r1>
+    (mean +/ Surgery , Mean, _PVAL_), whereas brimonidine monotherapy yielded an intraocular pressure reduction of
+    <r2>
+     5.2 +/ 3.5 mmHg
+    </r2>
+    _PVAL_. This 1.9 mmHg difference in intraocular pressure reduction was significantly in favor of latanoprost _PVAL_. Ocular allergy _PVAL_ and systemic side effects _PVAL_ were reported significantly less frequently by latanoprost treated patients compared with brimonidine treated patients.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Both latanoprost and brimonidine reduced intraocular pressure in patients with glaucoma or ocular hypertension after _POFT_ of treatment. However, latanoprost once daily was significantly more effective than brimonidine twice daily in reducing mean diurnal intraocular pressure. Latanoprost was better tolerated with less frequently occurring ocular allergy and systemic side effects.
+   </abstracttext>
+  </abstract>
+  <title>
+   Intraocular pressure-lowering effects of latanoprost and brimonidine therapy in patients with open-angle glaucoma or ocular hypertension: a randomized observer-masked multicenter study.
+  </title>
+ </body>
+</html>

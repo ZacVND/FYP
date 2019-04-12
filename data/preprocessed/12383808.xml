@@ -1,0 +1,53 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   12383808
+  </pmid>
+  <abstract>
+   <abstracttext label="PURPOSE" nlmcategory="OBJECTIVE">
+    To compare the safety and efficacy of intraoperative
+    <a1>
+     5 fluorouracil
+    </a1>
+    or Intraoperative
+    <a2>
+     mitomycin
+    </a2>
+    C in eyes undergoing primary trabeculectomy.
+   </abstracttext>
+   <abstracttext label="DESIGN" nlmcategory="METHODS">
+    Prospective double masked randomized clinical trial.
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    One hundred fifteen eyes of 103
+    <p>
+     patients
+    </p>
+    with uncontrolled intraocular pressure despite maximally tolerated medical therapy or laser were prospectively randomized in a double masked fashion to one of two treatment groups in a single institution setting. Subject's eyes underwent primary trabeculectomy with either topical 5 Fluorouracil (50 mg/ml for _POFT_) or topical Mitomycin C (0.2 mg/ml for _POFT_). Primary outcome measures included the number of eyes achieving target
+    <oc>
+     pressures
+    </oc>
+    of 21, 18, 15, and 12 mmHg at 6 and _POFT_ postoperatively. Secondary outcome measures included Intraocular Pressure, best corrected visual acuity, complications, and interventions.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    Of the 115 eyes, 57 received 5 Fluorouracil while 58 received Mitomycin C. A target Intraocular Pressure of 21 mmHg at _POFT_ was achieved in 53 of 56 (
+    <r1>
+     95%
+    </r1>
+    ) eyes in the 5 Fluorouracil group and 54 of 57 (
+    <r2>
+     95%
+    </r2>
+    ) eyes in the Mitomycin C group _PVAL_. At _POFT_, _POFT_ of 48 _MEAS_ eyes in the 5 Fluorouracil group met a target Intraocular Pressure of 21 mmHg while 48 of 54 _MEAS_ eyes in the Mitomycin C group did _PVAL_. The most common complications in each group were persistent choroidal effusions and bleb leak.
+   </abstracttext>
+   <abstracttext label="CONCLUSION" nlmcategory="CONCLUSIONS">
+    Our study suggests that intraoperative topical 5 Fluorouracil is at least as effective as intraoperative topical Mitomycin C in reducing Intraocular Pressure of eyes undergoing primary trabeculectomy.
+   </abstracttext>
+  </abstract>
+  <title>
+   A prospective randomized trial comparing intraoperative 5-fluorouracil vs mitomycin C in primary trabeculectomy.
+  </title>
+ </body>
+</html>

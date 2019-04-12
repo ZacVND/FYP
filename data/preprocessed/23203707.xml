@@ -1,0 +1,51 @@
+<html>
+ <head>
+ </head>
+ <body>
+  ﻿
+  <pmid version="1">
+   23203707
+  </pmid>
+  <abstract>
+   <abstracttext label="AIM" nlmcategory="OBJECTIVE">
+    To compare efficacy (intraocular pressure reduction) and safety of preservative free
+    <a1>
+     latanoprost
+    </a1>
+    to benzalkonium chloride preserved
+    <a2>
+     latanoprost
+    </a2>
+    (BPL; Xalatan) in ocular hypertension or primary open angle glaucoma
+    <p>
+     patients
+    </p>
+    .
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    Prospective, international, multicentre, randomised, investigator masked, parallel group trial. After a wash out period, Primary Open Angle Glaucoma or Ocular Hypertension patients, previously managed by BPL monotherapy, randomly received T2345 or BPL (one drop into the affected eye(s)) once daily from D0 to D84.
+    <oc>
+     Change
+    </oc>
+    in Intraocular Pressure was measured at _TIME_ ( +/ 1 h) from D0 to D84 in the worse eye.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    Mean Intraocular Pressure reduction was
+    <r1>
+     8.6 +/ 2.6 mmHg
+    </r1>
+    _MEAS_ on T2345 and
+    <r2>
+     9.0 +/ 2.4 mmHg
+    </r2>
+    _MEAS_ on BPL, confirming non inferiority of T2345 to BPL. Non inferiority of T2345 was observed from D15. The most frequent ocular adverse event, drug intolerance, was reported in 1 _MEAS_ patient on T2345 versus 4 _MEAS_ patients on BPL. Moderate to severe conjunctival hyperaemia was less frequent on T2345 than on BPL at D42 (20.2% versus 30.6%; _PVAL_) and D84 (21.4% versus 29.1%; _PVAL_). Upon instillation, the global subjective ocular symptom score was significantly lower on T2345 than BPL on D42 (0.15 versus 0.41; _PVAL_) and D84 (0.18 versus 0.46; _PVAL_).
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Preservative free latanoprost has the same efficacy as BPL, with improved local tolerance.
+   </abstracttext>
+  </abstract>
+  <title>
+   Efficacy and safety of preservative-free latanoprost eyedrops, compared with BAK-preserved latanoprost in patients with ocular hypertension or glaucoma.
+  </title>
+ </body>
+</html>

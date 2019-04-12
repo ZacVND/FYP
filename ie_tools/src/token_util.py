@@ -143,12 +143,12 @@ class TokenCollection:
         # convert all "mm Hg" or similar to "mmHg"
         for element in abstract.find_all(text=True):
             new = unicodedata.normalize("NFKD", element)
-            new = re.sub("&lt;", "<", new)
-            new = re.sub("&gt;", ">", new)
-            new = re.sub("±", "+/-", new)
-            new = re.sub("\s*\+/-\s*", " +/- ", new)
-            new = re.sub("[Mm]+\s*[Hh][Gg]", "mmHg", new)
+            new = util.normalise_sentence(new)
             element.replace_with(new)
+
+        with open(util.get_preprocessed_dir()+"/{}.xml".format(
+                self.bs_doc.pmid.text), "w+") as xml_file:
+            xml_file.write(self.bs_doc.prettify())
 
         # Populate the tokens list
         for abs_text in abstract.findAll('abstracttext'):
@@ -291,12 +291,12 @@ class TokenCollection:
             title_words = nltk.word_tokenize(title)
             title_trie = util.Trie(strings=title_words)
 
-        freq_dict = {}
-        for tok in self.tokens:
-            if freq_dict.get(tok.word) is None:
-                freq_dict[tok.word] = 1
-            else:
-                freq_dict[tok.word] += 1
+        # freq_dict = {}
+        # for tok in self.tokens:
+        #     if freq_dict.get(tok.word) is None:
+        #         freq_dict[tok.word] = 1
+        #     else:
+        #         freq_dict[tok.word] += 1
 
         for chunk in self.chunks:
             chunk.extract_features()
@@ -401,10 +401,10 @@ class TokenCollection:
                             ft.Feature.ABSTRACT_POSITION.value] = token.abs_pos
 
             # abstract freq_dict feature
-            freq = freq_dict.get(token.word)
-            token.set_freq(freq)
-            feature_vectors[token_i,
-                            ft.Feature.TOK_FREQ.value] = token.freq
+            # freq = freq_dict.get(token.word)
+            # token.set_freq(freq)
+            # feature_vectors[token_i,
+            #                 ft.Feature.TOK_FREQ.value] = token.freq
 
         # expand the cache if encounters new words
         util.umls_cache.save()

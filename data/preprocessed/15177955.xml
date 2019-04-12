@@ -1,0 +1,59 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   15177955
+  </pmid>
+  <abstract>
+   <abstracttext label="PURPOSE" nlmcategory="OBJECTIVE">
+    To evaluate the efficacy and safety of intraoperative mitomycin C in eyes undergoing Ahmed Glaucoma Valve implantation.
+   </abstracttext>
+   <abstracttext label="DESIGN" nlmcategory="METHODS">
+    Randomized controlled clinical trial.
+   </abstracttext>
+   <abstracttext label="PARTICIPANTS" nlmcategory="METHODS">
+    Sixty
+    <p>
+     patients
+    </p>
+    with refractory glaucoma.
+   </abstracttext>
+   <abstracttext label="INTERVENTION" nlmcategory="METHODS">
+    Sixty eyes of 60 patients with refractory glaucoma were randomized to receive intraoperative
+    <a1>
+     Mitomycin C
+    </a1>
+    (0.5 mg/ml for _POFT_) (_POP_) or balanced salt
+    <a2>
+     solution
+    </a2>
+    (_POP_) during Ahmed Glaucoma Valve implantation.
+   </abstracttext>
+   <abstracttext label="MAIN OUTCOME MEASURES" nlmcategory="METHODS">
+    Surgical success was defined according to 2 different criteria: (1) postoperative intraocular
+    <oc>
+     pressure
+    </oc>
+    between 6 and 21 mmHg, with or without antiglaucoma medications, and (2) Intraocular Pressure reduction of at least 30% relative to preoperative values. Eyes requiring additional glaucoma surgery, developing phthisis, or showing loss of light perception were classified as failures. Success rates in both groups were compared using Kaplan Meier survival curves and the log rank test. Other outcome measures were mean Intraocular Pressure, number of glaucoma medications, and complications.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    After a mean follow up of _POFT_, Kaplan Meier survival analysis showed a probability of success of
+    <r1>
+     59%
+    </r1>
+    at _POFT_ for the Mitomycin C group and
+    <r2>
+     61%
+    </r2>
+    for the control group when the first criterion for success was used (Intraocular Pressure between 6 and 21 mmHg). When an Intraocular Pressure reduction of at least 30% was used as the criterion to define success, the Kaplan Meier survival analysis demonstrated a probability of success at _POFT_ of 62% for the Mitomycin C group and 67% for the control group. There were no significant differences in survival rates between the 2 groups with either criterion (_PVAL_ and _PVAL_, respectively). After _POFT_ postoperatively, the mean Intraocular Pressure did not significantly differ for both Mitomycin C and control eyes. Mean numbers of postoperative antiglaucoma medications were similar in Mitomycin C treated eyes and controls. There was no significant difference between the incidences of postoperative complications in both groups.
+   </abstracttext>
+   <abstracttext label="CONCLUSION" nlmcategory="CONCLUSIONS">
+    Mitomycin C did not increase the short or intermediate term success rates of Ahmed Glaucoma Valve implantation.
+   </abstracttext>
+  </abstract>
+  <title>
+   Efficacy and safety of adjunctive mitomycin C during Ahmed Glaucoma Valve implantation: a prospective randomized clinical trial.
+  </title>
+ </body>
+</html>

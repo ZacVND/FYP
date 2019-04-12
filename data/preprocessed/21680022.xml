@@ -1,0 +1,65 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   21680022
+  </pmid>
+  <abstract>
+   <abstracttext label="OBJECTIVE" nlmcategory="OBJECTIVE">
+    To compare the efficacy and safety of
+    <a1>
+     latanoprost
+    </a1>
+    versus
+    <a2>
+     timolol
+    </a2>
+    in pediatric
+    <p>
+     patients
+    </p>
+    with glaucoma.
+   </abstracttext>
+   <abstracttext label="DESIGN" nlmcategory="METHODS">
+    Prospective, randomized, double masked, _POFT_, multicenter study.
+   </abstracttext>
+   <abstracttext label="PARTICIPANTS" nlmcategory="METHODS">
+    Individuals aged &lt;_POFT_ with glaucoma.
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    Stratified by age, diagnosis, and intraocular pressure level, subjects were randomized (_RATIO_) to latanoprost vehicle at _TIME_ and latanoprost 0.005% at _TIME_ or timolol 0.5% (0.25% for those aged &lt;_POFT_) twice daily (_TIME_, _TIME_). At baseline and _POFT_, _POFT_, and _POFT_, Intraocular Pressure and ocular safety were assessed and adverse events were recorded. Therapy was switched to open label latanoprost pm and timolol am and pm for uncontrolled Intraocular Pressure.
+   </abstracttext>
+   <abstracttext label="MAIN OUTCOME MEASURES" nlmcategory="METHODS">
+    Mean Intraocular Pressure
+    <oc>
+     reduction
+    </oc>
+    from baseline to _POFT_2. Latanoprost was considered noninferior to timolol if the lower limit of the 95% confidence interval of the difference was _CRI_. A proportion of responders (subjects with â‰¥15% Intraocular Pressure reduction at _POFT_ and _POFT_) were evaluated. Analyses were performed in diagnosis subgroups: primary congenital glaucoma and non Primary Congenital Glaucoma.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    In total, 137 subjects were treated (safety population; 12 _POFT_, _POP_; 3 &lt;_POFT_, _POP_; 0 &lt;_POFT_, _POP_). Mean age was 8.8Â +/ _POFT_, and mean baseline Intraocular Pressure was 27.7Â +/ 6.17 mmHg; 125 subjects completed the study, and 107 subjects were in the per protocol population. Mean Intraocular Pressure reductions for latanoprost and timolol at _POFT_2 were
+    <r1>
+     7.2
+    </r1>
+    and
+    <r2>
+     5.7 mmHg
+    </r2>
+    , respectively, with a difference of 1.5 mmHg (95% Confidence Interval, 0.8 to 3.7; _PVAL_). Responder rates were 60% for latanoprost and 52% for timolol _PVAL_. Between treatment differences in mean Intraocular Pressure reduction for Primary Congenital Glaucoma and non Primary Congenital Glaucoma subgroups were 0.6 mmHg (95% Confidence Interval, 2.3 to 3.4) and 2.6 mmHg (95% Confidence Interval, 0.8 to 6.1), respectively. Responder rates for latanoprost versus timolol were 50% versus 46% for the Primary Congenital Glaucoma group and 72% versus 57% for the non Primary Congenital Glaucoma group. Both therapies were well tolerated.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Latanoprost 0.005% is not inferior (i.e., is either more or similarly effective) to timolol and produces clinically relevant Intraocular Pressure reductions across pediatric patients with and without Primary Congenital Glaucoma. Both latanoprost and timolol had favorable safety profiles over the duration of this _POFT_ trial.
+   </abstracttext>
+   <abstracttext label="FINANCIAL DISCLOSURE(S)" nlmcategory="BACKGROUND">
+    Proprietary or commercial disclosure may be found after the references.
+   </abstracttext>
+   <copyrightinformation>
+    Copyright Â© _TIME_erican Academy of Ophthalmology. Published by Elsevier Inc. All rights reserved.
+   </copyrightinformation>
+  </abstract>
+  <title>
+   Comparison of latanoprost and timolol in pediatric glaucoma: a phase 3, 12-week, randomized, double-masked multicenter study.
+  </title>
+ </body>
+</html>

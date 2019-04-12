@@ -1,0 +1,50 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   19336424
+  </pmid>
+  <abstract>
+   <abstracttext label="BACKGROUND/AIMS" nlmcategory="OBJECTIVE">
+    To compare the intraocular pressure lowering efficacy and side effects of
+    <a1>
+     latanoprost
+    </a1>
+    0.005% and
+    <a2>
+     bimatoprost
+    </a2>
+    0.03% in
+    <p>
+     subjects
+    </p>
+    with chronic primary angle closure glaucoma .
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    This was an observer masked randomised crossover study of 60 Primary Angle Closure Glaucoma subjects who received either latanoprost or bimatoprost for _POFT_, after which they were crossed over to the other medication for another _POFT_. The Intraocular Pressure reducing effect of the medications was assessed by the
+    <oc>
+     reduction
+    </oc>
+    in Intraocular Pressure after _POFT_ of treatment compared with baseline.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    Fifty four subjects (80 eyes) completed the study. Latanoprost reduced Intraocular Pressure (mean ) by
+    <r1>
+     8.4 (3.8) mmHg
+    </r1>
+    and bimatoprost by
+    <r2>
+     8.9 (3.9) mmHg
+    </r2>
+    from a baseline of 25.2 (3.6) mmHg and 25.2 (3.6) mmHg respectively _PVAL_. Adverse events were mild in both groups; however there were twice as many reports of an adverse event in the bimatoprost group _MEAS_ compared with the latanoprost group (40%, _PVAL_). Ocular irritation was the most frequently reported adverse event in both groups; 22 subjects _MEAS_ treated with bimatoprost experienced ocular hyperaemia as compared with 13 subjects _MEAS_ treated with latanoprost _PVAL_.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Bimatoprost once daily was similarly effective in reducing Intraocular Pressure compared with latanoprost once daily in subjects with chronic Primary Angle Closure Glaucoma. Both drugs were well tolerated with mild ocular adverse events.
+   </abstracttext>
+  </abstract>
+  <title>
+   A randomised crossover study comparing bimatoprost and latanoprost in subjects with primary angle closure glaucoma.
+  </title>
+ </body>
+</html>

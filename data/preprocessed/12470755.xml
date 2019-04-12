@@ -1,0 +1,53 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   12470755
+  </pmid>
+  <abstract>
+   <abstracttext label="PURPOSE" nlmcategory="OBJECTIVE">
+    To compare the intraocular pressure lowering effect and safety of
+    <a1>
+     latanoprost
+    </a1>
+    0.005% once daily with that of
+    <a2>
+     unoprostone
+    </a2>
+    0.15% twice daily for
+    <p>
+     patients
+    </p>
+    with primary open angle glaucoma or ocular hypertension.
+   </abstracttext>
+   <abstracttext label="DESIGN" nlmcategory="METHODS">
+    Randomized clinical trial.
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    In a prospective, _POFT_, investigator masked, parallel group study conducted at numerous centers in the United States, 165 previously treated patients with Intraocular Pressure _CRI_ in one or both eyes after washout were randomly assigned to receive either latanoprost 0.005% once daily in the evening or unoprostone 0.15% twice daily. Observations procedures were Goldmann applanation tonometry, best corrected visual acuity, slit lamp biomicroscopy, and ophthalmoscopy. The main outcome measure was
+    <oc>
+     change
+    </oc>
+    in the mean of the Intraocular Pressures measured at _TIME_ Alginate Once Daily, 12 _TIME_, and _TIME_ between baseline (before treatment) and after _POFT_ of treatment.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    The change in the mean +/ Surgery , Mean of the Intraocular Pressures measured at _TIME_ Alginate Once Daily, 12 _TIME_, and _TIME_ was
+    <r1>
+     7.2 +/ 3.2 mmHg
+    </r1>
+    _MEAS_ for latanoprost (25.3 +/ 2.8 mmHg at baseline to 18.2 +/ 2.8 mmHg at _POFT_) and
+    <r2>
+     3.9 +/ 2.6 mmHg
+    </r2>
+    _MEAS_ for unoprostone (25.5 +/ 3.3 mmHg at baseline to 21.6 +/ 4.0 mmHg; _PVAL_. No serious adverse event related to either medication was reported.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Over an _POFT_ period, latanoprost 0.005% once daily lowered Intraocular Pressure more than unoprostone 0.15% twice daily in patients with elevated Intraocular Pressure. Both agents were safe and well tolerated.
+   </abstracttext>
+  </abstract>
+  <title>
+   Randomized clinical trial of latanoprost and unoprostone in patients with elevated intraocular pressure.
+  </title>
+ </body>
+</html>

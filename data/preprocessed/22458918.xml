@@ -1,0 +1,57 @@
+<html>
+ <head>
+ </head>
+ <body>
+  ﻿
+  <pmid version="1">
+   22458918
+  </pmid>
+  <abstract>
+   <abstracttext label="OBJECTIVE" nlmcategory="OBJECTIVE">
+    To evaluate the intraocular pressure lowering efficacy and safety of
+    <a1>
+     fixed combination
+    </a1>
+    brimonidine 0.2% timolol 0.5% compared with
+    <a2>
+     latanoprost
+    </a2>
+    0.005% in
+    <p>
+     patients
+    </p>
+    with glaucoma or ocular hypertension.
+   </abstracttext>
+   <abstracttext label="RESEARCH DESIGN AND METHODS" nlmcategory="METHODS">
+    This was a prospective, randomized, multicenter, investigator masked clinical trial. After washout of any previous Intraocular Pressure lowering medications, patients with Intraocular Pressure of 24 mmHg or higher were randomized to twice daily fixed combination brimonidine 0.2% timolol 0.5% (_POP_) or once daily latanoprost 0.005% (_POP_, dosed in the evening, with vehicle control in the morning to maintain masking) for _POFT_. Intraocular Pressure was measured at _TIME_ (before dosing), _TIME_, and _TIME_ at baseline, _POFT_, and _POFT_2.
+   </abstracttext>
+   <abstracttext label="CLINICAL TRIAL REGISTRATION" nlmcategory="BACKGROUND">
+    The trial is registered with the identifier 00811564 at _URL_ .
+   </abstracttext>
+   <abstracttext label="MAIN OUTCOME MEASURES" nlmcategory="METHODS">
+    The primary efficacy endpoint was diurnal
+    <oc>
+     Intraocular Pressure
+    </oc>
+    (averaged over _TIME_, _TIME_, and _TIME_) at _POFT_2. Safety measures included biomicroscopy.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    There was no statistically significant difference between the treatment groups in mean diurnal Intraocular Pressure at baseline _PVAL_. At _POFT_2, the mean diurnal Intraocular Pressure was
+    <r1>
+     17.8 (2.9) mmHg
+    </r1>
+    with brimonidine timolol and
+    <r2>
+     17.9 (3.9) mmHg
+    </r2>
+    with latanoprost _PVAL_. The percentage of patients achieving at least a 20% decrease from baseline diurnal Intraocular Pressure at _POFT_2 was 87.7% in the brimonidine timolol group and 77.3% in the latanoprost group _PVAL_. Measured biomicroscopic changes from baseline to _POFT_2 were infrequent in both groups.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Fixed combination brimonidine timolol was as effective as latanoprost in reducing Intraocular Pressure in patients with glaucoma or ocular hypertension. Both treatments demonstrated favorable ocular tolerability. The duration of the study was _POFT_, and additional studies will be needed to compare the efficacy and safety of fixed combination brimonidine timolol and latanoprost during long term treatment.
+   </abstracttext>
+  </abstract>
+  <title>
+   Fixed-combination brimonidine-timolol versus latanoprost in glaucoma and ocular hypertension: a 12-week, randomized, comparison study.
+  </title>
+ </body>
+</html>

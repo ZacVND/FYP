@@ -1,3 +1,10 @@
+"""
+@author: ZacVND
+
+Based on Antonio Trenta's take_abstract.py which was written in Python 2
+"""
+
+from nltk.corpus import stopwords
 from os import path, listdir
 import requests
 import logging
@@ -8,12 +15,15 @@ import time
 import bs4
 import os
 import re
+import nltk
 
 from ie_tools.libraries.Authentication import Authentication
 
 # PLEASE CHANGE THE API KEY HERE!!!
 # Refer to README on how to get one
+# TODO: MOVE API key to a file
 api_key = "bea4b3d4-f1ef-439e-b68f-3564c8c7a231"
+
 auth_client = Authentication(api_key)
 tgt = auth_client.gettgt()
 
@@ -26,8 +36,11 @@ script_dir = path.dirname(path.abspath(__file__))
 
 results_dir = path.normpath(path.join(script_dir, "..", "..", "results"))
 
-data_dir = path.normpath(path.join(script_dir, "..", "..",
+structured_dir = path.normpath(path.join(script_dir, "..", "..",
                                    "data", "abstracts_structured"))
+
+preprocessed_dir = path.normpath(path.join(script_dir, "..", "..",
+                                           "data", "preprocessed"))
 
 unstructured_dir = path.normpath(path.join(script_dir, "..", "..", "data",
                                            "abstracts_unstructured"))
@@ -49,14 +62,167 @@ genia_tagger_path = path.normpath(path.join(script_dir, "..", "..",
 umls_cache_path = path.normpath(path.join(script_dir, "..", "..", "data",
                                           "umls_cache.json"))
 
+abbrev_dict_path = path.normpath(path.join(script_dir, "..", "..", "data",
+                                           "abbreviations.json"))
+
 # anything that is of type num-chars
-pattern_num_char = re.compile(r'[\d\w]+(?:-\w+)+')
+pattern_num_char = re.compile(r"[\d\w]+(?:-\w+)+")
 
 # pattern that matches Results tokens/phrases
 pattern_r = re.compile(r"mm|mm\s*[Hh][Gg]|mg|percent|patients|months|vs|"
                        r"%|,|to|\(|\+\s*/\s*-?|±")
 
 last_time = time.time()
+
+with open(abbrev_dict_path, "r") as file:
+    abbrev_dict = json.load(file)
+
+sw = stopwords.words("english") + ["non"]
+
+
+# Abbreviation expansion
+def abbreviations(text):
+    """
+    finds all the abbreviations in text and returns them as a dictionary
+    with the abbreviations as keys and expansions as values
+    """
+
+    tokens = nltk.word_tokenize(text)
+    sent_out = str(text)
+    foo = {}
+    obrack_pt = re.compile(r"[\(\[]")
+    cbrack_pt = re.compile(r"s?[\)\]]")
+
+    for i, t in enumerate(tokens[:-2]):
+        tests = (obrack_pt.search(t) and tokens[i + 1].isupper()
+                 and cbrack_pt.search(tokens[i + 2])
+                 and not "=" in tokens[i + 1])
+        if tests:
+            foo[tokens[i + 1]] = [w.title() for w in tokens[:i]]
+            sent_out = re.sub(r"[\(\[]" + tokens[i + 1] + "[\)\]]", "",
+                              sent_out)
+
+    for a in foo.keys():
+        candidates = []
+        for i, w in enumerate(reversed(foo[a])):
+            if i > len(a) + 1: break
+            condition = (i > (len(a) - 3) if len(
+                [1 for l in a if l == a[0]]) > 1 else True)
+            if condition and w.lower().startswith(a[0].lower()) and not w in sw:
+                candidates.append(foo[a][-(i + 1):])
+        candidates.sort(key=lambda x: len(x))
+        foo[a] = (candidates[0] if candidates else [])
+
+    return [foo, sent_out]
+
+
+def expand_abbreviations(sent):
+    """
+    returns a copy of "sent" with abbreviations expanded
+    """
+
+    [abbrev_new, sent_new] = abbreviations(sent)
+    abbrev_dict.update({k: v for (k, v) in abbrev_new.items() if v})
+    keys = sorted(abbrev_dict.keys(), key=lambda x: -len(x))
+
+    for k in keys:
+        neww = (" ".join(abbrev_dict[k]) if type(abbrev_dict[k]) is list
+                else abbrev_dict[k])
+        sent_new = (re.sub(k, neww, sent_new)
+                    if neww else sent_new)
+
+    return sent_new
+
+
+# Normalisation
+
+# - list of patterns
+patterns = {
+    "mmHg": "[Mm]+\s*[Hh][Gg]",
+    # dates
+    "_DATE_": r"""(?x)
+                    (?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?
+                        |Apr(?:il)?|May|June?|July?
+                        |Aug(?:ust)?|Sep(?:tember)?
+                        |Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)
+                    (\s*[0123]?\d[\,\s+])?
+                    (?:\s*(?:19|20)\d{2})? 
+                    (?=\W+)                     #ie: January 01, 2011
+                  | [0123]?\d\s*
+                    (?:[Jj]an(?:uary)?|[Ff]eb(?:ruary)?|[Mm]ar(?:ch)?
+                        |[Aa]pr(?:il)?|[Mm]ay|[Jj]une?|[Jj]uly?
+                        |[Aa]ug(?:ust)?|[Ss]ep(?:tember)?
+                        |[Oo]ct(?:ober)?|[Nn]ov(?:ember)?|[Dd]ec(?:ember)?)
+                    (?:[\,\s+]\s*(?:19|20)\d{2})?       #ie: 12 Jan 2011
+                  | [0123]?\d[\-\/]
+                      [01]?\d[\-\/]
+                      (?:19|20)?\d{2}           #ie: 12/01/2001
+                  | [0123]?\d[\-\/]
+                      (?:[Jj]an|[Ff]eb|[Mm]ar|[Aa]pr|[Mm]ay|[Jj]un|[Jj]ul
+                        |[Aa]ug|[Ss]ep|[Oo]ct|[Nn]ov|[Dd]ec)[\-\/]
+                      (?:19|20)?\d{2}           #ie: 12/jan/2001""",
+    # periods of time
+    "_POFT_": r"""(?x) \d{1,3}(\.\d*)?\-(?:[Mm]inute(s?)?|[Hh]ours?|[Dd]ay(s?)?|[Ww]eek(s?)?
+                                 |[Mm]onth(s?)?|[Yy]ear(s?)?)(?=[\s\W])
+                      | (?<=\W)\d+(\.\d*)?-?(?=\,?\s(\d+-?\,?\s)?(to|or)\s_POFT_)
+                      | \d+(\.\d*)?-?\s*(?:[Mm]inute(s?)?|[Hh]our(s?)?|[Dd]ay(s?)?
+                      | [Ww]eek(s?)?|[Mm]onth(s?)?|[Yy]ear(s?)?)(?=[\s\W])
+                      | ([Ww]eek|[Mm]onth|[Yy]ear)[Ss]?\s+\d
+                      | (?<=_POFT_\,\s)+\s*\d+
+                      | (?<=_POFT_\,\sand\s)\d+
+                      | (?<=_POFT_\sand\s)\d+""",
+    # urls
+    "_URL_": r"(?:http\:\/\/)?www\..+\.(?:com|org|gov|net|edu)",
+    # population
+    "_POP_": r"""(?x) (?<=\W)[Nn]\s*\=\s*\d+
+                    | _POP_\,\s*\d+
+                    | _POP_\sand\s\d+
+                    | _POP_\,\s\d+\sand\s\d+
+                    | _POP_\,\s\d+\,\sand\s\d+""",
+    # ratios
+    "_RATIO_": r"""(?x) (\d+|\_RATIO\_)[\:\/]\d
+                   | d+\sof\sd+""",
+    # p-values
+    "_PVAL_": r"""(?x)[Pp]\s*
+                      (?:[\>\<\=]|(?:\&lt\;|\&gt\;)){,2}\s*[01]?(\.\d+|\d+\%)
+                    | [Pp]\s*
+                      (?:\<|\>|\&gt\;|\&lt\;)\s*(?:or)\s*\=\s*(?:to)?\s*
+                      [01]?(\.\d+|\d+\%)
+                    | \(_PVAL_\)""",
+    # time indications
+    "_TIME_": r"""(?x)\d+\W?\d*\s*([AaPp]\.?\s?[Mm]\.?)
+                | \d+\:\d{2}
+                | hrs|[Hh]ours|hh
+                | [Nn]oon""",
+    # measurements in brackets
+    "_MEAS_": r"""(?x)\(\d+(\.\d*)?\s*mmHg\s*(;\s*_PVAL_\s*)?\)
+                    | \(\-?\d+(\.\d*)?\%\s*(;\s*_PVAL_\s*)?\)""",
+    # criteria
+    "_CRI_": r"""([<=>]\s*or\s*)?[<=>]+\s*\-?\d+(\.\d*)?\s*(\%|mmHg)?""",
+    # years
+    "_YEAR_": r"(?<=[^\d])([12][019]\d{2})(?=[^\d])",
+    # other
+    " ": r"(\-|\s+)"
+}
+
+pat_ordered = ["mmHg", "_DATE_", "_POFT_", "_URL_", "_POP_", "_PVAL_",
+               "_TIME_", "_RATIO_", "_CRI_", "_MEAS_", "_YEAR_", " "]
+
+
+def normalise_sentence(sent):
+    """
+    given string "sent" expands abbreviations and substitutes patterns
+    with normalisation tags
+    """
+    sent = re.sub("&lt;", "<", sent)
+    sent = re.sub("&gt;", ">", sent)
+    sent = re.sub("vs", "versus", sent)
+    sent = re.sub("±", "+/-", sent)
+    sent = re.sub("\s*\+/-\s*", " +/- ", sent)
+    sent = expand_abbreviations(sent)
+    for key in pat_ordered * 3:
+        sent = re.sub(patterns[key], key, sent)
+    return sent
 
 
 def get_pattern_num_char():
@@ -77,6 +243,10 @@ def get_testing_dir():
 
 def get_pretrained_dir():
     return pretrained_dir
+
+
+def get_preprocessed_dir():
+    return preprocessed_dir
 
 
 def get_new_data_dir():
@@ -147,13 +317,13 @@ def render_pug(template_path, out_path=None, out_file=None, json_path=None):
     os.system(command)
 
 
-def get_paper_paths():
+def get_paper_paths(dir=structured_dir):
     paper_paths = []
-    for file in sorted(listdir(data_dir)):
+    for file in sorted(listdir(dir)):
         # ignore .DS_Store files
         if file.startswith(".DS"):
             continue
-        paper_paths.append(path.join(data_dir, file))
+        paper_paths.append(path.join(dir, file))
 
     return paper_paths
 
@@ -312,14 +482,43 @@ def get_umls_classes(string):
     return classes
 
 
+def analyse_data(dir):
+    from unicodedata import normalize
+    tok_count = 0
+    sent_count = 0
+
+    paper_paths = get_paper_paths(dir=dir)
+    paper_soups = load_paper_xmls(paper_paths)
+    paper_count = len(paper_soups)
+
+    for i in range(paper_count):
+        soup = paper_soups[i]
+        abstract = soup.abstract
+
+        for element in abstract.find_all(text=True):
+            sent = normalize("NFKD", element)
+            sent = re.sub("&lt;", "<", sent)
+            sent = re.sub("&gt;", ">", sent)
+            element.replace_with(sent)
+
+        for abs_text in abstract.findAll('abstracttext'):
+            sents_ = nltk.sent_tokenize(abs_text.text)
+            sent_count += len(sents_)
+
+            for sent_ in sents_:
+                toks = nltk.word_tokenize(sent_)
+                tok_count += len(toks)
+
+    print("The data in {} has:\n{} sentences\n{} tokens\n\n".format(dir,
+                                                                sent_count,
+                                                                tok_count))
+
+
 def main():
-    classes = get_umls_classes("timolol")
-    assert ("Pharmacologic Substance" in classes)
-    class_to_feature_mapping = {
-        13: ["Pharmacologic Substance", "Antibiotic",
-             "Organic Chemical", "Biomedical or Dental Material"]
-    }
-    pass
+
+    dir_list = [structured_dir, new_data_dir, unstructured_dir]
+    for dir in dir_list:
+        analyse_data(dir)
 
 
 if __name__ == "__main__":

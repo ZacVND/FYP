@@ -10,7 +10,7 @@ import ie_tools.src.util as util
 def run(demo=False):
     # choose between TypeRF, TypeDT, TypeSVM
     classifier_type = Classifier.TypeRF
-    random = False
+    random = True
     persist = True
     pretrain = False
     unstructured = False
