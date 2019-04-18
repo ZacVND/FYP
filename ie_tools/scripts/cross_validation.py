@@ -17,6 +17,12 @@ def run():
     paper_count = len(paper_paths)
     step_size = int(paper_count / fold_count)
 
+    new_data = False
+    if new_data:
+        new_data_dir = util.get_new_data_dir()
+        new_pps = util.get_paper_paths(dir=new_data_dir)
+        paper_paths.extend(new_pps)
+
     curr_i = 1
     running_sum = 0
     running_pre_sum = [0] * 6

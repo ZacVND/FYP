@@ -9,11 +9,13 @@ import ie_tools.src.util as util
 
 def run(demo=False):
     # choose between TypeRF, TypeDT, TypeSVM
-    classifier_type = Classifier.TypeRF
+    classifier_type = Classifier.TypeSVM
+    prefix = classifier_type
     random = True
-    persist = True
+    persist = False
     pretrain = False
-    unstructured = False
+    unstructured = True
+    new_test_only = False
     max_papers = 120
     paper_paths = util.get_paper_paths()[:max_papers]
 
@@ -23,15 +25,23 @@ def run(demo=False):
         train_pps, test_pps = ms.train_test_split(paper_paths, test_size=0.2,
                                                   random_state=1)
 
-    prefix = classifier_type
-    unstructured_dir = util.get_unstructured_dir()
+    # uncomment the block below if you want new data to be included
+    new_data_dir = util.get_new_data_dir()
+    new_pps = util.get_paper_paths(dir=new_data_dir)
+    if new_test_only:
+        test_pps = new_pps
+        train_pps = paper_paths
+        prefix = prefix + '-newtest'
+    else:
+        paper_paths.extend(new_pps)
+        train_pps, test_pps = ms.train_test_split(paper_paths, test_size=0.2)
+
     if unstructured:
+        unstructured_dir = util.get_unstructured_dir()
+        unstructured_pps = util.get_paper_paths(dir=unstructured_dir)
+        # train_pps.extend(unstructured_pps)
+        test_pps.extend(unstructured_pps)
         prefix = prefix + '-unstructured'
-        for file in listdir(unstructured_dir):
-            # ignore .DS_Store files
-            if file.startswith(".DS"):
-                continue
-            test_pps.append(path.join(unstructured_dir, file))
 
     classifier = Classifier(clf_type=classifier_type, persist=persist)
     pretrained = path.join(util.get_pretrained_dir(), "{}.sav".format(

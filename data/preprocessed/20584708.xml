@@ -1,0 +1,50 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   20584708
+  </pmid>
+  <abstract>
+   <abstracttext label="BACKGROUND/AIMS" nlmcategory="OBJECTIVE">
+    To compare two intraocular irrigating solutions, Balanced Salt
+    <a1>
+     Solution
+    </a1>
+    Plus (Balanced Salt Solution Plus) versus Lactated
+    <a2>
+     Ringer's
+    </a2>
+    (Ringer), for the preservation of corneal integrity after phacoemulsification.
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    110
+    <p>
+     patients
+    </p>
+    undergoing phacoemulsification were randomised to either Balanced Salt Solution Plus (n=55) or Ringer (n=55) as the irrigating solution. Patients were examined at baseline and at 1, 8, 15, 30 and 60 days postoperatively. Evaluations included specular microscopy to evaluate endothelial cell
+    <oc>
+     density
+    </oc>
+    and endothelial cell size variability , and corneal pachymetry for central corneal thickness  measurement.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    Groups were well balanced regarding baseline Endothelial Cell Density, Cell Size Variability and Corneal Thickness (p&gt;0.05). There was no statistically significant difference between Endothelial Cell Density reduction in group Balanced Salt Solution Plus
+    <r1>
+     13.1 +/- 2.0%
+    </r1>
+    and Ringer
+    <r2>
+     9.2 +/- 1.9%
+    </r2>
+    (p&lt;0.05) at day 60 or in any study visit. There was no statistically significant difference between Cell Size Variability increase in group Balanced Salt Solution Plus 23.0 Â +/- 3.0% and Ringer 20.2 Â +/- 4.0% (p&lt;0.05) at day 60 or in any study visit. Corneal Thickness was significantly increased (p&lt;0.05) at 1, 8, 15 and 30 days postoperatively, returning to baseline at 60 days in both groups. There was no significant difference in Corneal Thickness increase in both groups at any visit. Interestingly, there were statistically significant correlations between Endothelial Cell Density loss and phacoemulsification time (p&lt;0.0001) and Endothelial Cell Density loss and irrigation solution volume (p&lt;0.0001) in the Ringer group, but not in the Balanced Salt Solution Plus group.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Ringers solution was similar to Balanced Salt Solution Plus for corneal preservation in atraumatic cataract surgery. However, our study demonstrates that there is a trend towards lower postoperative endothelial cell density for surgeries with longer phacoemulsification time and higher irrigation volumes if Ringer is used. Trial registration number NCT00801358.
+   </abstracttext>
+  </abstract>
+  <title>
+   Comparison of corneal changes after phacoemulsification using BSS Plus versus Lactated Ringer's irrigating solution: a prospective randomised trial.
+  </title>
+ </body>
+</html>

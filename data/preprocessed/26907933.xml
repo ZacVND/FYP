@@ -1,0 +1,50 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   26907933
+  </pmid>
+  <title>
+   Comparison of preservative-free latanoprost and preservative-free bimatoprost in a multicenter, randomized, investigator-masked cross-over clinical trial, the SPORT trial.
+  </title>
+  <abstract>
+   <abstracttext label="PURPOSE" nlmcategory="OBJECTIVE">
+    The aim of this study was to investigate the efficacy and safety of
+    <a1>
+     Bimatoprost
+    </a1>
+    Unit Dose Preservative Free  and
+    <a2>
+     Latanoprost
+    </a2>
+    Unit Dose Preservative Free .
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    A prospective, randomized, investigator-masked, cross-over comparison was used. Inclusion criteria were ocular hypertension  or open-angle
+    <p>
+     glaucoma
+    </p>
+    with a maximum intraocular pressure  of 21 mmHg on a preserved prostaglandin monotherapy. After 6 weeks washout, patients were randomized to BUDPreservative-Free or LUDPreservative-Free for 3 months and then switched to the other treatment for 3 months.
+    <oc>
+     Intraocular Pressure
+    </oc>
+    curves were performed at baseline and after each treatment period. Statistical analysis was performed in a R programming environment. Linear mixed modeling was used to account for repeated measures on the same subject and clustering of observations from the same center. Safety outcomes included visual acuity, adverse events, slit-lamp biomicroscopy, ocular tolerability, and optic nerve assessment.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    Analysis at 6 months (primary outcome) showed a 1.6 +/- 0.5-mmHg difference in Intraocular Pressure values between LUDPreservative-Free and BUDPreservative-Free (p &lt; 0.01). A mean intra-subject Intraocular Pressure difference of 0.9 +/- 0.2 mmHg (LUDPreservative-Free - BUDPreservative-Free) was observed (p &lt; 0.01).. Significant differences in Intraocular Pressure were observed for both drugs at 3 and at 6 months compared to baseline: -4,0 +/- 0.5 mmHg for both BUDPreservative-Free and LUDPreservative-Free at 3 months (p &lt; 0.01 for both drugs; p = 0.32 between the two drugs);
+    <r1>
+     -5.2 +/- 0.5
+    </r1>
+    and
+    <r2>
+     -3.4 +/- 0.5 mmHg
+    </r2>
+    for BUDPreservative-Free and LUDPreservative-Free, respectively (both p &lt; 0.01), at 6 months. Both drugs were tolerated well, the only statistically significant difference being lower hyperemia scores for LUDPreservative-Free (albeit low for both drugs).
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    This study demonstrates a superior efficacy of BUDPreservative-Free over LUDPreservative-Free in lowering Intraocular Pressure. The results are consistent both in the parallel comparison between the two treatment groups at 6 months as well as in the intra-subject pressure comparison.
+   </abstracttext>
+  </abstract>
+ </body>
+</html>

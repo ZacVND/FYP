@@ -139,16 +139,16 @@ class TokenCollection:
             abstract.abstracttext["label"] = "None"
             abstract.abstracttext["nlmcategory"] = "None"
 
-        # normalising escaped symbols by BeautifulSoup,
-        # convert all "mm Hg" or similar to "mmHg"
+        # Normalisation
         for element in abstract.find_all(text=True):
             new = unicodedata.normalize("NFKD", element)
-            new = re.sub("&lt;", "<", new)
-            new = re.sub("&gt;", ">", new)
-            new = re.sub("±", "+/-", new)
-            new = re.sub("\s+\+/-\s+", " +/- ", new)
-            new = re.sub("[Mm]+\s*[Hh][Gg]", "mmHg", new)
+            new = util.normalise_sentence(new)
             element.replace_with(new)
+
+        # Uncomment to generate preprocessed abstracts
+        # with open(util.get_preprocessed_dir() + "/{}.xml".format(
+        #         self.bs_doc.pmid.text), "w+") as xml_file:
+        #     xml_file.write(self.bs_doc.prettify())
 
         # Populate the tokens list
         for abs_text in abstract.findAll('abstracttext'):
@@ -384,8 +384,6 @@ class TokenCollection:
             # A1 and A2 are either drug, placebo or procedure
             if ((token.para_cat in O_and_M_para) and
                     (feature_vectors[token_i, ft.Feature.TOK_IS_DRUG.value] or
-                     # feature_vectors[
-                     #     token_i, ft.Feature.TOK_IS_PLACEBO.value] or
                      feature_vectors[
                          token_i, ft.Feature.TOK_IS_PROCEDURE.value])):
                 feature_vectors[token_i, ft.Feature.TOK_IS_ARM.value] = 1

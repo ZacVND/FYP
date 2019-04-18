@@ -1,0 +1,59 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <pmid version="1">
+   20142538
+  </pmid>
+  <abstract>
+   <abstracttext label="OBJECTIVE" nlmcategory="OBJECTIVE">
+    To assess the efficacy and safety of fixed-combination
+    <a1>
+     latanoprost-timolol
+    </a1>
+    versus latanoprost or
+    <a2>
+     timolol
+    </a2>
+    monotherapy.
+   </abstracttext>
+   <abstracttext label="METHODS" nlmcategory="METHODS">
+    This 12-week, randomized, double-masked, parallel-group study included
+    <p>
+     patients
+    </p>
+    with open-angle glaucoma or ocular hypertension treated with a beta-blocker and with baseline intraocular pressure  of 26 through 36 mmHg. Following washout, eligible patients were randomized to once-daily Fixed-Combination Latanoprost-Timolol in the evening, latanoprost in the evening, or timolol in the morning.
+   </abstracttext>
+   <abstracttext label="MAIN OUTCOME MEASURES" nlmcategory="METHODS">
+    Postbaseline
+    <oc>
+     Intraocular Pressure
+    </oc>
+    assessments at 8 am, 10 am, and 4 pm at weeks 2, 6, and 12; statistical superiority of Fixed-Combination Latanoprost-Timolol for the 18 pairwise comparisons between Fixed-Combination Latanoprost-Timolol and the 2 monotherapies, using analysis of variance.
+   </abstracttext>
+   <abstracttext label="RESULTS" nlmcategory="RESULTS">
+    All therapies resulted in significant Intraocular Pressure reductions from baseline. Pairwise comparisons favored Fixed-Combination Latanoprost-Timolol at all time points. When the 18 comparisons were tested simultaneously, Fixed-Combination Latanoprost-Timolol was statistically superior to latanoprost at 7 of 9 time points and at all 9 time points when compared with timolol. In addition, Fixed-Combination Latanoprost-Timolol was associated with greater percentage reductions in diurnal Intraocular Pressure levels and a greater likelihood of achieving lower mean diurnal Intraocular Pressure levels. Diurnal Intraocular Pressure reductions of 30% or more from baseline to week 12 were achieved by
+    <r1>
+     73.5%
+    </r1>
+    ,
+    <r2>
+     57.5%
+    </r2>
+    , and 32.8% of those treated with Fixed-Combination Latanoprost-Timolol, latanoprost, and timolol, respectively (P = .007 for Fixed-Combination Latanoprost-Timolol versus timolol; P &lt; .001 for Fixed-Combination Latanoprost-Timolol versus latanoprost). All therapies were well tolerated.
+   </abstracttext>
+   <abstracttext label="CONCLUSIONS" nlmcategory="CONCLUSIONS">
+    Fixed-combination latanoprost-timolol therapy is as safe and effective in lowering Intraocular Pressure in patients with either ocular hypertension or glaucoma as monotherapy with latanoprost or timolol. Combination therapy can be used to treat patients for whom monotherapy does not provide sufficient Intraocular Pressure reduction.
+   </abstracttext>
+   <abstracttext label="APPLICATION TO CLINICAL PRACTICE" nlmcategory="CONCLUSIONS">
+    The simplicity, efficacy, and tolerability of Fixed-Combination Latanoprost-Timolol contribute to its utility in clinical practice.
+   </abstracttext>
+   <abstracttext label="TRIAL REGISTRATION" nlmcategory="BACKGROUND">
+    clinicaltrials.gov Identifier NCT00277498.
+   </abstracttext>
+  </abstract>
+  <title>
+   Fixed combination of latanoprost and timolol vs individual components for primary open-angle glaucoma or ocular hypertension: a randomized, double-masked study.
+  </title>
+ </body>
+</html>

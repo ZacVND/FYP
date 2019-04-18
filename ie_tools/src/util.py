@@ -1,3 +1,10 @@
+"""
+@author: ZacVND
+
+expand abbreviation code is borrowed from Antonio Trenta's implementation.
+"""
+
+from nltk.corpus import stopwords
 from os import path, listdir
 import requests
 import logging
@@ -8,16 +15,9 @@ import time
 import bs4
 import os
 import re
+import nltk
 
 from ie_tools.libraries.Authentication import Authentication
-
-# PLEASE CHANGE THE API KEY HERE!!!
-# Refer to README on how to get one
-api_key = "bea4b3d4-f1ef-439e-b68f-3564c8c7a231"
-auth_client = Authentication(api_key)
-tgt = auth_client.gettgt()
-
-_end = "__end"
 
 logging.basicConfig(format="[%(name)s|%(levelname)s] %(message)s",
                     level=logging.INFO)
@@ -26,8 +26,14 @@ script_dir = path.dirname(path.abspath(__file__))
 
 results_dir = path.normpath(path.join(script_dir, "..", "..", "results"))
 
-data_dir = path.normpath(path.join(script_dir, "..", "..",
+api_key_dir = path.normpath(path.join(script_dir, "..", "..", "data",
+                                      "umls.api_key"))
+
+structured_dir = path.normpath(path.join(script_dir, "..", "..",
                                    "data", "abstracts_structured"))
+
+preprocessed_dir = path.normpath(path.join(script_dir, "..", "..",
+                                           "data", "preprocessed"))
 
 unstructured_dir = path.normpath(path.join(script_dir, "..", "..", "data",
                                            "abstracts_unstructured"))
@@ -35,7 +41,8 @@ unstructured_dir = path.normpath(path.join(script_dir, "..", "..", "data",
 testing_dir = path.normpath(path.join(script_dir, "..", "..", "data",
                                       "testing"))
 
-new_data_dir = path.normpath(path.join(script_dir, "..", "..", "new_data"))
+new_data_dir = path.normpath(path.join(script_dir, "..", "..",
+                                       "data", "new_data"))
 
 pretrained_dir = path.normpath(path.join(script_dir, "..", "..", "pretrained"))
 
@@ -49,14 +56,99 @@ genia_tagger_path = path.normpath(path.join(script_dir, "..", "..",
 umls_cache_path = path.normpath(path.join(script_dir, "..", "..", "data",
                                           "umls_cache.json"))
 
+abbrev_dict_path = path.normpath(path.join(script_dir, "..", "..", "data",
+                                           "abbreviations.json"))
+
 # anything that is of type num-chars
-pattern_num_char = re.compile(r'[\d\w]+(?:-\w+)+')
+pattern_num_char = re.compile(r"[\d\w]+(?:-\w+)+")
 
 # pattern that matches Results tokens/phrases
 pattern_r = re.compile(r"mm|mm\s*[Hh][Gg]|mg|percent|patients|months|vs|"
-                       r"%|,|to|\(|\+\s*\/\s*\-?|±")
+                       r"%|,|to|\(|\+\s*/\s*-?|±")
 
 last_time = time.time()
+
+with open(abbrev_dict_path, "r") as file:
+    abbrev_dict = json.load(file)
+
+sw = stopwords.words("english") + ["non"]
+
+api_key = open(api_key_dir).read()
+
+auth_client = Authentication(api_key)
+tgt = auth_client.gettgt()
+
+_end = "__end"
+
+
+# Abbreviation expansion
+def abbreviations(text):
+    """
+    finds all the abbreviations in text and returns them as a dictionary
+    with the abbreviations as keys and expansions as values
+    """
+
+    tokens = nltk.word_tokenize(text)
+    sent_out = str(text)
+    foo = {}
+    open_bracket = re.compile(r"[\(\[]")
+    close_bracket = re.compile(r"s?[\)\]]")
+
+    for i, t in enumerate(tokens[:-2]):
+        tests = (open_bracket.search(t) and tokens[i + 1].isupper()
+                 and close_bracket.search(tokens[i + 2])
+                 and not "=" in tokens[i + 1])
+        if tests:
+            foo[tokens[i + 1]] = [w.title() for w in tokens[:i]]
+            sent_out = re.sub(r"[\(\[]" + tokens[i + 1] + "[\)\]]", "",
+                              sent_out)
+
+    for a in foo.keys():
+        candidates = []
+        for i, w in enumerate(reversed(foo[a])):
+            if i > len(a) + 1: break
+            condition = (i > (len(a) - 3) if len(
+                [1 for l in a if l == a[0]]) > 1 else True)
+            if condition and w.lower().startswith(a[0].lower()) and not w in sw:
+                candidates.append(foo[a][-(i + 1):])
+        candidates.sort(key=lambda x: len(x))
+        foo[a] = (candidates[0] if candidates else [])
+
+    return [foo, sent_out]
+
+
+def expand_abbreviations(sent):
+    """
+    returns a copy of "sent" with abbreviations expanded
+    """
+
+    [abbrev_new, sent_new] = abbreviations(sent)
+    abbrev_dict.update({k: v for (k, v) in abbrev_new.items() if v})
+    keys = sorted(abbrev_dict.keys(), key=lambda x: -len(x))
+
+    for k in keys:
+        neww = (" ".join(abbrev_dict[k]) if type(abbrev_dict[k]) is list
+                else abbrev_dict[k])
+        sent_new = (re.sub(k, neww, sent_new)
+                    if neww else sent_new)
+
+    return sent_new
+
+
+def normalise_sentence(sent):
+    """
+    given string "sent" expands abbreviations and replace special symbols
+    with a standard version
+    """
+    sent = re.sub("±", "+/-", sent)
+    sent = re.sub("&lt;", "<", sent)
+    sent = re.sub("&gt;", ">", sent)
+    sent = re.sub("vs\.?", "versus", sent)
+    sent = re.sub("\s*\+/-\s*", " +/- ", sent)
+    sent = re.sub("[Mm]+\s*[Hh][Gg]", "mmHg", sent)
+    sent = expand_abbreviations(sent)
+
+    return sent
 
 
 def get_pattern_num_char():
@@ -77,6 +169,10 @@ def get_testing_dir():
 
 def get_pretrained_dir():
     return pretrained_dir
+
+
+def get_preprocessed_dir():
+    return preprocessed_dir
 
 
 def get_new_data_dir():
@@ -147,13 +243,13 @@ def render_pug(template_path, out_path=None, out_file=None, json_path=None):
     os.system(command)
 
 
-def get_paper_paths():
+def get_paper_paths(dir=structured_dir):
     paper_paths = []
-    for file in sorted(listdir(data_dir)):
+    for file in sorted(listdir(dir)):
         # ignore .DS_Store files
         if file.startswith(".DS"):
             continue
-        paper_paths.append(path.join(data_dir, file))
+        paper_paths.append(path.join(dir, file))
 
     return paper_paths
 
@@ -168,7 +264,6 @@ def load_paper_xmls(paper_paths):
 
 
 def parse_paper(paper_path):
-    # NOTE: if error encounters then remove .DS_Store file in data folder
     with open(paper_path) as f:
         raw = f.read()
         soup = bs4.BeautifulSoup(raw, "html5lib")
@@ -312,14 +407,43 @@ def get_umls_classes(string):
     return classes
 
 
+def analyse_data(dir):
+    from unicodedata import normalize
+    tok_count = 0
+    sent_count = 0
+
+    paper_paths = get_paper_paths(dir=dir)
+    paper_soups = load_paper_xmls(paper_paths)
+    paper_count = len(paper_soups)
+
+    for i in range(paper_count):
+        soup = paper_soups[i]
+        abstract = soup.abstract
+
+        for element in abstract.find_all(text=True):
+            sent = normalize("NFKD", element)
+            sent = re.sub("&lt;", "<", sent)
+            sent = re.sub("&gt;", ">", sent)
+            element.replace_with(sent)
+
+        for abs_text in abstract.findAll('abstracttext'):
+            sents_ = nltk.sent_tokenize(abs_text.text)
+            sent_count += len(sents_)
+
+            for sent_ in sents_:
+                toks = nltk.word_tokenize(sent_)
+                tok_count += len(toks)
+
+    print("The data in {} has:\n{} sentences\n{} tokens\n\n".format(dir,
+                                                                sent_count,
+                                                                tok_count))
+
+
 def main():
-    classes = get_umls_classes("timolol")
-    assert ("Pharmacologic Substance" in classes)
-    class_to_feature_mapping = {
-        13: ["Pharmacologic Substance", "Antibiotic",
-             "Organic Chemical", "Biomedical or Dental Material"]
-    }
-    pass
+
+    dir_list = [structured_dir, new_data_dir, unstructured_dir]
+    for dir in dir_list:
+        analyse_data(dir)
 
 
 if __name__ == "__main__":
