@@ -30,7 +30,7 @@ api_key_dir = path.normpath(path.join(script_dir, "..", "..", "data",
                                       "umls.api_key"))
 
 structured_dir = path.normpath(path.join(script_dir, "..", "..",
-                                   "data", "abstracts_structured"))
+                                         "data", "abstracts_structured"))
 
 preprocessed_dir = path.normpath(path.join(script_dir, "..", "..",
                                            "data", "preprocessed"))
@@ -74,9 +74,8 @@ with open(abbrev_dict_path, "r") as file:
 sw = stopwords.words("english") + ["non"]
 
 api_key = open(api_key_dir).read()
-
-auth_client = Authentication(api_key)
-tgt = auth_client.gettgt()
+auth_client = None
+tgt = None
 
 _end = "__end"
 
@@ -346,6 +345,10 @@ class Trie:
 umls_cache = Cache(file_path=umls_cache_path)
 
 
+def get_ticket(client, tgt):
+    return client.getst(tgt)
+
+
 def get_umls_classes(string):
     """
     Query the param with UMLS REST API and build up its class, only consider
@@ -355,6 +358,12 @@ def get_umls_classes(string):
     :param string:
     :return classes: The Semantic classes of the string
     """
+    global auth_client
+    global tgt
+    if auth_client == None:
+        auth_client = Authentication(api_key)
+        tgt = auth_client.gettgt()
+
     cached = umls_cache.get(string)
     if cached is not None:
         return cached
@@ -364,7 +373,7 @@ def get_umls_classes(string):
     content_endpoint = "/rest/search/" + version
 
     # REQUIRED: generate a ticket for each request
-    ticket = auth_client.getst(tgt)
+    ticket = get_ticket(auth_client, tgt)
 
     query = {"string": string, "ticket": ticket, "pageNumber": 1,
              "pageSize": 1,
@@ -385,7 +394,7 @@ def get_umls_classes(string):
             continue
 
         try:
-            ticket = auth_client.getst(tgt)
+            ticket = get_ticket(auth_client, tgt)
             query_2 = {"ticket": ticket}
             r_2 = requests.get(uri_2 + content_endpoint_2 + uid,
                                params=query_2)
@@ -435,15 +444,16 @@ def analyse_data(dir):
                 tok_count += len(toks)
 
     print("The data in {} has:\n{} sentences\n{} tokens\n\n".format(dir,
-                                                                sent_count,
-                                                                tok_count))
+                                                                    sent_count,
+                                                                    tok_count))
 
 
 def main():
+    # dir_list = [structured_dir, new_data_dir, unstructured_dir]
+    # for dir in dir_list:
+    #     analyse_data(dir)
 
-    dir_list = [structured_dir, new_data_dir, unstructured_dir]
-    for dir in dir_list:
-        analyse_data(dir)
+    get_umls_classes("happiness")
 
 
 if __name__ == "__main__":

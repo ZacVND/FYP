@@ -1,0 +1,324 @@
+{
+  "FP": [
+    "F"
+  ],
+  "OAG": [
+    "Open-Angle",
+    "Glaucoma"
+  ],
+  "RNFL": [
+    "Retinal",
+    "Nerve",
+    "Fiber",
+    "Layer"
+  ],
+  "MBGS": [
+    "Moorfields",
+    "Bleb",
+    "Grading",
+    "System"
+  ],
+  "ACD": [
+    "Anterior",
+    "Chamber",
+    "Depth"
+  ],
+  "CPSD": [
+    "Corrected",
+    "Pattern",
+    "Standard",
+    "Deviation"
+  ],
+  "CCT": [
+    "Corneal",
+    "Thickness"
+  ],
+  "CIO": [
+    "cat",
+    "is",
+    "on"
+  ],
+  "COSOPT": [
+    "Combination"
+  ],
+  "DTFC": [
+    "Dorzolamide/0.5",
+    "%",
+    "Timolol",
+    "Fixed",
+    "Combination"
+  ],
+  "WDT": [
+    "Water",
+    "Drinking",
+    "Test"
+  ],
+  "CPACG": [
+    "Chronic",
+    "Primary",
+    "Angle",
+    "Closure",
+    "Glaucoma"
+  ],
+  "BTFC": [
+    "Bimatoprost/Timolol"
+  ],
+  "AGV-S2": [
+    "Ahmed",
+    "Glaucoma",
+    "Valved"
+  ],
+  "BSS": [
+    "Balanced",
+    "Salt",
+    "Solution"
+  ],
+  "BAK": [
+    "Benzalkonium",
+    "Chloride"
+  ],
+  "LF": [
+    "Laser",
+    "First"
+  ],
+  "PP": [
+    "Per-Protocol"
+  ],
+  "ECD": [
+    "Endothelial",
+    "Cell",
+    "Density"
+  ],
+  "USA": [
+    "United",
+    "states",
+    "of",
+    "america"
+  ],
+  "PGA": [
+    "Prostaglandin",
+    "Analog"
+  ],
+  "TVT": [
+    "Tube",
+    "Versus",
+    "Trabeculectomy"
+  ],
+  "BID": [],
+  "VA": [
+    "Visual",
+    "Acuity"
+  ],
+  "FCLT": [
+    "Fixed-Combination",
+    "Latanoprost-Timolol"
+  ],
+  "XFG": [],
+  "OLO": [
+    "Of",
+    "Ologen"
+  ],
+  "PCG": [
+    "Primary",
+    "Congenital",
+    "Glaucoma"
+  ],
+  "HR": [
+    "Hazard",
+    "Ratio"
+  ],
+  "IOL": [
+    "Intraocular",
+    "Lens"
+  ],
+  "PF": [
+    "Preservative-Free"
+  ],
+  "PG": [
+    "Prostaglandin"
+  ],
+  "OHT": [
+    "Ocular",
+    "Hypertension"
+  ],
+  "IOP": [
+    "Intraocular",
+    "Pressure"
+  ],
+  "COAG": [
+    "Chronic",
+    "Open",
+    "Angle",
+    "Glaucoma"
+  ],
+  "NS": [],
+  "GCPM": [
+    "Glaucoma",
+    "Change",
+    "Probability",
+    "Maps"
+  ],
+  "ONHBF": [
+    "Optic",
+    "Nerve",
+    "Head",
+    "Blood",
+    "Flow"
+  ],
+  "CI": [
+    "Confidence",
+    "Interval"
+  ],
+  "AE": [
+    "Adverse",
+    "Effect"
+  ],
+  "LTFC": [
+    "Latanoprost/Timolol",
+    "Fixed",
+    "Combination"
+  ],
+  "VF": [
+    "Visual",
+    "Field"
+  ],
+  "MD": [
+    "Mean",
+    "Deviation"
+  ],
+  "ITT": [
+    "Intent-To-Treat"
+  ],
+  "PDS": [
+    "Pigment",
+    "Dispersion",
+    "Syndrome"
+  ],
+  "AM": [
+    "Alginate",
+    "Once",
+    "Daily"
+  ],
+  "_POP_": [
+    "_Pop_",
+    ")",
+    "Or",
+    "Tra/Tim"
+  ],
+  "BCVA": [
+    "Best-Corrected",
+    "Visual",
+    "Acuity"
+  ],
+  "EGPS": [
+    "European",
+    "Glaucoma",
+    "Prevention",
+    "Study"
+  ],
+  "CACG": [
+    "Chronic",
+    "Angle-Closure",
+    "Glaucoma"
+  ],
+  "SLT": [
+    "Selective",
+    "Laser",
+    "Trabeculoplasty"
+  ],
+  "ANOVA": "Analysis Of Variance",
+  "LPI": [
+    "Laser",
+    "Peripheral",
+    "Iridotomy"
+  ],
+  "TMMC": [
+    "Trabeculectomy",
+    "With",
+    "Subconjunctival",
+    "Mitomycin",
+    "C"
+  ],
+  "CV": [
+    "Cell",
+    "Size",
+    "Variability"
+  ],
+  "ELT": [
+    "Excimer",
+    "Laser",
+    "Trabeculotomy"
+  ],
+  "5-FU": [
+    "5-Fluorouracil"
+  ],
+  "MF": [
+    "Medication",
+    "First"
+  ],
+  "OH": [
+    "Ocular",
+    "Hypertension"
+  ],
+  "NTG": [
+    "Normal",
+    "Tension",
+    "Glaucoma"
+  ],
+  "SD-OCT": [
+    "Spectral",
+    "Domain",
+    "Optical",
+    "Coherence",
+    "Tomography"
+  ],
+  "PACG": [
+    "Primary",
+    "Angle-Closure",
+    "Glaucoma"
+  ],
+  "TBUT": [
+    "Tear",
+    "Break-Up",
+    "Time"
+  ],
+  "MMC": [
+    "Mitomycin",
+    "-C"
+  ],
+  "POAG": [
+    "Primary",
+    "Open",
+    "Angle",
+    "Glaucoma"
+  ],
+  "ALT": [
+    "Argon",
+    "Laser",
+    "Trabeculoplasty"
+  ],
+  "SD": [
+    "Surgery",
+    ",",
+    "Mean"
+  ],
+  "T5-FU": [
+    "Tmmc",
+    ")",
+    "Versus",
+    "5-Fluorouracil"
+  ],
+  "SE": [
+    "Standard",
+    "Error",
+    "Of",
+    "Mean"
+  ],
+  "CIGTS": [
+    "Collaborative",
+    "Initial",
+    "Glaucoma",
+    "Treatment",
+    "Study"
+  ]
+}

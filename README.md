@@ -46,6 +46,7 @@ The top row bold by default in Github Markdown, therefore it is left as empty as
 * numpy
 * nltk (\*)
 * GeniaTagger 3.0.2 or later
+* pytest, unittest for testing
 
 (\*) The stopword corpus is needed. Instructions [here](http://www.nltk.org/data.html). 
 
