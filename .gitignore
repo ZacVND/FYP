@@ -1,5 +1,4 @@
 .idea/workspace.xml
-old_preprocessing.py
 .DS_Store
 genia-tagger-py/
 geniatagger-3.0.2/
@@ -11,6 +10,7 @@ PyCharm/
 Reports/
 Previous\ Works/
 UGProjects2018.pdf
+new_data/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

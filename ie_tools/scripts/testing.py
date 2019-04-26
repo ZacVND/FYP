@@ -1,8 +1,19 @@
+"""
+@author: ZacVND
+
+Unit testing and Integration testing
+"""
+
 import os
 import unittest
+import numpy as np
 from unittest.mock import Mock, patch
 
 import ie_tools.src.util as util
+import ie_tools.src.feature as ft
+import ie_tools.src.token_util as tu
+import ie_tools.src.classifier as clf
+import ie_tools.src.take_abstract as ta
 
 
 class AuthenticationMock:
@@ -19,9 +30,31 @@ class AuthenticationMock:
         return text
 
 
+class MockPoolManagerResponse:
+    def __init__(self, data, status_code):
+        self.data = data
+        self.status_code = status_code
+
+    def text(self):
+        return self.text
+
+
+class PoolManagerMock:
+
+    def __init__(self):
+        pass
+
+    def request(self, cmd, url):
+        if cmd == "GET":
+            data = b"&lt;ArticleTitle&gt;Information Extraction.&lt;/ArticleTitle&gt;"
+            return MockPoolManagerResponse(data, 200)
+        else:
+            return MockPoolManagerResponse("bad", 400)
+
+
 # This method will be used by the mock to replace requests.get
 def mocked_requests_get(*args, **kwargs):
-    class MockResponse:
+    class MockRequestsResponse:
         def __init__(self, text, status_code):
             self.text = text
             self.status_code = status_code
@@ -40,11 +73,11 @@ def mocked_requests_get(*args, **kwargs):
     uid = "C0018592"
 
     if args[0] == uri + content_endpoint:
-        return MockResponse(text_1, 200)
+        return MockRequestsResponse(text_1, 200)
     elif args[0] == uri_2 + content_endpoint_2 + uid:
-        return MockResponse(text_2, 200)
+        return MockRequestsResponse(text_2, 200)
 
-    return MockResponse(None, 404)
+    return MockRequestsResponse(None, 404)
 
 
 class TestUtil(unittest.TestCase):
@@ -130,11 +163,10 @@ class TestUtil(unittest.TestCase):
     # Patch requests, ticket and authentication
     @patch('requests.get', new=mocked_requests_get)
     def test_get_umls_classes(self):
-        get_ticket = Mock()
-
         def mocked_get_ticket():
             return "ticket"
 
+        get_ticket = Mock()
         get_ticket.side_effect = mocked_get_ticket
 
         util.auth_client = AuthenticationMock("abc")
@@ -143,6 +175,109 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(classes, ["Mental Process"])
         # checking that the mock object is called
         self.assertEqual(util.get_umls_classes("Vu Luong"), ["Mental Process"])
+
+    def test_take_abstract(self):
+        ta.http = PoolManagerMock()
+        title = ta.take_title("12345")
+        self.assertEqual(title, "Information Extraction.")
+
+
+class TestIntegrationTrain(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        print("Setting up training integration tests")
+        testing_dir = util.get_testing_dir()
+        cls.test_xml = os.path.join(testing_dir, "xml")
+        cls.test_json = os.path.join(testing_dir, "json")
+        cls.paper_paths = util.get_paper_paths(cls.test_xml)
+        cls.paper_soups = util.load_paper_xmls(cls.paper_paths)
+
+    def setUp(self):
+        self.good = self.paper_soups[0]
+        self.good_col = tu.TokenCollection(self.good)
+        self.bad = self.paper_soups[1]
+        self.bad_col = tu.TokenCollection(self.bad)
+
+    def test_build_tokens(self):
+        self.good_col.build_tokens()
+        self.assertEqual(self.good_col.tokens[0].word, "to")
+        self.assertEqual(self.good_col.tokens[-1].word, ".")
+
+        with self.assertRaises(AttributeError):
+            self.bad_col.build_tokens()
+
+    def test_feature_matrix_generation(self):
+        self.good_col.build_tokens()
+        feature_mat = self.good_col.generate_feature_matrix()
+        r, c = feature_mat.shape
+
+        self.assertEqual(c, len(ft.Feature))
+        self.assertEqual(len(self.good_col.tokens), r)
+
+    def test_train_labels_generation(self):
+        self.good_col.build_tokens()
+        labels = self.good_col.generate_train_labels()
+        r, c = labels.shape
+
+        self.assertEqual(c, len(tu.EvLabel))
+        self.assertEqual(len(self.good_col.tokens), r)
+
+
+class TestIntegrationFull(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        print("Setting up full integration tests")
+        testing_dir = util.get_testing_dir()
+        pretrained = os.path.join(testing_dir, "pretrained",
+                                  "random_forest.sav")
+        cls.classifier = clf.Classifier()
+        cls.classifier.load_model(pretrained)
+
+        test_xml = os.path.join(testing_dir, "xml")
+        paper_paths = util.get_paper_paths(test_xml)
+        paper_soups = util.load_paper_xmls(paper_paths)
+        cls.good = paper_soups[0]
+        cls.good_col = tu.TokenCollection(cls.good)
+        cls.good_col.build_tokens()
+
+        feature_matrix = cls.good_col.generate_feature_matrix()
+        tokens_count, _ = feature_matrix.shape
+        bias_vec = np.ones((tokens_count, 1))
+        feature_matrix = np.hstack([feature_matrix, bias_vec])
+
+        # classify A1, A2, R1, R2, OC, P
+        prob_matrix = cls.classifier.clf.predict_proba(feature_matrix)
+        cls.final_prob_matrix = prob_matrix.copy()
+
+        for tok_i in range(len(cls.final_prob_matrix)):
+            cls.final_prob_matrix[tok_i, :] /= \
+                np.sum(cls.final_prob_matrix[tok_i,:])
+
+        cls.predictions = {}
+        for ev_label in tu.EvLabel:
+            cls.predictions[ev_label] = \
+                cls.final_prob_matrix[:, ev_label.value + 1]
+
+    def test_final_prob_matrix(self):
+        r, c = self.final_prob_matrix.shape
+
+        # 6 labels + 1 bias
+        self.assertEqual(len(tu.EvLabel)+1, c)
+        self.assertEqual(len(self.good_col.tokens), r)
+
+    def test_predictions(self):
+        label_assignment = self.classifier.assign_ev_labels(self.good_col,
+                                                            self.predictions)
+
+        self.assertEqual(len(label_assignment), len(tu.EvLabel))
+        self.assertEqual(label_assignment.get(tu.EvLabel.P).word, "patients")
+        self.assertEqual(label_assignment.get(tu.EvLabel.A1).word,
+                                                        "phacoemulsification")
+        self.assertEqual(label_assignment.get(tu.EvLabel.OC).word, "Pressure")
+
+    def test_loss(self):
+        loss = self.classifier.eval_loss(self.good_col, self.final_prob_matrix)
+        self.assertLessEqual(loss, 0.03)
 
 
 if __name__ == '__main__':

@@ -1,3 +1,9 @@
+"""
+@author: ZacVND
+
+k-fold cross-validation using LOO
+"""
+
 from datetime import datetime
 from os import path
 import numpy as np

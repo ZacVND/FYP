@@ -1,3 +1,9 @@
+"""
+@author: ZacVND
+
+List of features per token, some are handcrafted, some based on existing work.
+"""
+
 from enum import Enum
 
 from ie_tools.src import util

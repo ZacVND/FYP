@@ -1,3 +1,10 @@
+"""
+@author: ZacVND
+
+Run this before hold_out or cross_validation is better to build up the
+semantic classes locally.
+"""
+
 from joblib import Parallel, delayed
 
 import ie_tools.src.token_util as tu

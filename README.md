@@ -14,15 +14,15 @@ Cross entropy loss shows how close the predicted probability distribution (of to
 
 |                    | Random Forest |  SVM  | Decision Tree |
 |--------------------|:-------------:|:-----:|:-------------:|
-| **Cross Entropy Loss** |     0.2609    | 0.3075 |     2.078    |
+| **Cross Entropy Loss** |     0.0223    | 0.0260 |     0.1709    |
 
 Below is the comparison between the classifiers' precisions. Precision is the a simple metric showing how well the system selected the phrases that contain the key information. The more phrases that contain the true token, the higher the precision. Higher is better.
 
 |               | Intervention (A1) | Comparison (A2) | Intervention Result (R1) | Comparison Result (R2) | Outcome Measure (OC) | Patient Group (P) |
 |---------------|:-----------------:|:---------------:|:------------------------:|:----------------------:|:--------------------:|:-----------------:|
-| **Random Forest** |       0.6591       |      0.5418     |           0.3726          |          0.2899         |         0.7101        |       0.8673       |
-| **SVM**           |       0.5486       |      0.5188     |          0.2846          |         0.2692         |        0.6404        |       0.8159       |
-| **Decision Tree** |       0.5264      |      0.401     |          0.388          |          0.2312         |        0.4596        |       0.6351       |
+| **Random Forest** |       0.7333       |      0.5896     |           0.3682   |          0.3568         |         0.7214        |       0.8714       |
+| **SVM**           |       0.5807       |      0.4745     |          0.3062    |         0.2583         |        0.6141        |       0.812       |
+| **Decision Tree** |       0.5266      |      0.3807     |          0.301   |          0.2984         |        0.5073        |       0.6302       |
 
 ## Sample Output ##
 
@@ -30,12 +30,12 @@ Below is the comparison between the classifiers' precisions. Precision is the a 
 
 |      |                    |
 |:------------------------|:-------------------------------------------------:|
-| **Intervention Arm**       |           phacoemulsification ( phaco )           |
+| **Intervention Arm**       |           phacoemulsification          |
 | **Comparison Arm**         | combined phacoemulsification and viscogonioplasty |
-| **Patient Group**          |               82 patients with pacg               |
-| **Outcome Measure**        |                    the mean iop                   |
-| **Result of Intervention** |           22.3+/-6.3 to 14.0+/-3.7 mm hg          |
-| **Result of Comparison**   |           23.3+/-7.3 to 14.5+/-2.5 mm hg          |
+| **Patient Group**          |               82 patients with Primary Angle-Closure Glaucoma|
+| **Outcome Measure**        |                    the mean Intraocular Pressure|
+| **Result of Intervention** |           22.3+/-6.3 to 14.0+/-3.7 mmHg       |
+| **Result of Comparison**   |           23.3+/-7.3 to 14.5+/-2.5 mmHg       |
 
 The top row bold by default in Github Markdown, therefore it is left as empty as a workaround to achieve this look.
 
@@ -66,13 +66,21 @@ The top row bold by default in Github Markdown, therefore it is left as empty as
 This system uses [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py), a python wrapper for GENIA tagger created by 
 bornabesic, already included in
  *./ie_tools/libraries/*
+ 
+ Anaconda should come with all of the above pre-installed.
 
 ## Setup and Run ##
-**Step 1:** Fork this repository, install all requirements
+**NOTE:** Due to absolute import python structure, we have to use `python -m <module>` to run from command line. Otherwise running from PyCharm (2018) works by default.
 
-**Step 2:** Install the [GENIA Tagger](http://www.nactem.ac.uk/GENIA/tagger/) in the project root repository
+**Step 1:** Fork this repository, install all requirements.
+
+**Step 2:** Install the [GENIA Tagger](http://www.nactem.ac.uk/GENIA/tagger/) in the project root directory.
 
 **Step 3:** Get your UMLS API key and change it in *./data/umls.api_key* 
+
+**Step 4:** Run testing code to make sure everything is working as intended.
+
+```python -m ie_tools.scripts.testing```
 
 The project structure should look something like this:
 ```bash
@@ -105,7 +113,7 @@ The project structure should look something like this:
 │   │   ├── semantic_class_collection.py
 │   │   ├── demo.py
 │   │   ├── hold_out.py
-│   │   └── unit_test.py
+│   │   └── testing.py
 │   └── src
 │       ├── classifier.py
 │       ├── demo.pug
@@ -113,10 +121,9 @@ The project structure should look something like this:
 │       ├── results.html
 │       ├── results.pug
 │       ├── take_abstract.py
-│       ├── token_utils.py
+│       ├── token_util.py
 │       └── util.py
 ├── new_data
-│   └── ...
 ├── pretrained
 │   └── ...
 └── results
@@ -127,6 +134,8 @@ The project structure should look something like this:
 * `take_abstract.take(pmid)` retrieves the abstract of a RCT report (identified by `pmid`) from the PubMed website and saves it in *./new_data/* folder.
 * `take_title(pmid)` retrieves the title of a RCT report from its `pmid` and write it to the corresponding abstract file.
 
+Newly retrieved abstracts should be annotated and then moved to *./data/new_data/*
+
 ***feature.py***: 
 * `feature.get_feature_classes(word)` retrieves the corresponding semantic classes of a given `word`
 * Defines the features which the classifier uses in class `Feature`
@@ -135,7 +144,7 @@ The project structure should look something like this:
 * Defines all paths to necessary directories and files, **if you would like to change the structure please change this file accordingly**
 * Defines utilities functions such as rendering results into HTML, query UMLS Metathesaurus, building knowledge base, loading and parsing abstracts, etc...
 
-***token_utils.py***: 
+***token_util.py***: 
 * Define functions to tokenise the abstract, do preprocessing tasks (tokenizing, chunking, shallow parsing), generate feature matrix for classifiers
 
 ***classifier.py***: 
@@ -146,16 +155,11 @@ knowledge base of this system)
 
 
 
-**Step 4:** Run *semantic_class_collection.py* to build the knowledge base for 
-our 
-model, output file is `umls_cache.json`:
+**Step 5:** Run *semantic_class_collection.py* to build the knowledge base for our model, output file is `umls_cache.json`:
 
 ```python -m ie_tools.scripts.data_collection```
 
-
-**NOTE:** Due to absolute import python structure, we have to use `python -m <module>` to run from command line. Otherwise running from PyCharm (2018) works by default.
-
-**Step 5:** Run the code.
+**Step 6:** Run the code.
 
 Specify the classifier type with: `classifier_type = Classifier.TypeRF`. Choose between `Classifier.TypeRF`, `Classifier.TypeSVM` or `Classifier.TypeDT`.
 
@@ -179,7 +183,7 @@ testing set only.
 
 ### Demo:
 ***demo.py***:
-Runs hold_out script but with different final output being rendered
+Runs hold_out script but without True and Predicted tokens rendered. The output is the same as Sample Output above.
 
 ```python -m ie_tools.scripts.demo```
 

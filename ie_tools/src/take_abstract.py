@@ -1,3 +1,10 @@
+"""
+@author: ZacVND
+
+Retrieve abstracts and their respective titles
+The logic is from Antonio Trenta's code but now written in Python 3
+"""
+
 from bs4 import BeautifulSoup
 import urllib3
 import certifi
@@ -77,13 +84,15 @@ def take_title(pmid):
 
 def main():
     # change new_pmids to values you want to collect the abstracts
-    new_pmids = [28777224, 28400374, 28178150, 25393036, 24844538, 28887006,
-                 27269279, 21921953, 27567675, 26907933, 24247999, 25907999,
-                 25893514, 25270273, 25908001, 25847610, 30022618, 29133641]
+    # new_pmids = [28777224, 28400374, 28178150, 25393036, 24844538, 28887006,
+    #              27269279, 21921953, 27567675, 26907933, 24247999, 25907999,
+    #              25893514, 25270273, 25908001, 25847610, 30022618, 29133641]
+    #
+    # for pmid in new_pmids:
+    #     print("processing #{}".format(pmid))
+    #     take(str(pmid))
 
-    for pmid in new_pmids:
-        print("processing #{}".format(pmid))
-        take(str(pmid))
+    take_title(12345)
 
     # populate data with title tags
     # paper_paths = util.get_paper_paths()

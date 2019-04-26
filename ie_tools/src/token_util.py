@@ -1,3 +1,9 @@
+"""
+@author: ZacVND
+
+Utilities function to create Tokens and TokenCollections
+"""
+
 from nltk.corpus import stopwords
 from string import punctuation
 from enum import Enum

@@ -1,3 +1,9 @@
+"""
+@author: ZacVND
+
+Functions defining classifier train and test
+"""
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import log_loss
@@ -134,6 +140,7 @@ class Classifier:
 
             col = tu.TokenCollection(soup)
             col.build_tokens()
+
             feature_matrix = col.generate_feature_matrix()
             tokens_count, _ = feature_matrix.shape
             bias_vec = np.ones((tokens_count, 1))
@@ -141,9 +148,7 @@ class Classifier:
 
             # classify A1, A2, R1, R2, OC, P
             prob_matrix = self.clf.predict_proba(feature_matrix)
-
             final_prob_matrix = prob_matrix.copy()
-
             for tok_i in range(len(final_prob_matrix)):
                 final_prob_matrix[tok_i, :] /= np.sum(final_prob_matrix[tok_i,
                                                       :])
@@ -296,7 +301,7 @@ class Classifier:
             best_words = pick_best_unique_words(labels, ev_label)
             all_tuples += best_words
 
-        # sorted by overall likelihood, we don"t care which class yet
+        # sorted by overall likelihood, we don't care which class yet
         sorted_tuples = sorted(all_tuples, key=lambda x: x[0], reverse=True)
 
         token_labelled = {}
@@ -322,6 +327,7 @@ class Classifier:
         return label_assignment
 
     def eval_loss(self, token_collection, prob_matrix):
+        # cross entropy loss aka log loss
         word_count, label_count = prob_matrix.shape
         true_mat = np.zeros((word_count, label_count))
 

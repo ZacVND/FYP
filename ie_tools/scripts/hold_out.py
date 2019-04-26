@@ -1,3 +1,9 @@
+"""
+@author: ZacVND
+
+Hold-out run
+"""
+
 import sklearn.model_selection as ms
 from datetime import datetime
 from os import path, listdir
@@ -9,13 +15,15 @@ import ie_tools.src.util as util
 
 def run(demo=False):
     # choose between TypeRF, TypeDT, TypeSVM
-    classifier_type = Classifier.TypeSVM
+    classifier_type = Classifier.TypeRF
     prefix = classifier_type
+
     random = True
     persist = False
     pretrain = False
-    unstructured = True
+    unstructured = False
     new_test_only = False
+
     max_papers = 120
     paper_paths = util.get_paper_paths()[:max_papers]
 
@@ -26,15 +34,15 @@ def run(demo=False):
                                                   random_state=1)
 
     # uncomment the block below if you want new data to be included
-    new_data_dir = util.get_new_data_dir()
-    new_pps = util.get_paper_paths(dir=new_data_dir)
-    if new_test_only:
-        test_pps = new_pps
-        train_pps = paper_paths
-        prefix = prefix + '-newtest'
-    else:
-        paper_paths.extend(new_pps)
-        train_pps, test_pps = ms.train_test_split(paper_paths, test_size=0.2)
+    # new_data_dir = util.get_new_data_dir()
+    # new_pps = util.get_paper_paths(dir=new_data_dir)
+    # if new_test_only:
+    #     test_pps = new_pps
+    #     train_pps = paper_paths
+    #     prefix = prefix + '-newtest'
+    # else:
+    #     paper_paths.extend(new_pps)
+    #     train_pps, test_pps = ms.train_test_split(paper_paths, test_size=0.2)
 
     if unstructured:
         unstructured_dir = util.get_unstructured_dir()

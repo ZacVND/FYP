@@ -1,6 +1,7 @@
 """
 @author: ZacVND
 
+Utilities functions used across the whole project
 expand abbreviation code is borrowed from Antonio Trenta's implementation.
 """
 
@@ -207,7 +208,8 @@ def get_logger(name):
 
 def load_dict(file_path):
     try:
-        cache = json.load(open(file_path, "r"))
+        with open(file_path, "r") as file:
+            cache = json.load(file)
     except (IOError, ValueError):
         cache = {}
 
@@ -215,7 +217,8 @@ def load_dict(file_path):
 
 
 def save_dict(file_path, dict):
-    json.dump(dict, open(file_path, "w"))
+    with open(file_path, "w") as file:
+        json.dump(dict, file)
 
 
 def render_pug(template_path, out_path=None, out_file=None, json_path=None):
