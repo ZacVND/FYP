@@ -40,6 +40,8 @@ Below is the comparison between the classifiers' precisions. Precision is the a 
 The top row bold by default in Github Markdown, therefore it is left as empty as a workaround to achieve this look.
 
 ## Requirements ##
+**This project has been tested on macOS Mojave and Ubuntu 18.04 LTS**
+
 **General**
 * Python 3.7 or higher
 * sklearn
