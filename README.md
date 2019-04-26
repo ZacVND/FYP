@@ -1,4 +1,4 @@
-# Final Year Project, Natural Language Processing
+# Final Year Project
 ## Extraction of medical evidence from abstracts of randomised clinical trials
 
 Systematic Reviews are regarded as the highest quality evidence in Evidence Based Medicine (EBM) practice. Authors of systematic reviews use randomised  clinical trials (RCT) as the main source of data. 
