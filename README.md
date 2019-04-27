@@ -20,11 +20,7 @@ Below is the comparison between the classifiers' precisions. Precision is the a 
 
 |               | Intervention (A1) | Comparison (A2) | Intervention Result (R1) | Comparison Result (R2) | Outcome Measure (OC) | Patient Group (P) |
 |---------------|:-----------------:|:---------------:|:------------------------:|:----------------------:|:--------------------:|:-----------------:|
-<<<<<<< HEAD
 | **Random Forest** |       0.7484       |      0.549    |           0.3865   |          0.325        |         0.7109        |        0.875       |
-=======
-| **Random Forest** |       0.7484       |      0.549     |           0.3865   |          0.325         |         0.7109        |       0.875       |
->>>>>>> 532fc17ecbad084636f2767adc5bc3f1188c7d33
 | **SVM**           |       0.5807       |      0.4745     |          0.3062    |         0.2583         |        0.6141        |       0.812       |
 | **Decision Tree** |       0.5266      |      0.3807     |          0.301   |          0.2984         |        0.5073        |       0.6302       |
 
