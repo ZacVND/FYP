@@ -65,7 +65,8 @@ The top row bold by default in Github Markdown, therefore it is left as empty as
 
 **Results rendering**
 * [pugjs](https://pugjs.org/api/getting-started.html)
-Install the CLI using `npm install pug-cli -g`, if any problem arises just run `npm init` first. If you are not virtualenv or conda environment then you need to use `sudo npm install pug-cli -g`.
+
+Install the CLI using `npm install pug-cli -g`, if any problem arises just run `npm init` first. If you are not using virtualenv or conda environment then you need to use `sudo npm install pug-cli -g`.
 
 This system uses [genia-tagger-py](https://github.com/bornabesic/genia-tagger-py), a python wrapper for GENIA tagger created by 
 bornabesic, already included in
