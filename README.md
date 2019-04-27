@@ -50,7 +50,7 @@ The top row bold by default in Github Markdown, therefore it is left as empty as
 * GeniaTagger 3.0.2 or later
 * pytest, unittest for testing
 
-(\*) The stopword corpus is needed. Instructions [here](http://www.nltk.org/data.html). 
+(\*) The stopword and punkt corpora are needed. Instructions [here](http://www.nltk.org/data.html). 
 
 **Data collection**
 * Sign up and request your **[UMLS API key](https://uts.nlm.nih.gov/home.html)**
