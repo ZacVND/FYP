@@ -204,3 +204,5 @@ Train a new classifier at every run. There are 20 runs of 10-fold cross validati
 Results from running the code are saved in *./results/* as `.json` and 
 rendered as `.html` files using `.pug` templates in *./ie_tools/src/*
 
+Please do not hesitate tp contact me at zac.luong.15@ucl.ac.uk should any problem arises.
+
