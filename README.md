@@ -194,7 +194,7 @@ Runs hold_out script but without True and Predicted tokens rendered. The output 
 
 ### Cross validation:
 ***cross_validation.py***:
-Train a new classifier at every run. There are 20 runs of 10-fold cross validation, these values can be modified in the file.
+Train a new classifier at every run. There are 20 runs of 8-fold cross validation, these values can be modified in the file.
 * `run_count` defines number of runs
 * `fold_count` defines number of folds in data
 * `new_data` defines whether you want to use new PMIDs in the run
